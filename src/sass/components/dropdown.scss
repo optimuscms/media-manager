@@ -1,0 +1,25 @@
+.is-media-manager {
+    .dropdown {
+        .scroll {
+            overflow: auto;
+            max-height: 250px;
+        }
+        
+        .dropdown-item {
+            padding: .375rem 1rem;
+
+            &.text-has-icon {
+                width: 100%;
+            }
+
+            &.is-spaced {
+                justify-content: space-between;
+            }
+
+            &:hover {
+                color: $dropdown-item-hover-color;
+                background-color: $dropdown-item-hover-background-color;
+            }
+        }
+    }
+}

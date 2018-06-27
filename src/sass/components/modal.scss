@@ -1,0 +1,80 @@
+.modal {
+    z-index: 120;
+
+    &.is-media-manager {
+        .modal-card {
+            width: 90%;
+            min-height: 90vh;
+
+            .modal-card-head {
+                .dropdown-trigger {
+                    height: 21px;
+                }
+            }
+
+            .modal-card-body {
+                position: relative;
+
+                &.is-loading {
+                    > * {
+                        opacity: 0;
+                        visibility: hidden;
+                        pointer-events: none;
+                    }
+
+                    &:before {
+                        $size: 3em;
+                        @include loader;
+                        z-index: 10;
+
+                        top: 40%;
+                        left: 50%;
+                        width: $size;
+                        height: $size;
+                        position: absolute;
+                        margin-top: -($size / 2);
+                        margin-left: -($size / 2);
+                        border-left-color: $grey-dark;
+                        border-bottom-color: $grey-dark;
+                    }
+                }
+            }
+        }
+    }
+
+    &.is-default {
+        .modal-card {
+            min-height: 0;
+
+            @include tablet {
+                max-width: 50%;
+            }
+
+            .modal-card-body {
+                padding: 20px;
+            }
+
+            .modal-card-foot {
+                justify-content: flex-end;
+            }
+        }
+
+        .is-media-image {
+            max-width: 45%;
+        }
+    }
+
+    &.is-media-move {
+        .modal-card {
+            min-height: 50vh;
+            
+            @include tablet {
+                max-width: 450px;
+            }
+
+            .modal-card-body {
+                padding: 0;
+            }
+        }
+    }
+}

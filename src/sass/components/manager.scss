@@ -1,0 +1,117 @@
+.is-media-manager {
+    .select-media {
+        &[disabled] {
+            opacity: .5;
+            cursor: not-allowed;
+        }
+    }
+
+    .folders-holder {
+        flex-wrap: wrap;
+        position: relative;
+        padding-bottom: 1.25rem;
+        margin-bottom: 2rem !important;
+
+        &:before {
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 1px;
+            content: '';
+            position: absolute;
+            background-color: $border;
+        }
+
+        .control {
+            margin-bottom: .75rem;
+
+            .control {
+                margin-bottom: 0;
+            }
+        }
+
+        .button {
+            &.is-folder {
+                max-width: 180px;
+                overflow: hidden;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+        
+                &.is-focused {
+                    color: $white;
+                    background-color: $link;
+                }
+
+                .icon {
+                    margin-right: .75rem;
+                }
+            }
+
+            &:not(.is-folder) {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+        }
+    }
+
+    .media-holder {
+        display: flex;
+        flex-wrap: wrap;
+
+        .card {
+            width: 100%;
+            cursor: pointer;
+            max-width: 180px;
+            margin-bottom: 1rem;
+
+            &:not(:last-child) {
+                margin-right: 1rem;
+            }
+
+            .media-file {
+                display: block;
+                padding-top: 75%;
+                position: relative;
+                background-color: $grey;
+
+                .icon {
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    width: 4rem;
+                    height: 4rem;
+                    margin: auto;
+                    position: absolute;
+                }
+            }
+
+            .card-content {
+                overflow: hidden;
+                padding: .5rem 1rem;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                background-color: $grey-lighter;
+            }
+
+            &.is-focused {
+                outline-style: solid;
+                outline-color: $link;
+
+                .card-content {
+                    color: $white;
+                    background-color: $link;
+                }
+            }
+
+            &.is-selected {
+                box-shadow: 0 0 0 2px rgba($primary, .5),
+                            0 0 0 1px rgba($black, .1);
+            }
+        }
+    }
+
+    .notification {
+        border-radius: $radius;
+    }
+}

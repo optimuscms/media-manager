@@ -1,0 +1,94 @@
+$media-size: 50px;
+
+.media-picker {
+    position: relative;
+    border-radius: $radius;
+    border: solid 1px $input-border-color;
+
+    &.is-multiple {
+        display: flex;
+        flex-wrap: wrap;
+        border-radius: $radius;
+        box-shadow: $input-shadow;
+        padding: 1rem 0 .5rem 1rem;
+
+        .media {
+            margin-right: 1rem;
+            align-items: center;
+            margin-bottom: .5rem;
+            border-radius: $radius;
+            border: solid 1px $grey;
+            background-color: $white;
+
+            &:hover,
+            + .media:hover {
+                border-color: $input-border-color;
+            }
+            
+            &:not(:last-child) {
+                margin-right: 1rem;
+            }
+
+            .media-left {
+                margin-right: .5rem;
+                padding: .5rem 0 .5rem .5rem;
+            }
+
+            .media-content {
+                color: $blue;
+                overflow: hidden;
+                max-width: 195px;
+                white-space: nowrap;
+                text-overflow: ellipsis;
+            }
+
+            .media-right {
+                display: flex;
+                padding-right: 1rem;
+            }
+
+            + .media {
+                margin-top: 0;
+                padding-top: 0;
+                border-top-color: $grey;
+            }
+        }
+    }
+
+    &.is-single-image {
+        vertical-align: top;
+        display: inline-block;
+
+        &:before {
+            @include overlay;
+            @include transition;
+        
+            z-index: 1;
+            opacity: 0;
+            content: '';
+            background-color: $black;
+        }
+
+        img {
+            display: block;
+            max-height: 200px;
+        }
+
+        &:hover {
+            &:before {
+                opacity: .25;
+            }
+        }
+
+        .picker-clear {
+            @include delete;
+    
+            top: 1rem;
+            z-index: 2;
+            right: 1rem;
+            width: 40px;
+            height: 40px;
+            position: absolute;
+        }
+    }
+}
