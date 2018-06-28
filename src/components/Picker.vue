@@ -47,7 +47,9 @@
             </div>
         </div>
 
-        <slot name="help"></slot>
+        <div class="help" v-if="$slots['help']">
+            <slot name="help"></slot>
+        </div>
     </div>
 </template>
 

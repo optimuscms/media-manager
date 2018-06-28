@@ -2,8 +2,5 @@
   "name": "@optimuscms/media-manager",
   "version": "1.0.0",
   "author": "Rich Moore",
-  "license": "MIT",
-  "dependencies": {
-    "@optimuscms/ui": "1.0.19"
-  }
+  "license": "MIT"
 }
