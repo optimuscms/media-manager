@@ -6,7 +6,7 @@
             <div class="field" v-if="media.length">
                 <div class="control">
                     <div class="media-picker is-single-image" v-if="hasPreview">
-                        <img :src="firstMedia.url">
+                        <img :src="firstMedia.thumbnail_url">
                         <a class="picker-clear" @click="remove(firstMedia.id)"></a>
                     </div>
 
@@ -119,7 +119,15 @@
             },
 
             media(media) {
-                this.$emit('input', (this.limit === 1) ? media[0] : media);
+                let value;
+                
+                if (this.limit === 1) {
+                    value = media.length ? media[0] : null;
+                } else {
+                    value = media;
+                }
+
+                this.$emit('input', value);
             }
         },
 

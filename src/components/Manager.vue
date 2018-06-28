@@ -120,7 +120,7 @@
                             @click.stop="focusMedia(file.id)"
                         >
                             <figure class="image is-4by3" v-if="isImage(file.extension)">
-                                <img :src="file.url" :alt="file.name" :title="file.name">
+                                <img :src="file.thumbnail_url" :alt="file.name" :title="file.name">
                             </figure>
 
                             <div class="media-file" v-else>
@@ -220,7 +220,7 @@
 
         <move ref="move" @moved="removeFocusedItems"></move>
 
-        <confirm ref="confirm" type="danger" @confirm="removeFocusedItems">
+        <confirm ref="confirm" type="danger" @confirm="deleteFocusedItems">
             <template slot="confirmButtonText">Delete</template>
 
             <template slot-scope="count">
@@ -322,6 +322,7 @@
 
         watch: {
             activeFolder() {
+                this.clearFocused();
                 this.getMediaAndFolders();
             }
         },
@@ -398,6 +399,21 @@
                 });
 
                 this.clearFocused();
+            },
+
+            deleteFocusedItems() {
+                let media = this.media.focused;
+                let folders = this.folders.focused;
+
+                this.removeFocusedItems();
+                
+                media.forEach(id => {
+                    axios.delete('/api/media/' + id);
+                });
+
+                folders.forEach(id => {
+                    axios.delete('/api/media-folders/' + id);
+                });
             },
 
             selectMedia() {

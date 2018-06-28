@@ -2,9 +2,13 @@
     <div class="upload-preview-holder" v-show="files.length">
         <transition name="notification">
             <div class="notification is-danger p-2" v-if="error.active">
-                <div class="content">
-                    {{ error.message }}
-                </div>
+                <ul>
+                    <template v-for="messages in error.messages">
+                        <li :key="index" v-for="(message, index) in messages">
+                            {{ message }}
+                        </li>
+                    </template>
+                </ul>
             </div>
         </transition>
 
@@ -45,7 +49,7 @@
                         class="panel-block"
                         :key="file.uuid"
                         v-for="file in files"
-                        @mouseover="showError(file.error)"
+                        @mouseover="showError(file.errors)"
                         @mouseleave="error.active = false"
                     >
                         <progress
@@ -78,6 +82,8 @@
 </template>
 
 <script>
+    import { CancelToken } from 'axios';
+
     export default {
         props: {
             folder: Number
@@ -91,7 +97,7 @@
 
                 error: {
                     active: false,
-                    message: null
+                    messages: null
                 },
 
                 files: []
@@ -116,18 +122,16 @@
             },
 
             upload(event) {
-                let data = new FormData();
-                const CancelToken = axios.CancelToken;
-
                 this.isLoading = true;
                 this.isActive = true;
 
-                if (this.folder) {
-                    data.append('folder_id', this.folder);
-                }
-
                 Array.from(event.target.files).forEach(file => {
+                    let data = new FormData();
                     let uuid = this.generateUuid();
+
+                    if (this.folder) {
+                        data.append('folder_id', this.folder);
+                    }
 
                     this.files.push({
                         uuid,
@@ -136,43 +140,40 @@
                         progress: 0,                        
                         uploading: false,
                         complete: false,
-                        error: false,
+                        errors: false,
                         cancel: null
                     });
 
                     data.append('file', file);
 
                     axios.post('/api/media', data, {
-                            cancelToken: new CancelToken(cancel => {
-                                this.updateFile(uuid, {
-                                    cancel
-                                });
-                            }),
-                            onUploadProgress: progressEvent => {
-                                this.updateFile(uuid, {
-                                    uploading: true,
-                                    progress: Math.round(
-                                        (progressEvent.loaded * 100) / progressEvent.total
-                                    )
-                                });
-                            }
-                        })
-                        .then(response => {
+                        cancelToken: new CancelToken(cancel => {
                             this.updateFile(uuid, {
-                                id: response.data.data.id,
-                                uploading: false,
-                                complete: true
+                                cancel
                             });
-
-                            this.$emit('success', response.data.data);
-                        })
-                        .catch(error => {
+                        }),
+                        onUploadProgress: progressEvent => {
                             this.updateFile(uuid, {
-                                uploading: false,
-                                error: 'File too big.'
-                                // error: error.data.message
+                                uploading: true,
+                                progress: Math.round(
+                                    (progressEvent.loaded * 100) / progressEvent.total
+                                )
                             });
+                        }
+                    }).then(response => {
+                        this.updateFile(uuid, {
+                            id: response.data.data.id,
+                            uploading: false,
+                            complete: true
                         });
+
+                        this.$emit('success', response.data.data);
+                    }).catch(error => {
+                        this.updateFile(uuid, {
+                            uploading: false,
+                            errors: error.response.data.errors
+                        });
+                    });
                 });
 
                 this.$refs.file.value = '';
@@ -211,7 +212,7 @@
             },
 
             fileIcon(file) {
-                if (file.error) {
+                if (file.errors) {
                     return {
                         icon: 'exclamation-triangle',
                         class: 'has-text-danger',
@@ -223,7 +224,7 @@
                         class: 'has-text-default',
                         spin: false
                     }
-                } else if (file.uploading && ! file.error) {
+                } else if (file.uploading && ! file.errors) {
                     return {
                         icon: 'spinner',
                         class: 'has-text-link',
@@ -238,9 +239,9 @@
                 }
             },
 
-            showError(error) {
-                if (error) {
-                    this.error.message = error;
+            showError(messages) {
+                if (messages) {
+                    this.error.messages = messages;
                     this.error.active = true;
                 }
             },
