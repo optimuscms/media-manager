@@ -350,7 +350,7 @@
 
                 axios.all([
                     axios.get('/api/media', { params: { folder: activeFolder }}),
-                    axios.get('/api/media-folders', { params: { folder: activeFolder }})
+                    axios.get('/api/media-folders', { params: { parent: activeFolder }})
                 ]).then(axios.spread((media, folders) => {
                     this.media.all = media.data.data;
                     this.folders.all = folders.data.data;
