@@ -326,15 +326,12 @@
             }
         },
 
-        created() {
-            eventBus.$on('media-manager-open', ({ limit, accept, selected }) => {
-                this.limit = limit;
-                this.accept = accept;
-                this.media.selected = selected.length ? this.activeMedia(selected) : [];
+        mounted() {
+            eventBus.$on('media-manager-open', this.open);
+        },
 
-                this.isOpen = true;
-                this.getMediaAndFolders();
-            });
+        beforeDestroy(){
+            eventBus.$off('media-manager-open', this.open);
         },
 
         methods: {
@@ -343,6 +340,15 @@
                 removeActiveMedia: 'media/removeActiveMedia',
                 setMoveExcludedFolders: 'media/setMoveExcludedFolders'
             }),
+
+            open({ limit, accept, selected }) {
+                this.limit = limit;
+                this.accept = accept;
+                this.media.selected = selected.length ? this.activeMedia(selected) : [];
+
+                this.isOpen = true;
+                this.getMediaAndFolders();
+            },
 
             getMediaAndFolders() {
                 let activeFolder = this.activeFolder || 'root';
