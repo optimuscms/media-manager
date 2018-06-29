@@ -20,12 +20,6 @@
                     </div>
 
                     <div class="level-right" v-if="numberOfFocusedItems">
-                        <div class="level-item" v-if="media.focused.length">
-                            <a class="select-media icon" title="Select" :disabled="limitExceeded" @click="selectMedia">
-                                <icon icon="arrow-circle-down" size="lg"></icon>
-                            </a>
-                        </div>
-
                         <div class="level-item">
                             <dropdown class="is-right">
                                 <a slot="button" class="icon">
@@ -202,7 +196,12 @@
 
                     <div class="level-right">
                         <div class="level-item">
-                            <a class="button is-success" @click="confirm">Insert ({{ numberOfSelectedFiles }})</a>
+                            <a
+                                @click="confirm" 
+                                class="button is-success"
+                                :disabled="limitExceeded"
+                            >Insert</a>
+
                             <a class="button" @click="isOpen = false">Cancel</a>
                         </div>
                     </div>
@@ -426,19 +425,17 @@
             },
 
             selectMedia() {
-                if (! this.limitExceeded) {
-                    let selected = this.media.focused.filter(id => {
-                        return ! this.selectedIds.includes(id);
-                    });
-    
-                    if (selected.length) {
-                        this.media.selected = this.media.selected.concat(
-                            this.media.all.filter(({ id }) => selected.includes(id))
-                        );
-                    }
-    
-                    this.media.focused = [];
+                let selected = this.media.focused.filter(id => {
+                    return ! this.selectedIds.includes(id);
+                });
+
+                if (selected.length) {
+                    this.media.selected = this.media.selected.concat(
+                        this.media.all.filter(({ id }) => selected.includes(id))
+                    );
                 }
+
+                this.media.focused = [];
             },
 
             deselectMedia(mediaId) {
@@ -521,17 +518,20 @@
             },
 
             confirm() {
-                this.addActiveMedia(this.media.selected);
+                if (! this.limitExceeded) {
+                    this.selectMedia();
+                    this.addActiveMedia(this.media.selected);
 
-                eventBus.$emit('media-selected', this.selectedIds);
+                    eventBus.$emit('media-selected', this.selectedIds);
 
-                this.folders.open = [{
-                    id: null,
-                    name: 'Home'
-                }];
+                    this.folders.open = [{
+                        id: null,
+                        name: 'Home'
+                    }];
 
-                this.clearFocused();
-                this.isOpen = false;
+                    this.clearFocused();
+                    this.isOpen = false;
+                }
             }
         }
     }

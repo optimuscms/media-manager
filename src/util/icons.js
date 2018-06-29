@@ -1,10 +1,7 @@
 import fontawesome from '@fortawesome/fontawesome';
 
-// import Test from '@fortawesome/fontawesome-free-solid/faEllipsisH';
-
 fontawesome.library.add(
     require('@fortawesome/fontawesome-free-solid/faAngleUp'),
-    require('@fortawesome/fontawesome-free-solid/faArrowCircleDown'),
     require('@fortawesome/fontawesome-free-solid/faCheck'),
     require('@fortawesome/fontawesome-free-solid/faCrosshairs'),
     require('@fortawesome/fontawesome-free-solid/faEllipsisH'),
