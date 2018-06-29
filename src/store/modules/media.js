@@ -88,6 +88,10 @@ const mutations = {
         });
     },
 
+    removeActiveMedia(state, mediaIds) {
+        state.activeMedia = state.activeMedia.filter(({ id }) => ! mediaIds.includes(id));
+    },
+
     clearActiveMedia(state) {
         state.activeMedia = [];
     },

@@ -328,7 +328,7 @@
         },
 
         created() {
-            eventBus.$on('open-media-manager', ({ limit, accept, selected }) => {
+            eventBus.$on('media-manager-open', ({ limit, accept, selected }) => {
                 this.limit = limit;
                 this.accept = accept;
                 this.media.selected = selected.length ? this.activeMedia(selected) : [];
@@ -341,6 +341,7 @@
         methods: {
             ...mapMutations({
                 addActiveMedia: 'media/addActiveMedia',
+                removeActiveMedia: 'media/removeActiveMedia',
                 setMoveExcludedFolders: 'media/setMoveExcludedFolders'
             }),
 
@@ -402,18 +403,26 @@
             },
 
             deleteFocusedItems() {
-                let media = this.media.focused;
-                let folders = this.folders.focused;
+                let mediaIds = this.media.focused;
+                let folderIds = this.folders.focused;
 
                 this.removeFocusedItems();
+                this.removeActiveMedia(mediaIds);
                 
-                media.forEach(id => {
-                    axios.delete('/api/media/' + id);
-                });
-
-                folders.forEach(id => {
-                    axios.delete('/api/media-folders/' + id);
-                });
+                if (mediaIds.length) {
+                    eventBus.$emit('media-deleted', mediaIds);
+                    
+                    mediaIds.forEach(id => {
+                        this.deselectMedia(id);
+                        axios.delete('/api/media/' + id);
+                    });
+                }
+                
+                if (folderIds.length) {
+                    folderIds.forEach(id => {
+                        axios.delete('/api/media-folders/' + id);
+                    });
+                }
             },
 
             selectMedia() {
@@ -514,7 +523,12 @@
             confirm() {
                 this.addActiveMedia(this.media.selected);
 
-                eventBus.$emit('update-picker', this.selectedIds);
+                eventBus.$emit('media-selected', this.selectedIds);
+
+                this.folders.open = [{
+                    id: null,
+                    name: 'Home'
+                }];
 
                 this.clearFocused();
                 this.isOpen = false;

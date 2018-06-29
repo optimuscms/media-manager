@@ -133,17 +133,21 @@
 
         mounted() {
             this.setMedia(this.value);
+
+            eventBus.$on('media-deleted', mediaIds => {
+                this.media = this.media.filter(id => ! mediaIds.includes(id));
+            });
         },
 
         methods: {
             open() {
-                eventBus.$emit('open-media-manager', {
+                eventBus.$emit('media-manager-open', {
                     limit: this.limit,
                     selected: this.media,
                     accept: this.accept ? this.setAccepted(this.accept) : []
                 });
 
-                eventBus.$once('update-picker', media => {
+                eventBus.$once('media-selected', media => {
                     this.media = media;
                 });
             },
