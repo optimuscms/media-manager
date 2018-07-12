@@ -147,8 +147,10 @@
                     accept: this.accept ? this.setAccepted(this.accept) : []
                 });
 
-                eventBus.$once('media-selected', media => {
-                    this.media = media;
+                eventBus.$once('media-selected', this.setMedia);
+
+                eventBus.$on('media-manager-closed', () => {
+                    eventBus.$off('media-selected', this.setMedia);
                 });
             },
 

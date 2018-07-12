@@ -17,7 +17,7 @@ const state = {
         'file-archive': ['zip'],
         'file-power-point': ['ppt', 'pptx'],
     },
-
+    
     imageExtensions: [
         'bmp', 'gif', 'jpg', 'jpeg', 'png'
     ],

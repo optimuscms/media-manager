@@ -1,5 +1,5 @@
 <template>
-    <media-modal class="is-media-manager" :active="isOpen" @close="isOpen = false">
+    <media-modal class="is-media-manager" :active="isOpen" @close="close">
         <div class="modal-card">
             <header class="modal-card-head is-block">
                 <div class="level">
@@ -330,7 +330,7 @@
             eventBus.$on('media-manager-open', this.open);
         },
 
-        beforeDestroy(){
+        beforeDestroy() {
             eventBus.$off('media-manager-open', this.open);
         },
 
@@ -538,6 +538,11 @@
                     this.clearFocused();
                     this.isOpen = false;
                 }
+            },
+
+            close() {
+                eventBus.$emit('media-manager-closed');
+                this.isOpen = false;
             }
         }
     }
