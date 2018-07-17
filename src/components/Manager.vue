@@ -198,11 +198,14 @@
                         <div class="level-item">
                             <a
                                 @click="confirm" 
+                                v-if="limit !== 0"
                                 class="button is-success"
                                 :disabled="limitExceeded"
                             >Insert</a>
 
-                            <a class="button" @click="isOpen = false">Cancel</a>
+                            <a class="button" @click="cancel">
+                                {{ limit === 0 ? 'Close' : 'Cancel' }}
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -215,11 +218,21 @@
             @updated="updateFolder"
         ></manage-folder>
 
-        <manage-media ref="manageMedia" @updated="updateMedia"></manage-media>
+        <manage-media
+            ref="manageMedia"
+            @updated="updateMedia"
+        ></manage-media>
 
-        <move ref="move" @moved="removeFocusedItems"></move>
+        <move
+            ref="move"
+            @moved="removeFocusedItems"
+        ></move>
 
-        <confirm ref="confirm" type="danger" @confirm="deleteFocusedItems">
+        <confirm
+            ref="confirm"
+            type="danger"
+            @confirm="deleteFocusedItems"
+        >
             <template slot="confirmButtonText">Delete</template>
 
             <template slot-scope="count">
@@ -233,8 +246,6 @@
 </template>
 
 <script>
-    // TODO restrict media type e.g. images / mp3,mp4
-
     import { mapGetters, mapMutations } from 'vuex';
 
     // Components
@@ -343,8 +354,11 @@
 
             open({ limit, accept, selected }) {
                 this.limit = limit;
-                this.accept = accept;
-                this.media.selected = selected.length ? this.activeMedia(selected) : [];
+
+                if (this.limit !== 0) {
+                    this.accept = accept;
+                    this.media.selected = selected.length ? this.activeMedia(selected) : [];
+                }
 
                 this.isOpen = true;
                 this.getMediaAndFolders();
@@ -499,7 +513,7 @@
                 this.$refs.manageMedia.open({
                     id: media.id,
                     name: media.name,
-                    url: media.url,
+                    url: media.thumbnail_url,
                     extension: media.extension
                 });
             },
@@ -538,6 +552,11 @@
                     this.clearFocused();
                     this.isOpen = false;
                 }
+            },
+
+            cancel() {
+                this.clearFocused();
+                this.close();
             },
 
             close() {
