@@ -352,13 +352,13 @@
                 setMoveExcludedFolders: 'media/setMoveExcludedFolders'
             }),
 
-            open({ limit, accept, selected }) {
+            open({ limit, selected, accept }) {
                 this.limit = limit;
+                this.accept = accept || null;
 
-                if (this.limit !== 0) {
-                    this.accept = accept;
-                    this.media.selected = selected.length ? this.activeMedia(selected) : [];
-                }
+                this.media.selected = (typeof selected === Array && selected.length)
+                    ? this.activeMedia(selected)
+                    : [];
 
                 this.isOpen = true;
                 this.getMediaAndFolders();
@@ -550,6 +550,7 @@
                     }];
 
                     this.clearFocused();
+                    this.clearSelected();
                     this.isOpen = false;
                 }
             },
