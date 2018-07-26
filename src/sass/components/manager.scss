@@ -32,10 +32,8 @@
 
         .button {
             &.is-folder {
-                max-width: 180px;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
+                max-width: 200px;
+                padding-right: 1rem;
         
                 &.is-focused {
                     color: $white;
@@ -44,6 +42,12 @@
 
                 .icon {
                     margin-right: .75rem;
+                }
+
+                span:not(.icon) {
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
                 }
             }
 
