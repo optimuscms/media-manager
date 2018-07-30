@@ -200,7 +200,7 @@
                                 @click="confirm" 
                                 v-if="limit !== 0"
                                 class="button is-success"
-                                :disabled="limitExceeded"
+                                :disabled="insertDisabled"
                             >Insert</a>
 
                             <a class="button" @click="cancel">
@@ -327,6 +327,10 @@
                 }
 
                 return false;
+            },
+
+            insertDisabled() {
+                return this.limitExceeded || ! (this.media.focused.length || this.media.selected.length)
             }
         },
 
@@ -538,7 +542,7 @@
             },
 
             confirm() {
-                if (! this.limitExceeded) {
+                if (! this.insertDisabled) {
                     this.selectMedia();
                     this.addActiveMedia(this.media.selected);
 
