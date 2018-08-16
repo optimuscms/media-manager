@@ -2,48 +2,103 @@
     <modal class="is-default" :active="isActive" @close="close">
         <div class="modal-card">
             <header class="modal-card-head">
-                <p class="modal-card-title">Edit Media</p>
+                <p class="modal-card-title">Media Properties</p>
                 <a class="delete" @click="close"></a>
             </header>
 
             <section class="modal-card-body">
                 <template v-if="media">
-                    <div class="columns" v-if="isImage(media.extension)">
+                    <div class="columns is-gapless" v-if="isImage(media.extension)">
                         <div class="column is-narrow is-media-image">
                             <img :src="media.url" :alt="media.name">
                         </div>
 
-                        <div class="column">                            
-                            <div class="field">
-                                <label for="name" class="label">Media Name</label>
+                        <div class="column">
+                            <div class="pl-4">                                
+                                <div class="field">
+                                    <label for="name" class="label">Media name</label>
 
-                                <div class="control">
-                                    <input
-                                        ref="name"
-                                        id="name"
-                                        type="text"
-                                        class="input"
-                                        v-model="media.name"
-                                        @keydown.enter.prevent="save"
-                                    >
+                                    <div class="control">
+                                        <input
+                                            id="name"
+                                            ref="name"
+                                            type="text"
+                                            class="input"
+                                            v-model="media.name"
+                                            @keydown.enter.prevent="save"
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <label for="alt" class="label">Alt text</label>
+
+                                    <div class="control">
+                                        <input
+                                            id="alt"
+                                            type="text"
+                                            class="input"
+                                            @keydown.enter.prevent="save"
+                                        >
+                                    </div>
+                                </div>
+
+                                <div class="field">
+                                    <div class="control">
+                                        <div class="content">
+                                            <hr>
+
+                                            <p>
+                                                <strong>Details</strong>
+                                            </p>
+
+                                            <p>
+                                                <i><strong>Dimensions:</strong> 1940 x 1000px</i><br>
+                                                <i><strong>File size:</strong> 1.4mb</i>
+                                            </p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="field" v-else>
-                        <label for="name" class="label">Media Name</label>
+                    <template v-else>
+                        <div class="field">
+                            <label for="name" class="label">Media Name</label>
 
-                        <div class="control">
-                            <input ref="name"
-                                type="text"
-                                id="name"
-                                class="input"
-                                v-model="media.name"
-                                @keydown.enter.prevent="save"
-                            >
+                            <div class="control">
+                                <input ref="name"
+                                    id="name"
+                                    type="text"
+                                    class="input"
+                                    v-model="media.name"
+                                    @keydown.enter.prevent="save"
+                                >
+                            </div>
                         </div>
-                    </div>
+
+                        <div class="field">
+                            <div class="control">
+                                <div class="content">
+                                    <hr>
+
+                                    <p>
+                                        <strong>Details</strong>
+                                    </p>
+
+                                    <p>
+                                        <i>
+                                            <strong>View:</strong>
+                                            <a :href="media.url" target="_blank">{{ media.name }}</a>
+                                        </i><br>
+                                        
+                                        <i><strong>File size:</strong> 1.4mb</i>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
                 </template>
             </section>
 
@@ -51,8 +106,8 @@
                 <a
                     class="button is-success"
                     @click="save"
-                    :disabled="isSaving"
                     :class="{ 'is-loading': isSaving }"
+                    :disabled="isSaving"
                 >Save</a>
 
                 <a class="button" @click="close">Cancel</a>

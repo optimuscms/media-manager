@@ -58,60 +58,51 @@
         }
     }
 
-    .media-holder {
-        display: flex;
-        flex-wrap: wrap;
+    .media-card {
+        cursor: pointer;
+        position: relative;
 
-        .card {
-            width: 100%;
-            cursor: pointer;
-            max-width: 180px;
-            margin-bottom: 1rem;
+        .media-file {
+            display: block;
+            padding-top: 75%;
+            position: relative;
+            background-color: $grey;
 
-            &:not(:last-child) {
-                margin-right: 1rem;
+            .icon {
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                width: 4rem;
+                height: 4rem;
+                margin: auto;
+                position: absolute;
             }
+        }
 
-            .media-file {
-                display: block;
-                padding-top: 75%;
-                position: relative;
-                background-color: $grey;
+        .media-content {
+            overflow: hidden;
+            white-space: nowrap;
+            padding: .5rem .75rem;
+            text-overflow: ellipsis;
+            border: solid 1px $grey-dark;
+            background-color: $grey-lighter;
+        }
 
-                .icon {
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    width: 4rem;
-                    height: 4rem;
-                    margin: auto;
-                    position: absolute;
-                }
+        &.is-focused {
+            outline-style: solid;
+            outline-color: $link;
+
+            .media-content {
+                color: $white;
+                border-color: $link;
+                background-color: $link;
             }
+        }
 
-            .card-content {
-                overflow: hidden;
-                padding: .5rem 1rem;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-                background-color: $grey-lighter;
-            }
-
-            &.is-focused {
-                outline-style: solid;
-                outline-color: $link;
-
-                .card-content {
-                    color: $white;
-                    background-color: $link;
-                }
-            }
-
-            &.is-selected {
-                box-shadow: 0 0 0 2px rgba($primary, .5),
-                            0 0 0 1px rgba($black, .1);
-            }
+        &.is-selected {
+            box-shadow: 0 0 0 2px rgba($primary, .5),
+                        0 0 0 1px rgba($black, .1);
         }
     }
 

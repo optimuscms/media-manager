@@ -17,6 +17,7 @@ library.add(
     require('@fortawesome/free-solid-svg-icons/faFileVideo').definition,
     require('@fortawesome/free-solid-svg-icons/faFileWord').definition,
     require('@fortawesome/free-solid-svg-icons/faFolder').definition,
+    require('@fortawesome/free-solid-svg-icons/faInfoCircle').definition,
     require('@fortawesome/free-solid-svg-icons/faMinus').definition,
     require('@fortawesome/free-solid-svg-icons/faPencilAlt').definition,
     require('@fortawesome/free-solid-svg-icons/faPlus').definition,

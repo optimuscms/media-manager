@@ -26,15 +26,15 @@
                                     <icon icon="ellipsis-h" size="lg"></icon>
                                 </a>
 
-                                <a class="dropdown-item" v-if="numberOfFocusedItems === 1" @click="edit">
+                                <a class="dropdown-item text-has-icon" v-if="numberOfFocusedItems === 1" @click="edit">
                                     <span class="icon">
-                                        <icon icon="pencil-alt"></icon>
+                                        <icon icon="info-circle"></icon>
                                     </span>
 
-                                    <span>Edit</span>
+                                    <span>Properties</span>
                                 </a>
 
-                                <a class="dropdown-item" @click="openMoveModal">
+                                <a class="dropdown-item text-has-icon" @click="openMoveModal">
                                     <span class="icon">
                                         <icon icon="reply"></icon>
                                     </span>
@@ -73,10 +73,10 @@
                             <div class="field has-addons">
                                 <div class="control">
                                     <a
+                                        title="Open folder"
                                         class="button is-folder"
                                         :class="{ 'is-focused': folders.focused.includes(folder.id) }"
                                         @click="openFolder(folder)"
-                                        title="Open folder"
                                     >
                                         <div class="icon">
                                             <icon icon="folder" size="lg"></icon>
@@ -102,28 +102,34 @@
                 <template v-if="media.all.length">
                     <h2 class="title">Media</h2>
 
-                    <div class="media-holder">
+                    <div class="columns is-mobile is-multiline">
                         <div
-                            class="card"
                             :key="file.id"
+                            class="column is-6-mobile is-4-tablet is-3-desktop is-2-widescreen"
                             v-for="file in media.all"
-                            :class="{
-                                'is-focused': media.focused.includes(file.id),
-                                'is-selected': selectedIds.includes(file.id)
-                            }"
-                            @click.stop="focusMedia(file.id)"
                         >
-                            <figure class="image is-4by3" v-if="isImage(file.extension)">
-                                <img :src="file.thumbnail_url" :alt="file.name" :title="file.name">
-                            </figure>
+                            <div
+                                class="media-card"
+                                :class="{
+                                    'is-focused': media.focused.includes(file.id),
+                                    'is-selected': selectedIds.includes(file.id)
+                                }"
+                                @click.stop="focusMedia(file.id)"
+                            >
+                                <figure class="image is-4by3" v-if="isImage(file.extension)">
+                                    <img :src="file.thumbnail_url" :alt="file.name" :title="file.name">
+                                </figure>
 
-                            <div class="media-file" v-else>
-                                <div class="icon">
-                                    <icon :icon="getIcon(file.extension)" size="4x"></icon>
+                                <div class="media-file" v-else>
+                                    <div class="icon">
+                                        <icon :icon="getIcon(file.extension)" size="4x"></icon>
+                                    </div>
+                                </div>
+
+                                <div class="media-content">
+                                    {{ file.name }}
                                 </div>
                             </div>
-
-                            <div class="card-content">{{ file.name }}</div>
                         </div>
                     </div>
                 </template>
@@ -197,9 +203,9 @@
                     <div class="level-right">
                         <div class="level-item">
                             <a
-                                @click="confirm" 
                                 v-if="limit !== 0"
                                 class="button is-success"
+                                @click="confirm" 
                                 :disabled="insertDisabled"
                             >Insert</a>
 
