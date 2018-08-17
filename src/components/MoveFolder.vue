@@ -30,9 +30,9 @@
 
         computed: {
             ...mapGetters({
-                folders: 'media/getMoveFolders',
-                open: 'media/getMoveOpenFolders',
-                exculded: 'media/getMoveExcludedFolders'
+                folders: 'mediaManager/getMoveFolders',
+                open: 'mediaManager/getMoveOpenFolders',
+                exculded: 'mediaManager/getMoveExcludedFolders'
             }),
 
             isOpen() {
@@ -66,7 +66,7 @@
 
         methods: {
             ...mapMutations({
-                addOpenFolder: 'media/addMoveOpenFolder'
+                addOpenFolder: 'mediaManager/addMoveOpenFolder'
             }),
 
             select() {

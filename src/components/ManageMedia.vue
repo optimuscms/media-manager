@@ -1,5 +1,5 @@
 <template>
-    <modal class="is-default" :active="isActive" @close="close">
+    <o-modal class="is-default" :active="isActive" @close="close">
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">Media Properties</p>
@@ -7,6 +7,12 @@
             </header>
 
             <section class="modal-card-body">
+                <o-errors
+                    v-if="form.errors.any()"
+                    class="mb-2"
+                    :errors="form.errors.all()"
+                ></o-errors>
+
                 <template v-if="media">
                     <div class="columns is-gapless" v-if="isImage(media.extension)">
                         <div class="column is-narrow is-media-image">
@@ -14,36 +20,28 @@
                         </div>
 
                         <div class="column">
-                            <div class="pl-4">                                
-                                <div class="field">
-                                    <label for="name" class="label">Media name</label>
+                            <div class="pl-4">
+                                <!-- Media name -->
+                                <o-form-field input="name" label="Media name" required>
+                                    <o-input
+                                        id="name"
+                                        ref="name"
+                                        v-model="form.name"
+                                        required
+                                        @keydown.enter.prevent.native="save"
+                                    ></o-input>
+                                </o-form-field>
 
-                                    <div class="control">
-                                        <input
-                                            id="name"
-                                            ref="name"
-                                            type="text"
-                                            class="input"
-                                            v-model="media.name"
-                                            @keydown.enter.prevent="save"
-                                        >
-                                    </div>
-                                </div>
+                                <!-- Alt text -->
+                                <o-form-field input="name" label="Alt text">
+                                    <o-input
+                                        id="alt"
+                                        v-model="form.alt"
+                                        @keydown.enter.prevent.native="save"
+                                    ></o-input>
+                                </o-form-field>
 
-                                <div class="field">
-                                    <label for="alt" class="label">Alt text</label>
-
-                                    <div class="control">
-                                        <input
-                                            id="alt"
-                                            type="text"
-                                            class="input"
-                                            @keydown.enter.prevent="save"
-                                        >
-                                    </div>
-                                </div>
-
-                                <div class="field">
+                                <!-- <div class="field">
                                     <div class="control">
                                         <div class="content">
                                             <hr>
@@ -58,27 +56,24 @@
                                             </p>
                                         </div>
                                     </div>
-                                </div>
+                                </div> -->
                             </div>
                         </div>
                     </div>
                     
                     <template v-else>
-                        <div class="field">
-                            <label for="name" class="label">Media Name</label>
+                        <!-- Media name -->
+                        <o-form-field input="name" label="Media name" required>
+                            <o-input
+                                id="name"
+                                ref="name"
+                                v-model="form.name"
+                                required
+                                @keydown.enter.prevent.native="save"
+                            ></o-input>
+                        </o-form-field>
 
-                            <div class="control">
-                                <input ref="name"
-                                    id="name"
-                                    type="text"
-                                    class="input"
-                                    v-model="media.name"
-                                    @keydown.enter.prevent="save"
-                                >
-                            </div>
-                        </div>
-
-                        <div class="field">
+                        <!-- <div class="field">
                             <div class="control">
                                 <div class="content">
                                     <hr>
@@ -97,7 +92,7 @@
                                     </p>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
                     </template>
                 </template>
             </section>
@@ -106,76 +101,76 @@
                 <a
                     class="button is-success"
                     @click="save"
-                    :class="{ 'is-loading': isSaving }"
-                    :disabled="isSaving"
+                    :class="{ 'is-loading': form.processing }"
+                    :disabled="form.processing"
                 >Save</a>
 
                 <a class="button" @click="close">Cancel</a>
             </footer>
         </div>
-    </modal>
+    </o-modal>
 </template>
 
 <script>
     import { mapGetters, mapMutations } from 'vuex';
-    import Modal from '@optimuscms/ui/src/components/ui/Modal';
+    import Form from 'form-backend-validation';
 
     export default {
-        components: {
-            Modal
-        },
-
         data() {
             return {
                 isActive: false,
-                isSaving: false,
+                media: {},
 
-                media: null
+                form: new Form({
+                    id: null,
+                    name: ''
+                }, { resetOnSuccess: false })
             }
         },
 
         computed: {
             ...mapGetters({
-                isImage: 'media/isImage'
+                isImage: 'mediaManager/isImage'
             }),
         },
 
         methods: {
             ...mapMutations({
-                updateActiveMedia: 'media/updateActiveMedia'
+                updateActiveMedia: 'mediaManager/updateActiveMedia'
             }),
-
-            save() {
-                this.isSaving = true;
-
-                let properties = {
-                    name: this.media.name
-                }
-
-                axios.patch('/api/media/' + this.media.id, properties).then(() => {
-                    this.updateActiveMedia({
-                        id: this.media.id,
-                        properties
-                    });
-    
-                    this.$emit('updated', this.media.id, properties);
-
-                    this.isSaving = false;
-                    this.close();
-                });
-            },
 
             open(media) {
                 this.media = media;
+
+                this.form.populate({
+                    id: this.media.id,
+                    name: this.media.name
+                });
                 
                 this.isActive = true;
-                this.$nextTick(() => this.$refs.name.focus());
+                this.$nextTick(() => this.$refs.name.$el.focus());
+            },
+
+            save() {
+                this.form['patch']('/api/media/' + this.form.id)
+                    .then(response => {
+                        let properties = {
+                            name: this.form.name
+                        };
+                        
+                        this.updateActiveMedia({
+                            id: this.form.id,
+                            properties
+                        });
+
+                        this.$emit('updated', this.form.id, properties);
+                        this.close();
+                    });
             },
 
             close() {
-                this.media = null;
+                this.form.reset();
                 this.isActive = false;
-                this.isSaving = false;
             }
         }
     }

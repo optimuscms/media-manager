@@ -1,5 +1,5 @@
 <template>
-    <modal class="is-default" :active="isActive" @close="close">
+    <o-modal class="is-default" :active="isActive" @close="close">
         <div class="modal-card">
             <header class="modal-card-head">
                 <p class="modal-card-title">{{ title }}</p>
@@ -7,6 +7,12 @@
             </header>
 
             <section class="modal-card-body">
+                <o-errors
+                    v-if="form.errors.any()"
+                    class="mb-2"
+                    :errors="form.errors.all()"
+                ></o-errors>
+
                 <div class="field is-horizontal">
                     <div class="field-label is-normal">
                         <label for="name" class="label">Folder Name</label>
@@ -15,15 +21,13 @@
                     <div class="field-body">
                         <div class="field">
                             <div class="control">
-                                <input
-                                    ref="name"
-                                    type="text"
+                                <o-input
                                     id="name"
-                                    class="input"
-                                    :disabled="isSaving"
-                                    @keydown.enter.prevent="save"
-                                    v-model="folder.name"
-                                >
+                                    ref="name"
+                                    v-model="form.name"
+                                    :disabled="form.processing"
+                                    @keydown.enter.prevent.native="save"
+                                ></o-input>
                             </div>
                         </div>
                     </div>
@@ -34,24 +38,20 @@
                 <a
                     class="button is-success"
                     @click="save"
-                    :class="{ 'is-loading': isSaving }"
-                    :disabled="isSaving"
+                    :class="{ 'is-loading': form.processing }"
+                    :disabled="form.processing"
                 >Save</a>
                 
                 <a class="button" @click="close">Cancel</a>
             </footer>
         </div>
-    </modal>
+    </o-modal>
 </template>
 
 <script>
-    import Modal from '@optimuscms/ui/src/components/ui/Modal';
+    import Form from 'form-backend-validation';
 
     export default {
-        components: {
-            Modal
-        },
-
         props: {
             parent: {
                 type: Number,
@@ -62,62 +62,67 @@
         data() {
             return {
                 isActive: false,
-                isSaving: false,
 
-                folder: {}
+                title: 'Create Folder',
+                method: 'post',
+                action: '/api/media-folders',
+
+                form: new Form({
+                    id: null,
+                    parent_id: null,
+                    name: ''
+                }, { resetOnSuccess: false })
             }
         },
 
         computed: {
             editing() {
-                return this.folder.hasOwnProperty('id');
-            },
+                return !! this.form.id;
+            }
+        },
 
-            title() {
-                return (this.editing) ? 'Edit Folder' : 'Create Folder';
+        watch: {
+            editing(editing) {
+                if (editing) {
+                    this.title = 'Edit Folder';
+                    this.method = 'patch';
+                    this.action = '/api/media-folders/' + this.form.id;
+                }
             }
         },
 
         methods: {
-            save() {
-                this.isSaving = true;
-
-                if (this.editing) {
-                    axios.patch('/api/media-folders/' + this.folder.id, {
+            open(folder) {
+                if (folder) {
+                    this.form.populate({
+                        id: folder.id,
                         parent_id: this.parent,
-                        name: this.folder.name
-                    }).then(() => {
-                        this.$emit('updated', this.folder.id, {
-                            name: this.folder.name
-                        });
-
-                        this.isSaving = false;
-                        this.close();
-                    });
-                } else {
-                    axios.post('/api/media-folders', {
-                        parent_id: this.parent,
-                        name: this.folder.name
-                    }).then(response => {
-                        this.$emit('created', response.data.data);
-                        
-                        this.isSaving = false;
-                        this.close();
+                        name: folder.name
                     });
                 }
-            },
-
-            open(folder) {
-                this.folder = folder || {};
                 
                 this.isActive = true;
-                this.$nextTick(() => this.$refs.name.focus());
+                this.$nextTick(() => this.$refs.name.$el.focus());
+            },
+
+            save() {
+                this.form[this.method](this.action)
+                    .then(response => {
+                        if (this.editing) {
+                            this.$emit('updated', this.form.id, {
+                                name: this.form.name
+                            });
+                        } else {
+                            this.$emit('created', response.data);
+                        }
+
+                        this.close();
+                    });
             },
 
             close() {
-                this.folder = {};
+                this.form.reset();
                 this.isActive = false;
-                this.isSaving = false;
             }
         }
     }

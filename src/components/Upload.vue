@@ -46,17 +46,17 @@
 
                 <div class="is-scrollable" v-if="isActive">
                     <div
-                        class="panel-block"
                         :key="file.uuid"
+                        class="panel-block"
                         v-for="file in files"
                         @mouseover="showError(file.errors)"
                         @mouseleave="error.active = false"
                     >
                         <progress
-                            class="progress is-primary"
-                            :value="file.progress"
                             max="100"
                             v-if="file.uploading"
+                            class="progress is-primary"
+                            :value="file.progress"
                         >{{ file.progress }}%</progress>
 
                         <span class="panel-icon">

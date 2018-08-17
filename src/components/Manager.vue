@@ -1,5 +1,5 @@
 <template>
-    <media-modal class="is-media-manager" :active="isOpen" @close="close">
+    <o-modal class="is-media-manager" :active="isOpen" @close="close">
         <div class="modal-card">
             <header class="modal-card-head is-block">
                 <div class="level">
@@ -21,7 +21,7 @@
 
                     <div class="level-right" v-if="numberOfFocusedItems">
                         <div class="level-item">
-                            <dropdown class="is-right">
+                            <o-dropdown class="is-right">
                                 <a slot="button" class="icon">
                                     <icon icon="ellipsis-h" size="lg"></icon>
                                 </a>
@@ -47,8 +47,8 @@
                                 <a
                                     class="dropdown-item text-has-icon has-text-danger"
                                     @click="$refs.confirm.open({
-                                        folders: folders.focused.length,
-                                        media: media.focused.length
+                                        media: media.focused.length,
+                                        folders: folders.focused.length
                                     })"
                                 >
                                     <span class="icon">
@@ -57,7 +57,7 @@
 
                                     <span>Delete</span>
                                 </a>
-                            </dropdown>
+                            </o-dropdown>
                         </div>
                     </div>
                 </div>
@@ -134,18 +134,27 @@
                     </div>
                 </template>
 
-                <notification class="is-info radius-small" :active="! media.all.length" v-else>
+                <o-notification
+                    class="is-info radius-small"
+                    v-else
+                    :active="! media.all.length"
+                    :closeable="false"
+                >
                     No media, add new media by clicking the <strong>New</strong> button below.
-                </notification>
+                </o-notification>
 
-                <upload ref="upload" :folder="activeFolder" @success="addMedia"></upload>
+                <upload
+                    ref="upload"
+                    :folder="activeFolder"
+                    @success="addMedia"
+                ></upload>
             </section>
 
             <footer class="modal-card-foot is-block">
                 <div class="level">
                     <div class="level-left">
                         <div class="level-item">
-                            <dropdown class="is-up">
+                            <o-dropdown class="is-up">
                                 <a slot="button" class="button is-primary">
                                     <span>New</span>
 
@@ -156,11 +165,11 @@
 
                                 <a class="dropdown-item" @click="$refs.manageFolder.open()">New Folder</a>
                                 <a class="dropdown-item" @click="$refs.upload.focus()">Upload Media</a>
-                            </dropdown>
+                            </o-dropdown>
                         </div>
 
                         <div class="level-item" v-if="numberOfSelectedFiles">
-                            <dropdown class="is-up">
+                            <o-dropdown class="is-up">
                                 <a slot="button" class="button is-light">
                                     <span>
                                         <template v-if="limit">
@@ -196,7 +205,7 @@
                                         Clear all selected files
                                     </a>
                                 </div>
-                            </dropdown>
+                            </o-dropdown>
                         </div>
                     </div>
 
@@ -234,7 +243,7 @@
             @moved="removeFocusedItems"
         ></move>
 
-        <confirm
+        <o-confirm
             ref="confirm"
             type="danger"
             @confirm="deleteFocusedItems"
@@ -247,19 +256,14 @@
                 <template v-if="count.folders && count.media"> and </template>
                 <strong v-if="count.media">{{ count.media }} media item{{ count.media !== 1 ? 's' : null }}</strong>
             </template>
-        </confirm>
-    </media-modal>
+        </o-confirm>
+    </o-modal>
 </template>
 
 <script>
     import { mapGetters, mapMutations } from 'vuex';
 
     // Components
-    import Confirm from '@optimuscms/ui/src/components/ui/Confirm';
-    import Dropdown from '@optimuscms/ui/src/components/ui/Dropdown';
-    import MediaModal from '@optimuscms/ui/src/components/ui/Modal';
-    import Notification from '@optimuscms/ui/src/components/ui/Notification';
-
     import ManageFolder from './ManageFolder';
     import ManageMedia from './ManageMedia';
     import Move from './Move';
@@ -267,13 +271,9 @@
 
     export default {
         components: {
-            Confirm,
-            Dropdown,
             ManageFolder,
             ManageMedia,
-            MediaModal,
             Move,
-            Notification,
             Upload
         },
 
@@ -304,9 +304,9 @@
 
         computed: {
             ...mapGetters({
-                getIcon: 'media/getIcon',
-                isImage: 'media/isImage',
-                activeMedia: 'media/getActiveMedia',
+                getIcon: 'mediaManager/getIcon',
+                isImage: 'mediaManager/isImage',
+                activeMedia: 'mediaManager/getActiveMedia',
             }),
 
             activeFolder() {
@@ -348,25 +348,25 @@
         },
 
         mounted() {
-            eventBus.$on('media-manager-open', this.open);
+            mediaManagerBus.$on('media-manager-open', this.open);
         },
 
         beforeDestroy() {
-            eventBus.$off('media-manager-open', this.open);
+            mediaManagerBus.$off('media-manager-open', this.open);
         },
 
         methods: {
             ...mapMutations({
-                addActiveMedia: 'media/addActiveMedia',
-                removeActiveMedia: 'media/removeActiveMedia',
-                setMoveExcludedFolders: 'media/setMoveExcludedFolders'
+                addActiveMedia: 'mediaManager/addActiveMedia',
+                removeActiveMedia: 'mediaManager/removeActiveMedia',
+                setMoveExcludedFolders: 'mediaManager/setMoveExcludedFolders'
             }),
 
             open({ limit, selected, accept }) {
                 this.limit = limit;
                 this.accept = accept || null;
 
-                this.media.selected = (typeof selected === Array && selected.length)
+                this.media.selected = (Array.isArray(selected) && selected.length)
                     ? this.activeMedia(selected)
                     : [];
 
@@ -439,7 +439,7 @@
                 this.removeActiveMedia(mediaIds);
                 
                 if (mediaIds.length) {
-                    eventBus.$emit('media-deleted', mediaIds);
+                    mediaManagerBus.$emit('media-deleted', mediaIds);
                     
                     mediaIds.forEach(id => {
                         this.deselectMedia(id);
@@ -552,7 +552,7 @@
                     this.selectMedia();
                     this.addActiveMedia(this.media.selected);
 
-                    eventBus.$emit('media-selected', this.selectedIds);
+                    mediaManagerBus.$emit('media-selected', this.selectedIds);
 
                     this.folders.open = [{
                         id: null,
@@ -571,7 +571,7 @@
             },
 
             close() {
-                eventBus.$emit('media-manager-closed');
+                mediaManagerBus.$emit('media-manager-closed');
                 this.isOpen = false;
             }
         }

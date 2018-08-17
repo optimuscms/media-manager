@@ -1,5 +1,5 @@
 <template>
-    <modal class="is-media-move" :active="isActive" @close="close">
+    <o-modal class="is-media-move" :active="isActive" @close="close">
         <div class="modal-card">
             <header class="modal-card-head">
                 <div class="modal-card-title">Move</div>
@@ -10,8 +10,8 @@
                 <ul class="move-list" v-if="folders.hasOwnProperty('root')">
                     <move-folder
                         :key="folder.id"
-                        :folder="folder"
                         v-for="folder in folders['root']"
+                        :folder="folder"
                     ></move-folder>
                 </ul>
             </section>
@@ -25,19 +25,16 @@
                 >Move</a>
             </footer>
         </div>
-    </modal>
+    </o-modal>
 </template>
 
 <script>
     import { mapGetters, mapMutations } from 'vuex';
     import groupBy from 'lodash/groupBy';
-    
-    import Modal from '@optimuscms/ui/src/components/ui/Modal';
     import MoveFolder from './MoveFolder';
 
     export default {
         components: {
-            Modal,
             MoveFolder
         },
 
@@ -53,8 +50,8 @@
         
         computed: {
             ...mapGetters({
-                folders: 'media/getMoveFolders',
-                openFolders: 'media/getMoveOpenFolders'
+                folders: 'mediaManager/getMoveFolders',
+                openFolders: 'mediaManager/getMoveOpenFolders'
             }),
 
             activeFolder() {
@@ -72,8 +69,8 @@
 
         methods: {
             ...mapMutations({
-                setFolders: 'media/setMoveFolders',
-                clearOpen: 'media/clearMoveOpenFolders'
+                setFolders: 'mediaManager/setMoveFolders',
+                clearOpen: 'mediaManager/clearMoveOpenFolders'
             }),
 
             getFolders() {

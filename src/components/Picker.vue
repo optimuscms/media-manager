@@ -1,54 +1,46 @@
 <template>
-    <div class="field" :class="{ 'is-required': required }">
-        <label class="label">{{ label }}</label>
+    <div class="control">
+        <div class="field" v-if="media.length">
+            <div class="control">
+                <div class="media-picker is-single-image" v-if="hasPreview">
+                    <img :src="firstMedia.thumbnail_url">
+                    <a class="picker-clear" @click="remove(firstMedia.id)"></a>
+                </div>
 
-        <div class="control">
-            <div class="field" v-if="media.length">
-                <div class="control">
-                    <div class="media-picker is-single-image" v-if="hasPreview">
-                        <img :src="firstMedia.thumbnail_url">
-                        <a class="picker-clear" @click="remove(firstMedia.id)"></a>
-                    </div>
+                <div class="media-picker is-multiple" v-else>
+                    <div class="media" :key="media.id" v-for="media in getMedia(media)">
+                        <div class="media-left">
+                            <div class="icon is-large">
+                                <icon :icon="getIcon(media.extension)" size="2x"></icon>
+                            </div>
+                        </div>
+                        
+                        <div class="media-content">
+                            {{ media.name }}
+                        </div>
 
-                    <div class="media-picker is-multiple" v-else>
-                        <div class="media" :key="media.id" v-for="media in getMedia(media)">
-                            <div class="media-left">
-                                <div class="icon is-large">
-                                    <icon :icon="getIcon(media.extension)" size="2x"></icon>
-                                </div>
-                            </div>
-                            
-                            <div class="media-content">
-                                {{ media.name }}
-                            </div>
-
-                            <div class="media-right">
-                                <a class="delete is-small" @click="remove(media.id)"></a>
-                            </div>
+                        <div class="media-right">
+                            <a class="delete is-small" @click="remove(media.id)"></a>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <div class="field" v-if="! limitMet">
-                <div class="file is-light">
-                    <label class="file-label" @click="open">
-                        <span class="file-cta">
-                            <span class="file-icon">
-                                <icon icon="upload"></icon>
-                            </span>
-
-                            <span class="file-label">
-                                Choose media…
-                            </span>
-                        </span>
-                    </label>
-                </div>
-            </div>
         </div>
 
-        <div class="help" v-if="$slots['help']">
-            <slot name="help"></slot>
+        <div class="field" v-if="! limitMet">
+            <div class="file is-light">
+                <label class="file-label" @click="open">
+                    <span class="file-cta">
+                        <span class="file-icon">
+                            <icon icon="upload"></icon>
+                        </span>
+
+                        <span class="file-label">
+                            Choose media…
+                        </span>
+                    </span>
+                </label>
+            </div>
         </div>
     </div>
 </template>
@@ -74,16 +66,6 @@
             preview: {
                 type: Boolean,
                 default: false
-            },
-
-            label: {
-                type: String,
-                required: true
-            },
-
-            required: {
-                type: Boolean,
-                default: false
             }
         },
 
@@ -95,9 +77,9 @@
 
         computed: {
             ...mapGetters({
-                getIcon: 'media/getIcon',
-                getMedia: 'media/getActiveMedia',
-                imageExtensions: 'media/imageExtensions'
+                getIcon: 'mediaManager/getIcon',
+                getMedia: 'mediaManager/getActiveMedia',
+                imageExtensions: 'mediaManager/imageExtensions'
             }),
 
             firstMedia() {
@@ -134,23 +116,23 @@
         mounted() {
             this.setMedia(this.value);
 
-            eventBus.$on('media-deleted', mediaIds => {
+            mediaManagerBus.$on('media-deleted', mediaIds => {
                 this.media = this.media.filter(id => ! mediaIds.includes(id));
             });
         },
 
         methods: {
             open() {
-                eventBus.$emit('media-manager-open', {
+                mediaManagerBus.$emit('media-manager-open', {
                     limit: this.limit,
                     selected: this.media,
                     accept: this.accept ? this.setAccepted(this.accept) : []
                 });
 
-                eventBus.$once('media-selected', this.setMedia);
+                mediaManagerBus.$once('media-selected', this.setMedia);
 
-                eventBus.$on('media-manager-closed', () => {
-                    eventBus.$off('media-selected', this.setMedia);
+                mediaManagerBus.$on('media-manager-closed', () => {
+                    mediaManagerBus.$off('media-selected', this.setMedia);
                 });
             },
 

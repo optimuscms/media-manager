@@ -21,7 +21,7 @@ const state = {
     imageExtensions: [
         'bmp', 'gif', 'jpg', 'jpeg', 'png'
     ],
-}
+};
 
 const getters = {
     getActiveMedia: state => ids => {
@@ -59,7 +59,7 @@ const getters = {
     isImage: state => extension => {
         return state.imageExtensions.includes(extension);
     },
-}
+};
 
 const mutations = {
     setActiveMedia(state, media) {
@@ -119,11 +119,11 @@ const mutations = {
     setMoveExcludedFolders(state, folders) {
         state.move.excludedFolders = folders;
     }
-}
+};
 
 export default {
     namespaced: true,
     state,
     getters,
     mutations
-}
+};
