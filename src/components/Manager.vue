@@ -9,8 +9,8 @@
                                 <ul>
                                     <li
                                         :key="folder.id"
-                                        v-for="folder in folders.open"
-                                        :class="{ 'is-active': folder.id === activeFolder }"
+                                        v-for="folder in openFolders"
+                                        :class="{ 'is-active': folder.id === activeFolderId }"
                                     >
                                         <a @click="openFolder(folder)">{{ folder.name }}</a>
                                     </li>
@@ -19,14 +19,14 @@
                         </div>
                     </div>
 
-                    <div class="level-right" v-if="numberOfFocusedItems">
+                    <div class="level-right" v-if="focusedItemCount">
                         <div class="level-item">
                             <o-dropdown class="is-right">
                                 <a slot="button" class="icon">
                                     <icon icon="ellipsis-h" size="lg"></icon>
                                 </a>
 
-                                <a class="dropdown-item text-has-icon" v-if="numberOfFocusedItems === 1" @click="edit">
+                                <a class="dropdown-item text-has-icon" v-if="focusedItemCount === 1" @click="edit">
                                     <span class="icon">
                                         <icon icon="info-circle"></icon>
                                     </span>
@@ -34,7 +34,7 @@
                                     <span>Properties</span>
                                 </a>
 
-                                <a class="dropdown-item text-has-icon" @click="openMoveModal">
+                                <a class="dropdown-item text-has-icon" @click="$refs.move.open()">
                                     <span class="icon">
                                         <icon icon="reply"></icon>
                                     </span>
@@ -47,8 +47,8 @@
                                 <a
                                     class="dropdown-item text-has-icon has-text-danger"
                                     @click="$refs.confirm.open({
-                                        media: media.focused.length,
-                                        folders: folders.focused.length
+                                        media: focusedMedia.length,
+                                        folders: focusedFolders.length
                                     })"
                                 >
                                     <span class="icon">
@@ -65,17 +65,17 @@
 
             <section class="modal-card-body" @click="clearFocused" :class="{ 'is-loading': isLoading }">
                 <!-- Folders -->
-                <template v-if="folders.all.length">
+                <template v-if="currentFolders.length">
                     <h2 class="title">Folders</h2>
 
                     <div class="folders-holder field is-grouped is-grouped-multiline">
-                        <div class="control" :key="folder.id" v-for="folder in folders.all">
+                        <div class="control" :key="folder.id" v-for="folder in currentFolders">
                             <div class="field has-addons">
                                 <div class="control">
                                     <a
                                         title="Open folder"
                                         class="button is-folder"
-                                        :class="{ 'is-focused': folders.focused.includes(folder.id) }"
+                                        :class="{ 'is-focused': focusedFolders.includes(folder.id) }"
                                         @click="openFolder(folder)"
                                     >
                                         <div class="icon">
@@ -99,20 +99,20 @@
                 </template>
 
                 <!-- Media -->
-                <template v-if="media.all.length">
+                <template v-if="currentMedia.length">
                     <h2 class="title">Media</h2>
 
                     <div class="columns is-mobile is-multiline">
                         <div
                             :key="file.id"
                             class="column is-6-mobile is-4-tablet is-3-desktop is-2-widescreen"
-                            v-for="file in media.all"
+                            v-for="file in currentMedia"
                         >
                             <div
                                 class="media-card"
                                 :class="{
-                                    'is-focused': media.focused.includes(file.id),
-                                    'is-selected': selectedIds.includes(file.id)
+                                    'is-focused': focusedMedia.includes(file.id),
+                                    'is-selected': selectedMediaIds.includes(file.id)
                                 }"
                                 @click.stop="focusMedia(file.id)"
                             >
@@ -137,17 +137,13 @@
                 <o-notification
                     class="is-info radius-small"
                     v-else
-                    :active="! media.all.length"
+                    :active="! currentMedia.length"
                     :closeable="false"
                 >
                     No media, add new media by clicking the <strong>New</strong> button below.
                 </o-notification>
 
-                <upload
-                    ref="upload"
-                    :folder="activeFolder"
-                    @success="addMedia"
-                ></upload>
+                <upload ref="upload"></upload>
             </section>
 
             <footer class="modal-card-foot is-block">
@@ -168,16 +164,16 @@
                             </o-dropdown>
                         </div>
 
-                        <div class="level-item" v-if="numberOfSelectedFiles">
+                        <div class="level-item" v-if="selectedMediaCount">
                             <o-dropdown class="is-up">
                                 <a slot="button" class="button is-light">
                                     <span>
                                         <template v-if="limit">
-                                            {{ numberOfSelectedFiles }} of {{ limit }} file{{ limit !== 1 ? 's' : null }} selected
+                                            {{ selectedMediaCount }} of {{ limit }} file{{ limit !== 1 ? 's' : null }} selected
                                         </template>
 
                                         <template v-else>
-                                            {{ numberOfSelectedFiles }} file{{ numberOfSelectedFiles !== 1 ? 's' : null }} selected
+                                            {{ selectedMediaCount }} file{{ selectedMediaCount !== 1 ? 's' : null }} selected
                                         </template>
                                     </span>
 
@@ -190,18 +186,18 @@
                                     <div
                                         class="dropdown-item text-has-icon is-spaced"
                                         :key="file.id"
-                                        v-for="file in media.selected"
+                                        v-for="file in selectedMedia"
                                     >
                                         <span class="overflow-wrap">{{ file.name }}</span>
 
-                                        <a class="icon" @click.stop="deselectMedia(file.id)">
+                                        <a class="icon" @click.stop="removeSelectedMediaItem(file.id)">
                                             <icon :icon="['far', 'times-circle']"></icon>
                                         </a>
                                     </div>
 
                                     <div class="dropdown-divider"></div>
 
-                                    <a class="dropdown-item" @click="clearSelected">
+                                    <a class="dropdown-item" @click="clearSelectedMedia">
                                         Clear all selected files
                                     </a>
                                 </div>
@@ -215,7 +211,7 @@
                                 v-if="limit !== 0"
                                 class="button is-success"
                                 @click="confirm" 
-                                :disabled="insertDisabled"
+                                :disabled="insertIsDisabled"
                             >Insert</a>
 
                             <a class="button" @click="cancel">
@@ -227,21 +223,9 @@
             </footer>
         </div>
 
-        <manage-folder ref="manageFolder"
-            :parent="activeFolder"
-            @created="addFolder"
-            @updated="updateFolder"
-        ></manage-folder>
-
-        <manage-media
-            ref="manageMedia"
-            @updated="updateMedia"
-        ></manage-media>
-
-        <move
-            ref="move"
-            @moved="removeFocusedItems"
-        ></move>
+        <move ref="move"></move>
+        <manage-media ref="manageMedia"></manage-media>
+        <manage-folder ref="manageFolder"></manage-folder>
 
         <o-confirm
             ref="confirm"
@@ -261,7 +245,7 @@
 </template>
 
 <script>
-    import { mapGetters, mapMutations } from 'vuex';
+    import { mapGetters, mapMutations, mapActions } from 'vuex';
 
     // Components
     import ManageFolder from './ManageFolder';
@@ -283,242 +267,142 @@
                 isLoading: true,
 
                 limit: null,
-                accept: [],
-
-                media: {
-                    all: [],
-                    focused: [],
-                    selected: []
-                },
-
-                folders: {
-                    all: [],
-                    focused: [],
-                    open: [{
-                        id: null,
-                        name: 'Home'
-                    }]
-                }
+                accept: []
             }
         },
 
         computed: {
             ...mapGetters({
+                allMedia: 'mediaManager/allMedia',
+                currentMedia: 'mediaManager/currentMedia',
+                focusedMedia: 'mediaManager/focusedMedia',
+                selectedMedia: 'mediaManager/selectedMedia',
+                selectedMediaIds: 'mediaManager/selectedMediaIds',
+
+                activeFolderId: 'mediaManager/activeFolderId',
+                currentFolders: 'mediaManager/currentFolders',
+                focusedFolders: 'mediaManager/focusedFolders',
+                openFolders: 'mediaManager/openFolders',
+
                 getIcon: 'mediaManager/getIcon',
                 isImage: 'mediaManager/isImage',
                 activeMedia: 'mediaManager/getActiveMedia',
             }),
 
-            activeFolder() {
-                return this.folders.open[this.folders.open.length - 1].id;
+            focusedItemCount() {
+                return this.focusedFolders.length + this.focusedMedia.length;
             },
 
-            numberOfFocusedItems() {
-                return this.folders.focused.length + this.media.focused.length;
+            selectedMediaCount() {
+                return this.selectedMedia.length;
             },
 
-            numberOfSelectedFiles() {
-                return this.media.selected.length;
-            },
-
-            selectedIds() {
-                return this.media.selected.map(item => item.id);
-            },
-
-            limitExceeded() {
+            limitIsExceeded() {
                 if (this.limit) {
-                    let selected = this.media.focused.filter(id => ! this.selectedIds.includes(id));
+                    let newlySelectedMedia = this.focusedMedia.filter(id => {
+                        return ! this.selectedMediaIds.includes(id)
+                    });
                     
-                    return (this.media.selected.length + selected.length) > this.limit;
+                    return (this.selectedMediaCount + newlySelectedMedia.length) > this.limit;
                 }
 
                 return false;
             },
 
-            insertDisabled() {
-                return this.limitExceeded || ! (this.media.focused.length || this.media.selected.length)
+            insertIsDisabled() {
+                return this.limitIsExceeded || ! (this.focusedMedia.length || this.selectedMediaCount)
             }
         },
 
         watch: {
-            activeFolder() {
+            activeFolderId() {
                 this.clearFocused();
                 this.getMediaAndFolders();
             }
         },
 
         mounted() {
-            mediaManagerBus.$on('media-manager-open', this.open);
+            this.$mediaManager.bus.$on('media-manager-open', this.open);
         },
 
         beforeDestroy() {
-            mediaManagerBus.$off('media-manager-open', this.open);
+            this.$mediaManager.bus.$off('media-manager-open', this.open);
         },
 
         methods: {
+            ...mapActions({
+                resetMediaManager: 'mediaManager/reset',
+
+                removeFocusedMedia: 'mediaManager/removeFocusedMedia',
+                setSelectedMedia: 'mediaManager/setSelectedMedia',
+                selectMedia: 'mediaManager/selectMedia',
+
+                removeFocusedFolders: 'mediaManager/removeFocusedFolders'
+            }),
+
             ...mapMutations({
+                setMedia: 'mediaManager/setMedia',
+                focusMedia: 'mediaManager/focusMedia',
+                clearFocusedMedia: 'mediaManager/clearFocusedMedia',
+                removeSelectedMediaItem: 'mediaManager/removeSelectedMediaItem',
+                clearSelectedMedia: 'mediaManager/clearSelectedMedia',
+
+                setFolders: 'mediaManager/setFolders',
+                focusFolder: 'mediaManager/focusFolder',
+                clearFocusedFolders: 'mediaManager/clearFocusedFolders',
+                openFolder: 'mediaManager/openFolder',
+
                 addActiveMedia: 'mediaManager/addActiveMedia',
-                removeActiveMedia: 'mediaManager/removeActiveMedia',
-                setMoveExcludedFolders: 'mediaManager/setMoveExcludedFolders'
+                removeActiveMedia: 'mediaManager/removeActiveMedia'
             }),
 
             open({ limit, selected, accept }) {
                 this.limit = limit;
                 this.accept = accept || null;
 
-                this.media.selected = (Array.isArray(selected) && selected.length)
-                    ? this.activeMedia(selected)
-                    : [];
+                this.setSelectedMedia(selected);
 
                 this.isOpen = true;
                 this.getMediaAndFolders();
             },
 
             getMediaAndFolders() {
-                let activeFolder = this.activeFolder || 'root';
+                if (! this.allMedia.hasOwnProperty(this.activeFolderId)) {                    
+                    this.isLoading = true;
+    
+                    axios.all([
+                        axios.get('/api/media', {
+                            params: { folder: this.activeFolderId || 'root' }
+                        }),
+                        axios.get('/api/media-folders', {
+                            params: { parent: this.activeFolderId || 'root' }
+                        })
+                    ]).then(axios.spread((media, folders) => {
+                        this.setMedia({
+                            folder: this.activeFolderId,
+                            media: media.data.data
+                        });
 
-                this.isLoading = true;
-
-                axios.all([
-                    axios.get('/api/media', { params: { folder: activeFolder }}),
-                    axios.get('/api/media-folders', { params: { parent: activeFolder }})
-                ]).then(axios.spread((media, folders) => {
-                    this.media.all = media.data.data;
-                    this.folders.all = folders.data.data;
-
-                    this.isLoading = false;
-                }));
+                        this.setFolders({
+                            parent: this.activeFolderId,
+                            folders: folders.data.data
+                        });
+    
+                        this.isLoading = false;
+                    }));
+                }
             },
 
             edit() {
-                if (this.numberOfFocusedItems === 1) {
-                    this.folders.focused.length
-                        ? this.editFolder(this.folders.focused[0])
-                        : this.editMedia(this.media.focused[0]);
-                }
-            },
-
-            focusMedia(mediaId) {
-                if (! this.media.focused.includes(mediaId)) {
-                    this.media.focused.push(mediaId);
-                } else {
-                    this.media.focused = this.media.focused.filter(id => id !== mediaId);
-                }
-            },
-
-            focusFolder(folderId) {
-                if (! this.folders.focused.includes(folderId)) {
-                    this.folders.focused.push(folderId);
-                } else {
-                    this.folders.focused = this.folders.focused.filter(id => id !== folderId);
-                }
-            },
-
-            clearFocused() {
-                this.media.focused = [];
-                this.folders.focused = [];
-            },
-
-            removeFocusedItems() {
-                this.media.all = this.media.all.filter(({ id }) => {
-                    return ! this.media.focused.includes(id);
-                });
-
-                this.folders.all = this.folders.all.filter(({ id }) => {
-                    return ! this.folders.focused.includes(id);
-                });
-
-                this.clearFocused();
-            },
-
-            deleteFocusedItems() {
-                let mediaIds = this.media.focused;
-                let folderIds = this.folders.focused;
-
-                this.removeFocusedItems();
-                this.removeActiveMedia(mediaIds);
-                
-                if (mediaIds.length) {
-                    mediaManagerBus.$emit('media-deleted', mediaIds);
-                    
-                    mediaIds.forEach(id => {
-                        this.deselectMedia(id);
-                        axios.delete('/api/media/' + id);
-                    });
-                }
-                
-                if (folderIds.length) {
-                    folderIds.forEach(id => {
-                        axios.delete('/api/media-folders/' + id);
-                    });
-                }
-            },
-
-            selectMedia() {
-                let selected = this.media.focused.filter(id => {
-                    return ! this.selectedIds.includes(id);
-                });
-
-                if (selected.length) {
-                    this.media.selected = this.media.selected.concat(
-                        this.media.all.filter(({ id }) => selected.includes(id))
-                    );
-                }
-
-                this.media.focused = [];
-            },
-
-            deselectMedia(mediaId) {
-                this.media.selected = this.media.selected.filter(({ id }) => id !== mediaId);
-            },
-
-            clearSelected() {
-                this.media.selected = [];
-            },
-
-            openFolder(folder) {
-                let openFolderIds = this.folders.open.map(folder => folder.id);
-
-                if (openFolderIds.includes(folder.id)) {
-                    this.folders.open.splice(openFolderIds.findIndex(id => id === folder.id) + 1);
-                } else {
-                    this.folders.open.push(folder);
-                }
-            },
-
-            addFolder(folder) {
-                if (folder.parent_id === this.activeFolder) {
-                    this.folders.all.push(folder);
-                }
-            },
-
-            editFolder(folderId) {
-                let folder = this.folders.all.find(({ id }) => id === folderId);
-
-                this.$refs.manageFolder.open({
-                    id: folder.id,
-                    name: folder.name
-                });
-            },
-
-            updateFolder(id, properties) {
-                this.folders.all.map(folder => {
-                    if (folder.id === id) {
-                        Object.entries(properties).forEach(([key, value]) => {
-                            folder[key] = value;
-                        });
-                    }
-                });
-            },
-
-            addMedia(media) {
-                if (this.activeFolder === media.folder_id) {
-                    this.media.all.push(media);
+                if (this.focusedItemCount === 1) {
+                    this.focusedMedia.length
+                        ? this.editMedia(this.focusedMedia[0])
+                        : this.editFolder(this.focusedFolders[0]);
                 }
             },
 
             editMedia(mediaId) {
-                let media = this.media.all.find(({ id }) => id === mediaId);
+                let media = this.currentMedia.find(({ id }) => id === mediaId);
 
                 this.$refs.manageMedia.open({
                     id: media.id,
@@ -528,39 +412,53 @@
                 });
             },
 
-            updateMedia(id, properties) {
-                this.media.all.map(media => {
-                    if (media.id === id) {
-                        Object.entries(properties).forEach(([key, value]) => {
-                            media[key] = value;
-                        });
-                    }
+            editFolder(folderId) {
+                let folder = this.currentFolders.find(({ id }) => id === folderId);
+
+                this.$refs.manageFolder.open({
+                    id: folder.id,
+                    name: folder.name
                 });
             },
 
-            openMoveModal() {
-                this.setMoveExcludedFolders(this.folders.focused);
+            clearFocused() {
+                this.clearFocusedMedia();
+                this.clearFocusedFolders();
+            },
+
+            deleteFocusedItems() {
+                let mediaIds = this.focusedMedia;
+                let folderIds = this.focusedFolders;
+
+                this.removeFocusedMedia();
+                this.removeFocusedFolders();
+
+                this.removeActiveMedia(mediaIds);
+
+                if (mediaIds.length) {
+                    this.$mediaManager.bus.$emit('media-deleted', mediaIds);
+                    
+                    mediaIds.forEach(mediaId => {
+                        this.removeSelectedMediaItem(mediaId);
+                        axios.delete('/api/media/' + mediaId);
+                    });
+                }
                 
-                this.$refs.move.open({
-                    media: this.media.focused,
-                    folders: this.folders.focused,
-                });
+                if (folderIds.length) {
+                    folderIds.forEach(folderId => {
+                        axios.delete('/api/media-folders/' + folderId);
+                    });
+                }
             },
 
             confirm() {
-                if (! this.insertDisabled) {
+                if (! this.insertIsDisabled) {
                     this.selectMedia();
-                    this.addActiveMedia(this.media.selected);
+                    this.addActiveMedia(this.selectedMedia);
 
-                    mediaManagerBus.$emit('media-selected', this.selectedIds);
-
-                    this.folders.open = [{
-                        id: null,
-                        name: 'Home'
-                    }];
-
-                    this.clearFocused();
-                    this.clearSelected();
+                    this.$mediaManager.bus.$emit('media-selected', this.selectedMediaIds);
+                    
+                    this.resetMediaManager();
                     this.isOpen = false;
                 }
             },
@@ -571,7 +469,7 @@
             },
 
             close() {
-                mediaManagerBus.$emit('media-manager-closed');
+                this.$mediaManager.bus.$emit('media-manager-closed');
                 this.isOpen = false;
             }
         }

@@ -7,10 +7,10 @@
             </header>
 
             <section class="modal-card-body" :class="{ 'is-loading': isLoading }">
-                <ul class="move-list" v-if="folders.hasOwnProperty('root')">
+                <ul class="move-list" v-if="folders.hasOwnProperty(null)">
                     <move-folder
                         :key="folder.id"
-                        v-for="folder in folders['root']"
+                        v-for="folder in folders[null]"
                         :folder="folder"
                     ></move-folder>
                 </ul>
@@ -19,9 +19,9 @@
             <footer class="modal-card-foot">
                 <a
                     class="button is-success is-fullwidth"
+                    @click="move"
                     :class="{ 'is-loading': isSaving }"
                     :disabled="isSaving || isLoading"
-                    @click="move"
                 >Move</a>
             </footer>
         </div>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-    import { mapGetters, mapMutations } from 'vuex';
+    import { mapGetters, mapMutations, mapActions } from 'vuex';
     import groupBy from 'lodash/groupBy';
     import MoveFolder from './MoveFolder';
 
@@ -42,20 +42,20 @@
             return {
                 isActive: false,
                 isLoading: false,
-                isSaving: false,
-
-                focused: null
+                isSaving: false
             }
         },
         
         computed: {
             ...mapGetters({
+                focusedMedia: 'mediaManager/focusedMedia',
+                focusedFolders: 'mediaManager/focusedFolders',
                 folders: 'mediaManager/getMoveFolders',
                 openFolders: 'mediaManager/getMoveOpenFolders'
             }),
 
-            activeFolder() {
-                return this.openFolders[this.openFolders.length - 1];
+            selectedFolder() {
+                return this.openFolders[this.openFolders.length - 1] || null;
             }
         },
 
@@ -68,18 +68,23 @@
         },
 
         methods: {
+            ...mapActions({
+                moveFocusedMediaTo: 'mediaManager/moveFocusedMediaTo',
+                moveFocusedFoldersTo: 'mediaManager/moveFocusedFoldersTo'
+            }),
+
             ...mapMutations({
                 setFolders: 'mediaManager/setMoveFolders',
-                clearOpen: 'mediaManager/clearMoveOpenFolders'
+                clearOpen: 'mediaManager/clearMoveOpenFolders',
             }),
 
             getFolders() {
                 this.isLoading = true;
 
                 axios.get('/api/media-folders').then(response => {
-                    this.setFolders(groupBy(response.data.data, folder => {
-                        return folder.parent_id || 'root';
-                    }));
+                    this.setFolders(
+                        groupBy(response.data.data, folder => folder.parent_id)
+                    );
 
                     this.isLoading = false;
                 });
@@ -87,33 +92,33 @@
 
             move() {
                 this.isSaving = true;
-
                 let requests = [];
 
-                if (this.focused.media.length) {
-                    this.focused.media.forEach(mediaId => {
+                if (this.focusedMedia.length) {
+                    this.focusedMedia.forEach(mediaId => {
                         requests.push(axios.patch('/api/media/' + mediaId, {
-                            folder_id: this.activeFolder
+                            folder_id: this.selectedFolder
                         }));
                     });
                 }
 
-                if (this.focused.folders.length) {
-                    this.focused.folders.forEach(folderId => {
+                if (this.focusedFolders.length) {
+                    this.focusedFolders.forEach(folderId => {
                         requests.push(axios.patch('/api/media-folders/' + folderId, {
-                            parent_id: this.activeFolder
+                            parent_id: this.selectedFolder
                         }));
                     });
                 }
 
                 axios.all(requests).then(() => {
-                    this.$emit('moved');
+                    this.moveFocusedMediaTo(this.selectedFolder);
+                    this.moveFocusedFoldersTo(this.selectedFolder);
+
                     this.close();
                 });
             },
 
-            open(focused) {
-                this.focused = focused;
+            open() {
                 this.isActive = true;
             },
 

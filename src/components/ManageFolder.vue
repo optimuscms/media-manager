@@ -49,16 +49,10 @@
 </template>
 
 <script>
+    import { mapGetters, mapMutations } from 'vuex';
     import Form from 'form-backend-validation';
 
     export default {
-        props: {
-            parent: {
-                type: Number,
-                default: 0
-            }
-        },
-
         data() {
             return {
                 isActive: false,
@@ -76,6 +70,10 @@
         },
 
         computed: {
+            ...mapGetters({
+                activeFolderId: 'mediaManager/activeFolderId'
+            }),
+
             editing() {
                 return !! this.form.id;
             }
@@ -92,14 +90,17 @@
         },
 
         methods: {
+            ...mapMutations({
+                addFolder: 'mediaManager/addFolder',
+                updateFolder: 'mediaManager/updateFolder',
+            }),
+
             open(folder) {
-                if (folder) {
-                    this.form.populate({
-                        id: folder.id,
-                        parent_id: this.parent,
-                        name: folder.name
-                    });
-                }
+                this.form.populate({
+                    id: folder ? folder.id : null,
+                    parent_id: this.activeFolderId,
+                    name: folder ? folder.name : '',
+                });
                 
                 this.isActive = true;
                 this.$nextTick(() => this.$refs.name.$el.focus());
@@ -109,11 +110,18 @@
                 this.form[this.method](this.action)
                     .then(response => {
                         if (this.editing) {
-                            this.$emit('updated', this.form.id, {
-                                name: this.form.name
+                            this.updateFolder({
+                                parent: this.activeFolderId,
+                                id: this.form.id,
+                                properties: {
+                                    name: this.form.name
+                                }
                             });
                         } else {
-                            this.$emit('created', response.data);
+                            this.addFolder({
+                                parent: this.activeFolderId,
+                                folder: response.data
+                            });
                         }
 
                         this.close();

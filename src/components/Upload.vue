@@ -83,12 +83,9 @@
 
 <script>
     import { CancelToken } from 'axios';
+import { mapGetters, mapMutations } from 'vuex';
 
     export default {
-        props: {
-            folder: Number
-        },
-
         data() {
             return {
                 isActive: false,
@@ -105,6 +102,10 @@
         },
 
         computed: {
+            ...mapGetters({
+                activeFolderId: 'mediaManager/activeFolderId'
+            }),
+
             isComplete() {
                 return ! this.files.filter(file => ! file.complete && ! file.error).length;
             }
@@ -117,6 +118,10 @@
         },
 
         methods: {
+            ...mapMutations({
+                addMedia: 'mediaManager/addMediaItem'
+            }),
+
             focus() {
                 this.$refs.file.click();
             },
@@ -129,8 +134,8 @@
                     let data = new FormData();
                     let uuid = this.generateUuid();
 
-                    if (this.folder) {
-                        data.append('folder_id', this.folder);
+                    if (this.activeFolderId) {
+                        data.append('folder_id', this.activeFolderId);
                     }
 
                     this.files.push({
@@ -167,7 +172,10 @@
                             complete: true
                         });
 
-                        this.$emit('success', response.data.data);
+                        this.addMedia({
+                            folder: response.data.data.folder_id,
+                            media: response.data.data
+                        });
                     }).catch(error => {
                         this.updateFile(uuid, {
                             uploading: false,

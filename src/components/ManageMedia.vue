@@ -130,12 +130,14 @@
 
         computed: {
             ...mapGetters({
+                activeFolderId: 'mediaManager/activeFolderId',
                 isImage: 'mediaManager/isImage'
             }),
         },
 
         methods: {
             ...mapMutations({
+                updateMedia: 'mediaManager/updateMediaItem',
                 updateActiveMedia: 'mediaManager/updateActiveMedia'
             }),
 
@@ -152,18 +154,23 @@
             },
 
             save() {
-                this.form['patch']('/api/media/' + this.form.id)
+                this.form.patch('/api/media/' + this.form.id)
                     .then(response => {
                         let properties = {
                             name: this.form.name
                         };
-                        
+
+                        this.updateMedia({
+                            folder: this.activeFolderId,
+                            id: this.form.id,
+                            properties
+                        });
+
                         this.updateActiveMedia({
                             id: this.form.id,
                             properties
                         });
 
-                        this.$emit('updated', this.form.id, properties);
                         this.close();
                     });
             },

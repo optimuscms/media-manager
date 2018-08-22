@@ -13,11 +13,12 @@ export default function install(Vue, options = {}) {
     }
     
     options.store.registerModule('mediaManager', mediaStore);
-    window.mediaManagerBus = new Vue();
 
     Vue.mediaManager = {
+        bus: new Vue(),
+
         open(options) {
-            mediaManagerBus.$emit('media-manager-open', options);
+            this.bus.$emit('media-manager-open', options);
         },
 
         imageExtensions() {
