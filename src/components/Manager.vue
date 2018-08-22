@@ -122,7 +122,7 @@
 
                                 <div class="media-file" v-else>
                                     <div class="icon">
-                                        <icon :icon="getIcon(file.extension)" size="4x"></icon>
+                                        <icon :icon="icon(file.extension)" size="4x"></icon>
                                     </div>
                                 </div>
 
@@ -284,7 +284,7 @@
                 focusedFolderIds: 'mediaManager/focusedFolderIds',
                 openFolders: 'mediaManager/openFolders',
 
-                getIcon: 'mediaManager/getIcon',
+                icon: 'mediaManager/icon',
                 isImage: 'mediaManager/isImage'
             }),
 

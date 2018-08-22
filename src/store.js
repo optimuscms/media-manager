@@ -1,6 +1,6 @@
 const defaultOpenFolders = () => {
     return [{ id: null, name: 'Home' }];
-}
+};
 
 const state = {
     isLoading: true,
@@ -89,31 +89,24 @@ const getters = {
         return state.openFolders;
     },
 
-    activeMedia: state => mediaIds => { // todo rename active
+    activeMedia: state => mediaIds => {
         return state.activeMedia.filter(media => mediaIds.includes(media.id));
     },
 
 
 
-
-    
-    
-
-
-
-    getActiveMedia: state => mediaIds => { // todo delete
-        return state.activeMedia.filter(media => mediaIds.includes(media.id));
-    },
-
-    getMoveFolders: state => {
+    getMoveFolders: state => { // todo rename
         return state.move.folders;
     },
 
-    getMoveOpenFolders: state => {
+    getMoveOpenFolders: state => { // todo rename
         return state.move.openFolders;
     },
 
-    getIcon: state => extension => {
+
+
+
+    icon: state => extension => {
         let icon = 'file-alt';
 
         Object.keys(state.icons).some(key => {

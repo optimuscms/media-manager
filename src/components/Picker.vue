@@ -8,10 +8,10 @@
                 </div>
 
                 <div class="media-picker is-multiple" v-else>
-                    <div class="media" :key="media.id" v-for="media in getMedia(media)">
+                    <div class="media" :key="media.id" v-for="media in activeMedia(media)">
                         <div class="media-left">
                             <div class="icon is-large">
-                                <icon :icon="getIcon(media.extension)" size="2x"></icon>
+                                <icon :icon="icon(media.extension)" size="2x"></icon>
                             </div>
                         </div>
                         
@@ -77,13 +77,13 @@
 
         computed: {
             ...mapGetters({
-                getIcon: 'mediaManager/getIcon',
-                getMedia: 'mediaManager/getActiveMedia',
+                icon: 'mediaManager/icon',
+                activeMedia: 'mediaManager/activeMedia',
                 imageExtensions: 'mediaManager/imageExtensions'
             }),
 
             firstMedia() {
-                return this.getMedia(this.media)[0];
+                return this.activeMedia(this.media)[0];
             },
 
             limitMet() {

@@ -30,7 +30,7 @@ export default function install(Vue, options = {}) {
         },
 
         getActiveMedia(mediaId) {
-            return options.store.getters['mediaManager/getActiveMedia']([mediaId])[0];
+            return options.store.getters['mediaManager/activeMedia']([mediaId])[0];
         },
 
         clearActiveMedia() {
