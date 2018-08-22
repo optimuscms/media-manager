@@ -25,15 +25,15 @@ export default function install(Vue, options = {}) {
             return options.store.getters['mediaManager/imageExtensions'];
         },
 
-        setActiveMedia(media) { // todo rename active media?
+        setActiveMedia(media) {
             options.store.commit('mediaManager/setActiveMedia', media);
         },
 
-        getActiveMediaById(id) { // todo rename active media?
-            return options.store.getters['mediaManager/getActiveMedia']([id])[0];
+        getActiveMedia(mediaId) {
+            return options.store.getters['mediaManager/getActiveMedia']([mediaId])[0];
         },
 
-        clearActiveMedia() { // todo rename active media?
+        clearActiveMedia() {
             options.store.commit('mediaManager/clearActiveMedia');
         }
     }

@@ -32,7 +32,7 @@
             ...mapGetters({
                 folders: 'mediaManager/getMoveFolders',
                 open: 'mediaManager/getMoveOpenFolders',
-                exculded: 'mediaManager/focusedFolders'
+                exculded: 'mediaManager/focusedFolderIds'
             }),
 
             isOpen() {

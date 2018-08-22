@@ -48,8 +48,8 @@
         
         computed: {
             ...mapGetters({
-                focusedMedia: 'mediaManager/focusedMedia',
-                focusedFolders: 'mediaManager/focusedFolders',
+                focusedMediaIds: 'mediaManager/focusedMediaIds',
+                focusedFolderIds: 'mediaManager/focusedFolderIds',
                 folders: 'mediaManager/getMoveFolders',
                 openFolders: 'mediaManager/getMoveOpenFolders'
             }),
@@ -94,16 +94,16 @@
                 this.isSaving = true;
                 let requests = [];
 
-                if (this.focusedMedia.length) {
-                    this.focusedMedia.forEach(mediaId => {
+                if (this.focusedMediaIds.length) {
+                    this.focusedMediaIds.forEach(mediaId => {
                         requests.push(axios.patch('/api/media/' + mediaId, {
                             folder_id: this.selectedFolder
                         }));
                     });
                 }
 
-                if (this.focusedFolders.length) {
-                    this.focusedFolders.forEach(folderId => {
+                if (this.focusedFolderIds.length) {
+                    this.focusedFolderIds.forEach(folderId => {
                         requests.push(axios.patch('/api/media-folders/' + folderId, {
                             parent_id: this.selectedFolder
                         }));

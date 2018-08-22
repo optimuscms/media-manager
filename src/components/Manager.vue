@@ -47,8 +47,8 @@
                                 <a
                                     class="dropdown-item text-has-icon has-text-danger"
                                     @click="$refs.confirm.open({
-                                        media: focusedMedia.length,
-                                        folders: focusedFolders.length
+                                        media: focusedMediaIds.length,
+                                        folders: focusedFolderIds.length
                                     })"
                                 >
                                     <span class="icon">
@@ -75,7 +75,7 @@
                                     <a
                                         title="Open folder"
                                         class="button is-folder"
-                                        :class="{ 'is-focused': focusedFolders.includes(folder.id) }"
+                                        :class="{ 'is-focused': focusedFolderIds.includes(folder.id) }"
                                         @click="openFolder(folder)"
                                     >
                                         <div class="icon">
@@ -111,7 +111,7 @@
                             <div
                                 class="media-card"
                                 :class="{
-                                    'is-focused': focusedMedia.includes(file.id),
+                                    'is-focused': focusedMediaIds.includes(file.id),
                                     'is-selected': selectedMediaIds.includes(file.id)
                                 }"
                                 @click.stop="focusMedia(file.id)"
@@ -264,7 +264,6 @@
         data() {
             return {
                 isOpen: false,
-                isLoading: true,
 
                 limit: null,
                 accept: []
@@ -273,24 +272,24 @@
 
         computed: {
             ...mapGetters({
-                allMedia: 'mediaManager/allMedia',
+                isLoading: 'mediaManager/isLoading',
+
                 currentMedia: 'mediaManager/currentMedia',
-                focusedMedia: 'mediaManager/focusedMedia',
+                focusedMediaIds: 'mediaManager/focusedMediaIds',
                 selectedMedia: 'mediaManager/selectedMedia',
                 selectedMediaIds: 'mediaManager/selectedMediaIds',
 
                 activeFolderId: 'mediaManager/activeFolderId',
                 currentFolders: 'mediaManager/currentFolders',
-                focusedFolders: 'mediaManager/focusedFolders',
+                focusedFolderIds: 'mediaManager/focusedFolderIds',
                 openFolders: 'mediaManager/openFolders',
 
                 getIcon: 'mediaManager/getIcon',
-                isImage: 'mediaManager/isImage',
-                activeMedia: 'mediaManager/getActiveMedia',
+                isImage: 'mediaManager/isImage'
             }),
 
             focusedItemCount() {
-                return this.focusedFolders.length + this.focusedMedia.length;
+                return this.focusedFolderIds.length + this.focusedMediaIds.length;
             },
 
             selectedMediaCount() {
@@ -299,7 +298,7 @@
 
             limitIsExceeded() {
                 if (this.limit) {
-                    let newlySelectedMedia = this.focusedMedia.filter(id => {
+                    let newlySelectedMedia = this.focusedMediaIds.filter(id => {
                         return ! this.selectedMediaIds.includes(id)
                     });
                     
@@ -310,7 +309,7 @@
             },
 
             insertIsDisabled() {
-                return this.limitIsExceeded || ! (this.focusedMedia.length || this.selectedMediaCount)
+                return this.limitIsExceeded || ! (this.focusedMediaIds.length || this.selectedMediaCount)
             }
         },
 
@@ -332,28 +331,22 @@
         methods: {
             ...mapActions({
                 resetMediaManager: 'mediaManager/reset',
-
-                removeFocusedMedia: 'mediaManager/removeFocusedMedia',
+                getMediaAndFolders: 'mediaManager/getMediaAndFolders',
+                deleteFocusedItems: 'mediaManager/deleteFocusedItems',
+                
                 setSelectedMedia: 'mediaManager/setSelectedMedia',
-                selectMedia: 'mediaManager/selectMedia',
-
-                removeFocusedFolders: 'mediaManager/removeFocusedFolders'
+                selectMedia: 'mediaManager/selectMedia'
             }),
 
             ...mapMutations({
-                setMedia: 'mediaManager/setMedia',
                 focusMedia: 'mediaManager/focusMedia',
-                clearFocusedMedia: 'mediaManager/clearFocusedMedia',
+                clearFocusedMediaIds: 'mediaManager/clearFocusedMediaIds',
                 removeSelectedMediaItem: 'mediaManager/removeSelectedMediaItem',
                 clearSelectedMedia: 'mediaManager/clearSelectedMedia',
 
-                setFolders: 'mediaManager/setFolders',
                 focusFolder: 'mediaManager/focusFolder',
-                clearFocusedFolders: 'mediaManager/clearFocusedFolders',
-                openFolder: 'mediaManager/openFolder',
-
-                addActiveMedia: 'mediaManager/addActiveMedia',
-                removeActiveMedia: 'mediaManager/removeActiveMedia'
+                clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds',
+                openFolder: 'mediaManager/openFolder'
             }),
 
             open({ limit, selected, accept }) {
@@ -366,38 +359,11 @@
                 this.getMediaAndFolders();
             },
 
-            getMediaAndFolders() {
-                if (! this.allMedia.hasOwnProperty(this.activeFolderId)) {                    
-                    this.isLoading = true;
-    
-                    axios.all([
-                        axios.get('/api/media', {
-                            params: { folder: this.activeFolderId || 'root' }
-                        }),
-                        axios.get('/api/media-folders', {
-                            params: { parent: this.activeFolderId || 'root' }
-                        })
-                    ]).then(axios.spread((media, folders) => {
-                        this.setMedia({
-                            folder: this.activeFolderId,
-                            media: media.data.data
-                        });
-
-                        this.setFolders({
-                            parent: this.activeFolderId,
-                            folders: folders.data.data
-                        });
-    
-                        this.isLoading = false;
-                    }));
-                }
-            },
-
             edit() {
                 if (this.focusedItemCount === 1) {
-                    this.focusedMedia.length
-                        ? this.editMedia(this.focusedMedia[0])
-                        : this.editFolder(this.focusedFolders[0]);
+                    this.focusedMediaIds.length
+                        ? this.editMedia(this.focusedMediaIds[0])
+                        : this.editFolder(this.focusedFolderIds[0]);
                 }
             },
 
@@ -422,39 +388,13 @@
             },
 
             clearFocused() {
-                this.clearFocusedMedia();
-                this.clearFocusedFolders();
-            },
-
-            deleteFocusedItems() {
-                let mediaIds = this.focusedMedia;
-                let folderIds = this.focusedFolders;
-
-                this.removeFocusedMedia();
-                this.removeFocusedFolders();
-
-                this.removeActiveMedia(mediaIds);
-
-                if (mediaIds.length) {
-                    this.$mediaManager.bus.$emit('media-deleted', mediaIds);
-                    
-                    mediaIds.forEach(mediaId => {
-                        this.removeSelectedMediaItem(mediaId);
-                        axios.delete('/api/media/' + mediaId);
-                    });
-                }
-                
-                if (folderIds.length) {
-                    folderIds.forEach(folderId => {
-                        axios.delete('/api/media-folders/' + folderId);
-                    });
-                }
+                this.clearFocusedMediaIds();
+                this.clearFocusedFolderIds();
             },
 
             confirm() {
                 if (! this.insertIsDisabled) {
-                    this.selectMedia();
-                    this.addActiveMedia(this.selectedMedia);
+                    this.selectMedia(); 
 
                     this.$mediaManager.bus.$emit('media-selected', this.selectedMediaIds);
                     
