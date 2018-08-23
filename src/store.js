@@ -124,7 +124,7 @@ const getters = {
 
     isImage: state => extension => {
         return state.imageExtensions.includes(extension);
-    },
+    }
 };
 
 const actions = {
@@ -255,8 +255,8 @@ const actions = {
     },
 
     deleteFocusedItems({ commit, dispatch, getters }) {
-        let focusedMediaIds = getters.focusedMediaIds; // todo rename to Ids
-        let focusedFolderIds = getters.focusedFolderIds; // todo rename to Ids
+        let focusedMediaIds = getters.focusedMediaIds;
+        let focusedFolderIds = getters.focusedFolderIds;
 
         dispatch('removeFocusedMedia');
         dispatch('removeFocusedFolders');
@@ -264,7 +264,7 @@ const actions = {
         commit('removeActiveMedia', focusedMediaIds);
 
         if (focusedMediaIds.length) {
-            Vue.mediaManager.bus.$emit('media-deleted', focusedMediaIds);
+            Vue.mediaManager.mediaDeleted(focusedMediaIds);
 
             focusedMediaIds.forEach(mediaId => {
                 commit('removeSelectedMediaItem', mediaId);

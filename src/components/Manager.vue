@@ -169,11 +169,13 @@
                                 <a slot="button" class="button is-light">
                                     <span>
                                         <template v-if="limit">
-                                            {{ selectedMediaCount }} of {{ limit }} file{{ limit !== 1 ? 's' : null }} selected
+                                            {{ selectedMediaCount }} of {{ limit }} 
+                                            file{{ limit !== 1 ? 's' : null }} selected
                                         </template>
 
                                         <template v-else>
-                                            {{ selectedMediaCount }} file{{ selectedMediaCount !== 1 ? 's' : null }} selected
+                                            {{ selectedMediaCount }} 
+                                            file{{ selectedMediaCount !== 1 ? 's' : null }} selected
                                         </template>
                                     </span>
 
@@ -321,11 +323,11 @@
         },
 
         mounted() {
-            this.$mediaManager.bus.$on('media-manager-open', this.open);
+            this.$mediaManager.onOpen(this.open);
         },
 
         beforeDestroy() {
-            this.$mediaManager.bus.$off('media-manager-open', this.open);
+            this.$mediaManager.destroy(this.open);
         },
 
         methods: {
@@ -396,7 +398,7 @@
                 if (! this.insertIsDisabled) {
                     this.selectMedia(); 
 
-                    this.$mediaManager.bus.$emit('media-selected', this.selectedMediaIds);
+                    this.$mediaManager.mediaSelected(this.selectedMediaIds);
                     
                     this.resetMediaManager();
                     this.isOpen = false;
@@ -409,7 +411,7 @@
             },
 
             close() {
-                this.$mediaManager.bus.$emit('media-manager-closed');
+                this.$mediaManager.close();
                 this.isOpen = false;
             }
         }

@@ -116,24 +116,21 @@
         mounted() {
             this.setMedia(this.value);
 
-            this.$mediaManager.bus.$on('media-deleted', mediaIds => {
+            this.$mediaManager.onMediaDeleted(mediaIds => {
                 this.media = this.media.filter(id => ! mediaIds.includes(id));
             });
         },
 
         methods: {
             open() {
-                this.$mediaManager.bus.$emit('media-manager-open', {
+                this.$mediaManager.open({
                     limit: this.limit,
                     selected: this.media,
                     accept: this.accept ? this.setAccepted(this.accept) : []
                 });
 
-                this.$mediaManager.bus.$once('media-selected', this.setMedia);
-
-                this.$mediaManager.bus.$on('media-manager-closed', () => {
-                    this.$mediaManager.bus.$off('media-selected', this.setMedia);
-                });
+                this.$mediaManager.onMediaSelected(this.setMedia);
+                this.$mediaManager.onClose(this.setMedia);
             },
 
             setAccepted(accept) {

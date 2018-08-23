@@ -12,13 +12,46 @@ export default function install(Vue, options = {}) {
         throw new Error('Please provide vuex store.');
     }
     
+    const eventBus = new Vue();
     options.store.registerModule('mediaManager', mediaStore);
 
     Vue.mediaManager = {
-        bus: new Vue(),
+        open(params) {
+            eventBus.$emit('media-manager-open', params);
+        },
 
-        open(options) {
-            this.bus.$emit('media-manager-open', options);
+        onOpen(params) {
+            eventBus.$on('media-manager-open', params);
+        },
+
+        close() {
+            eventBus.$emit('media-manager-closed');
+        },
+
+        onClose(params) {
+            eventBus.$on('media-manager-closed', () => {
+                eventBus.$off('media-selected', params);
+            });
+        },
+
+        destroy(params) {
+            eventBus.$off('media-manager-open', params);
+        },
+
+        mediaSelected(mediaIds) {
+            eventBus.$emit('media-selected', mediaIds);
+        },
+
+        onMediaSelected(params) {
+            return eventBus.$once('media-selected', params);
+        },
+
+        mediaDeleted(mediaIds) {
+            eventBus.$emit('media-deleted', mediaIds);
+        },
+
+        onMediaDeleted(mediaIds) {
+            return eventBus.$on('media-deleted', mediaIds);
         },
 
         imageExtensions() {
