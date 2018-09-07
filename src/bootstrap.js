@@ -5,5 +5,5 @@ window.eventBus = new Vue();
 // Components
 Vue.component('o-picker', require('./components/Picker'));
 
-// Utilities
-import './util/icons';
+// Libraries
+import './lib/icons';

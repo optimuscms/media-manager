@@ -1,11 +1,13 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 
 library.add(
+    require('@fortawesome/free-regular-svg-icons/faClock').definition,
+    require('@fortawesome/free-regular-svg-icons/faTimesCircle').definition,
+
     require('@fortawesome/free-solid-svg-icons/faAngleUp').definition,
     require('@fortawesome/free-solid-svg-icons/faCheck').definition,
     require('@fortawesome/free-solid-svg-icons/faCrosshairs').definition,
     require('@fortawesome/free-solid-svg-icons/faEllipsisH').definition,
-    require('@fortawesome/free-regular-svg-icons/faClock').definition,
     require('@fortawesome/free-solid-svg-icons/faExclamationTriangle').definition,
     require('@fortawesome/free-solid-svg-icons/faFileAlt').definition,
     require('@fortawesome/free-solid-svg-icons/faFileArchive').definition,
@@ -13,7 +15,7 @@ library.add(
     require('@fortawesome/free-solid-svg-icons/faFileExcel').definition,
     require('@fortawesome/free-solid-svg-icons/faFileImage').definition,
     require('@fortawesome/free-solid-svg-icons/faFilePdf').definition,
-    require('@fortawesome/free-solid-svg-icons/faFilePowerPoint').definition,
+    require('@fortawesome/free-solid-svg-icons/faFilePowerpoint').definition,
     require('@fortawesome/free-solid-svg-icons/faFileVideo').definition,
     require('@fortawesome/free-solid-svg-icons/faFileWord').definition,
     require('@fortawesome/free-solid-svg-icons/faFolder').definition,
@@ -23,7 +25,6 @@ library.add(
     require('@fortawesome/free-solid-svg-icons/faReply').definition,
     require('@fortawesome/free-solid-svg-icons/faSpinner').definition,
     require('@fortawesome/free-solid-svg-icons/faTimes').definition,
-    require('@fortawesome/free-regular-svg-icons/faTimesCircle').definition,
     require('@fortawesome/free-solid-svg-icons/faTrash').definition,
     require('@fortawesome/free-solid-svg-icons/faUpload').definition
 );
