@@ -1,5 +1,5 @@
 <template>
-    <o-modal class="is-media-manager" :active="isOpen" @close="close">
+    <o-modal class="is-media-manager" :active="isOpen" @close="$mediaManager.close()">
         <div class="modal-card">
             <header class="modal-card-head is-block">
                 <div class="level">
@@ -263,18 +263,13 @@
             Upload
         },
 
-        data() {
-            return {
-                isOpen: false,
-
-                limit: null,
-                accept: []
-            }
-        },
-
         computed: {
             ...mapGetters({
+                isOpen: 'mediaManager/isOpen',
                 isLoading: 'mediaManager/isLoading',
+
+                limit: 'mediaManager/limit',
+                acceptedExtensions: 'mediaManager/acceptedExtensions',
 
                 currentMedia: 'mediaManager/currentMedia',
                 focusedMediaIds: 'mediaManager/focusedMediaIds',
@@ -324,6 +319,8 @@
 
         mounted() {
             this.$mediaManager.onOpen(this.open);
+            // this.$mediaManager.onClose(this.close);
+            this.$mediaManager.onClose(this.close);
         },
 
         beforeDestroy() {
@@ -332,15 +329,18 @@
 
         methods: {
             ...mapActions({
+                open: 'mediaManager/open',
+
                 resetMediaManager: 'mediaManager/reset',
                 getMediaAndFolders: 'mediaManager/getMediaAndFolders',
                 deleteFocusedItems: 'mediaManager/deleteFocusedItems',
                 
-                setSelectedMedia: 'mediaManager/setSelectedMedia',
                 selectMedia: 'mediaManager/selectMedia'
             }),
 
             ...mapMutations({
+                close: 'mediaManager/close',
+
                 focusMedia: 'mediaManager/focusMedia',
                 clearFocusedMediaIds: 'mediaManager/clearFocusedMediaIds',
                 removeSelectedMediaItem: 'mediaManager/removeSelectedMediaItem',
@@ -350,16 +350,6 @@
                 clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds',
                 openFolder: 'mediaManager/openFolder'
             }),
-
-            open({ limit, selected, accept }) {
-                this.limit = limit;
-                this.accept = accept || null;
-
-                this.setSelectedMedia(selected);
-
-                this.isOpen = true;
-                this.getMediaAndFolders();
-            },
 
             edit() {
                 if (this.focusedItemCount === 1) {
@@ -401,18 +391,13 @@
                     this.$mediaManager.mediaSelected(this.selectedMediaIds);
                     
                     this.resetMediaManager();
-                    this.isOpen = false;
+                    this.$mediaManager.close();
                 }
             },
 
             cancel() {
                 this.clearFocused();
-                this.close();
-            },
-
-            close() {
                 this.$mediaManager.close();
-                this.isOpen = false;
             }
         }
     }

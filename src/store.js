@@ -3,7 +3,11 @@ const defaultOpenFolders = () => {
 };
 
 const state = {
+    isOpen: false,
     isLoading: true,
+
+    limit: null,
+    acceptedExtensions: [],
 
     media: {},
     focusedMediaIds: [],
@@ -37,8 +41,20 @@ const state = {
 };
 
 const getters = {
+    isOpen: state => {
+        return state.isOpen;
+    },
+
     isLoading: state => {
         return state.isLoading;
+    },
+
+    limit: state => {
+        return state.limit;
+    },
+
+    acceptedExtensions: state => {
+        return state.acceptedExtensions;
     },
 
     allMedia: state => {
@@ -128,6 +144,25 @@ const getters = {
 };
 
 const actions = {
+    open({ commit, getters, dispatch }, { limit, selectedMediaIds, acceptedExtensions }) {
+        commit('setLimit', limit);
+        commit('setAcceptedExtensions', acceptedExtensions);
+
+        commit('setSelectedMedia', (Array.isArray(selectedMediaIds) && selectedMediaIds.length)
+            ? getters.activeMedia(selectedMediaIds)
+            : []);
+
+        commit('open');
+
+        dispatch('getMediaAndFolders');
+    },
+
+    // setSelectedMedia({ commit, getters }, mediaIds) {
+    //     commit('setSelectedMedia', (Array.isArray(mediaIds) && mediaIds.length)
+    //         ? getters.activeMedia(mediaIds)
+    //         : []);
+    // },
+
     getMediaAndFolders({ commit, getters }) {
         let requests = [];
 
@@ -162,12 +197,6 @@ const actions = {
         } else {
             commit('setLoading', false);
         }
-    },
-
-    setSelectedMedia({ commit, getters }, mediaIds) {
-        commit('setSelectedMedia', (Array.isArray(mediaIds) && mediaIds.length)
-            ? getters.activeMedia(mediaIds)
-            : []);
     },
 
     selectMedia({ commit, getters }) {
@@ -289,8 +318,24 @@ const actions = {
 };
 
 const mutations = {
+    open(state) {
+        state.isOpen = true;
+    },
+
+    close(state) {
+        state.isOpen = false;
+    },
+
     setLoading(state, loading) {
         state.isLoading = loading;
+    },
+
+    setLimit(state, limit) {
+        state.limit = limit;
+    },
+
+    setAcceptedExtensions(state, extensions) {
+        state.acceptedExtensions = extensions;
     },
 
     setMedia(state, { folder, media }) {

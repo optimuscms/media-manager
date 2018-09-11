@@ -1,6 +1,6 @@
 <template>
     <div class="control">
-        <div class="field" v-if="media.length">
+        <div class="field" v-if="selectedMediaIds.length">
             <div class="control">
                 <div class="media-picker is-single-image" v-if="hasPreview">
                     <img :src="firstMedia.thumbnail_url">
@@ -8,7 +8,7 @@
                 </div>
 
                 <div class="media-picker is-multiple" v-else>
-                    <div class="media" :key="media.id" v-for="media in activeMedia(media)">
+                    <div class="media" :key="media.id" v-for="media in activeMedia(selectedMediaIds)">
                         <div class="media-left">
                             <div class="icon is-large">
                                 <icon :icon="icon(media.extension)" size="2x"></icon>
@@ -54,7 +54,7 @@
                 type: [ Array, Number ]
             },
 
-            accept: {
+            acceptedExtensions: {
                 type: [ Array, String ]
             },
 
@@ -71,7 +71,7 @@
 
         data() {
             return {
-                media: []
+                selectedMediaIds: []
             }
         },
 
@@ -83,11 +83,11 @@
             }),
 
             firstMedia() {
-                return this.activeMedia(this.media)[0];
+                return this.activeMedia(this.selectedMediaIds)[0];
             },
 
             limitMet() {
-                return this.limit === this.media.length;
+                return this.limit === this.selectedMediaIds.length;
             },
 
             hasPreview() {
@@ -97,16 +97,16 @@
 
         watch: {
             value(value) {
-                this.setMedia(value);
+                this.setSelectedMediaIds(value);
             },
 
-            media(media) {
+            selectedMediaIds(selectedMediaIds) {
                 let value;
                 
                 if (this.limit === 1) {
-                    value = media.length ? media[0] : null;
+                    value = selectedMediaIds.length ? selectedMediaIds[0] : null;
                 } else {
-                    value = media;
+                    value = selectedMediaIds;
                 }
 
                 this.$emit('input', value);
@@ -114,10 +114,10 @@
         },
 
         mounted() {
-            this.setMedia(this.value);
+            this.setSelectedMediaIds(this.value);
 
             this.$mediaManager.onMediaDeleted(mediaIds => {
-                this.media = this.media.filter(id => ! mediaIds.includes(id));
+                this.selectedMediaIds = this.selectedMediaIds.filter(id => ! mediaIds.includes(id));
             });
         },
 
@@ -125,31 +125,38 @@
             open() {
                 this.$mediaManager.open({
                     limit: this.limit,
-                    selected: this.media,
-                    accept: this.accept ? this.setAccepted(this.accept) : []
+                    selectedMediaIds: this.selectedMediaIds,
+                    acceptedExtensions: this.acceptedExtensions
+                        ? this.setAcceptedExtensions(this.acceptedExtensions)
+                        : []
                 });
 
-                this.$mediaManager.onMediaSelected(this.setMedia);
-                this.$mediaManager.onClose(this.setMedia);
+                this.$mediaManager.onMediaSelected(this.setSelectedMediaIds);
+
+                this.$mediaManager.onClose(() => {
+                    this.$mediaManager.removeMediaSelectedListener(this.setSelectedMediaIds);
+                });
             },
 
-            setAccepted(accept) {
-                if (accept === 'image') {
+            setAcceptedExtensions(acceptedExtensions) {
+                if (acceptedExtensions === 'image') {
                     return this.imageExtensions;
                 }
 
-                return Array.isArray(accept) ? accept : [accept];
+                return Array.isArray(acceptedExtensions)
+                    ? acceptedExtensions
+                    : [acceptedExtensions];
             },
 
-            setMedia(value) {
+            setSelectedMediaIds(value) {
                 if (value) {
-                    this.media = Array.isArray(value) ? value : [value];
+                    this.selectedMediaIds = Array.isArray(value) ? value : [value];
                 }
             },
 
             remove(id) {
-                this.media = this.media.filter(media => {
-                    return media !== id;
+                this.selectedMediaIds = this.selectedMediaIds.filter(mediaId => {
+                    return mediaId !== id;
                 });
             }
         }

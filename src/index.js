@@ -20,30 +20,32 @@ export default function install(Vue, options = {}) {
             eventBus.$emit('media-manager-open', params);
         },
 
-        onOpen(params) {
-            eventBus.$on('media-manager-open', params);
+        onOpen(callback = () => {}) {
+            eventBus.$on('media-manager-open', callback);
         },
 
         close() {
             eventBus.$emit('media-manager-closed');
         },
 
-        onClose(params) {
-            eventBus.$on('media-manager-closed', () => {
-                eventBus.$off('media-selected', params);
-            });
+        onClose(callback = () => {}) {
+            eventBus.$on('media-manager-closed', callback);
         },
 
-        destroy(params) {
-            eventBus.$off('media-manager-open', params);
+        destroy(callback = () => {}) {
+            eventBus.$off('media-manager-open', callback);
         },
 
         mediaSelected(mediaIds) {
             eventBus.$emit('media-selected', mediaIds);
         },
 
-        onMediaSelected(params) {
-            return eventBus.$once('media-selected', params);
+        onMediaSelected(callback = () => {}) {
+            return eventBus.$once('media-selected', callback);
+        },
+
+        removeMediaSelectedListener(callback = () => {}) {
+            eventBus.$off('media-selected', callback);
         },
 
         mediaDeleted(mediaIds) {
