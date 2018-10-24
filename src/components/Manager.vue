@@ -1,88 +1,79 @@
 <template>
-    <o-modal class="is-media-manager" :active="isOpen" @close="$mediaManager.close()">
-        <div class="modal-card">
-            <header class="modal-card-head is-block">
-                <div class="level">
-                    <div class="level-left">
-                        <div class="level-item">
-                            <nav class="breadcrumb">
-                                <ul>
-                                    <li
-                                        :key="folder.id"
-                                        v-for="folder in openFolders"
-                                        :class="{ 'is-active': folder.id === activeFolderId }"
-                                    >
-                                        <a @click="openFolder(folder)">{{ folder.name }}</a>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
+    <o-modal :active="isOpen" @close="$mediaManager.close()">
+        <div class="modal-content bg-white rounded h-full">
+            <header class="flex flex-no-shrink justify-between items-center bg-grey-lighter border-b border-grey-light rounded-t px-6 py-4">
+                <ul class="list-reset nav-breadcrumb text-base">
+                    <li
+                        :key="folder.id"
+                        v-for="folder in openFolders"
+                        :class="{ 'active': folder.id === activeFolderId }"
+                    >
+                        <a @click="openFolder(folder)">{{ folder.name }}</a>
+                    </li>
+                </ul>
 
-                    <div class="level-right" v-if="focusedItemCount">
-                        <div class="level-item">
-                            <o-dropdown class="is-right">
-                                <a slot="button" class="icon">
-                                    <icon icon="ellipsis-h" size="lg"></icon>
-                                </a>
+                <o-dropdown class="right" :class="{ 'invisible pointer-events-none': ! focusedItemCount }">
+                    <a slot="button" class="icon">
+                        <icon icon="ellipsis-h" size="lg"></icon>
+                    </a>
 
-                                <a class="dropdown-item text-has-icon" v-if="focusedItemCount === 1" @click="edit">
-                                    <span class="icon">
-                                        <icon icon="info-circle"></icon>
-                                    </span>
+                    <a class="dropdown-item flex items-center" v-if="focusedItemCount === 1" @click="edit">
+                        <span class="icon flex-no-shrink mr-2">
+                            <icon icon="info-circle"></icon>
+                        </span>
 
-                                    <span>Properties</span>
-                                </a>
+                        <span class="flex-grow">Properties</span>
+                    </a>
 
-                                <a class="dropdown-item text-has-icon" @click="$refs.move.open()">
-                                    <span class="icon">
-                                        <icon icon="reply"></icon>
-                                    </span>
+                    <a class="dropdown-item flex items-center" @click="$refs.move.open()">
+                        <span class="icon flex-no-shrink mr-2">
+                            <icon icon="reply"></icon>
+                        </span>
 
-                                    <span>Move</span>
-                                </a>
+                        <span class="flex-grow">Move</span>
+                    </a>
 
-                                <div class="dropdown-divider"></div>
+                    <div class="dropdown-divider"></div>
 
-                                <a
-                                    class="dropdown-item text-has-icon has-text-danger"
-                                    @click="$refs.confirm.open({
-                                        media: focusedMediaIds.length,
-                                        folders: focusedFolderIds.length
-                                    })"
-                                >
-                                    <span class="icon">
-                                        <icon icon="trash"></icon>
-                                    </span>
+                    <a
+                        class="dropdown-item flex items-center text-red"
+                        @click="$refs.confirm.open({
+                            media: focusedMediaIds.length,
+                            folders: focusedFolderIds.length
+                        })"
+                    >
+                        <span class="icon flex-no-shrink mr-2">
+                            <icon icon="trash"></icon>
+                        </span>
 
-                                    <span>Delete</span>
-                                </a>
-                            </o-dropdown>
-                        </div>
-                    </div>
-                </div>
+                        <span class="flex-grow">Delete</span>
+                    </a>
+                </o-dropdown>
             </header>
 
-            <section class="modal-card-body" @click="clearFocused" :class="{ 'is-loading': isLoading }">
-                <!-- Folders -->
+            <section
+                class="section-loader bg-white overflow-auto flex-grow px-6 py-4"
+                :class="{ 'loading': isLoading }"
+                @click="clearFocused"
+            >
                 <template v-if="currentFolders.length">
-                    <h2 class="title">Folders</h2>
+                    <h2 class="title mb-4">Folders</h2>
 
-                    <div class="folders-holder field is-grouped is-grouped-multiline">
-                        <div class="control" :key="folder.id" v-for="folder in currentFolders">
-                            <div class="field has-addons">
-                                <div class="control">
-                                    <a
-                                        title="Open folder"
-                                        class="button is-folder"
-                                        :class="{ 'is-focused': focusedFolderIds.includes(folder.id) }"
-                                        @click="openFolder(folder)"
-                                    >
-                                        <div class="icon">
+                    <div class="flex flex-wrap -m-2">
+                        <div
+                            :key="folder.id"
+                            class="folder select-none p-2"
+                            v-for="folder in currentFolders"
+                            :class="{ 'focused': focusedFolderIds.includes(folder.id) }"
+                        >
+                            <div class="field addons">
+                                <div class="control flex-grow">
+                                    <a title="Open folder" class="button w-full" @click="openFolder(folder)">
+                                        <span class="icon">
                                             <icon icon="folder" size="lg"></icon>
-                                        </div>
+                                        </span>
 
-                                        <span class="text-weight-normal">{{ folder.name }}</span>
+                                        <span class="font-normal normal-case truncate">{{ folder.name }}</span>
                                     </a>
                                 </div>
 
@@ -96,38 +87,41 @@
                             </div>
                         </div>
                     </div>
+
+                    <hr class="bg-grey-light my-6">
                 </template>
 
-                <!-- Media -->
                 <template v-if="currentMedia.length">
-                    <h2 class="title">Media</h2>
-
-                    <div class="columns is-mobile is-multiline">
+                    <h2 class="title mb-4">Media</h2>
+                    
+                    <div class="flex flex-wrap -m-2">
                         <div
                             :key="file.id"
-                            class="column is-6-mobile is-4-tablet is-3-desktop is-2-widescreen"
+                            class="w-1/2 md:w-1/4 lg:w-1/6"
                             v-for="file in currentMedia"
                         >
-                            <div
-                                class="media-card"
-                                :class="{
-                                    'is-focused': focusedMediaIds.includes(file.id),
-                                    'is-selected': selectedMediaIds.includes(file.id)
-                                }"
-                                @click.stop="focusMedia(file.id)"
-                            >
-                                <figure class="image is-4by3" v-if="isImage(file.extension)">
-                                    <img :src="file.thumbnail_url" :alt="file.name" :title="file.name">
-                                </figure>
+                            <div class="p-2">
+                                <div
+                                    class="media-card"
+                                    :class="{
+                                        'focused': focusedMediaIds.includes(file.id),
+                                        'selected': selectedMediaIds.includes(file.id)
+                                    }"
+                                    @click.stop="focusMedia(file.id)"
+                                >   
+                                    <div class="media-card-image">
+                                        <figure class="image 4by3" v-if="isImage(file.extension)">
+                                            <img :src="file.thumbnail_url" :alt="file.name" :title="file.name">
+                                        </figure>
 
-                                <div class="media-file" v-else>
-                                    <div class="icon">
-                                        <icon :icon="icon(file.extension)" size="4x"></icon>
+                                        <div class="file" v-else>
+                                            <div class="icon">
+                                                <icon :icon="icon(file.extension)" size="4x"></icon>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
 
-                                <div class="media-content">
-                                    {{ file.name }}
+                                    <div class="media-card-body truncate">{{ file.name }}</div>
                                 </div>
                             </div>
                         </div>
@@ -135,93 +129,65 @@
                 </template>
 
                 <o-notification
-                    class="is-info radius-small"
+                    class="bg-blue-light text-white rounded"
                     v-else
                     :active="! currentMedia.length"
                     :closeable="false"
-                >
-                    No media, add new media by clicking the <strong>New</strong> button below.
-                </o-notification>
+                >No media, add new media by clicking the <strong>New</strong> button below.</o-notification>
+            </section>
+            
+            <footer class="flex flex-no-shrink justify-between relative bg-grey-lighter border-t border-grey-light rounded-b px-6 py-4">
+                <div>
+                    <o-dropdown icon="angle-up" class="up" placeholder="New">
+                        <a class="dropdown-item" @click="$refs.manageFolder.open()">New Folder</a>
+                        <a class="dropdown-item" @click="$refs.upload.focus()">Upload Media</a>
+                    </o-dropdown>
+
+                    <o-dropdown class="up ml-3">
+                        <template slot="button">
+                            <span class="button button-grey">
+                                <span class="font-normal normal-case">{{ selectedMediaLabel }}</span>
+
+                                <span class="icon">
+                                    <icon icon="angle-up"></icon>
+                                </span>
+                            </span>
+                        </template>
+                        
+                        <a
+                            :key="file.id"
+                            class="dropdown-item flex items-center"
+                            v-for="file in selectedMedia"
+                        >
+                            <span class="flex-grow truncate">{{ file.name }}</span>
+
+                            <a class="icon flex-no-shrink ml-2" @click.stop="removeSelectedMediaItem(file.id)">
+                                <icon :icon="['far', 'times-circle']"></icon>
+                            </a>
+                        </a>
+
+                        <div class="dropdown-divider" v-if="selectedMedia.length"></div>
+
+                        <a class="dropdown-item" @click="clearSelectedMedia">
+                            Clear all selected files
+                        </a>
+                    </o-dropdown>
+                </div>
+
+                <div>
+                    <a
+                        v-if="limit !== 0"
+                        class="button button-green"
+                        @click="confirm" 
+                        :disabled="insertIsDisabled"
+                    >Insert</a>
+
+                    <a class="button ml-3" @click="cancel">
+                        {{ limit === 0 ? 'Close' : 'Cancel' }}
+                    </a>
+                </div>
 
                 <upload ref="upload"></upload>
-            </section>
-
-            <footer class="modal-card-foot is-block">
-                <div class="level">
-                    <div class="level-left">
-                        <div class="level-item">
-                            <o-dropdown class="is-up">
-                                <a slot="button" class="button is-primary">
-                                    <span>New</span>
-
-                                    <span class="icon is-small">
-                                        <icon icon="angle-up"></icon>
-                                    </span>
-                                </a>
-
-                                <a class="dropdown-item" @click="$refs.manageFolder.open()">New Folder</a>
-                                <a class="dropdown-item" @click="$refs.upload.focus()">Upload Media</a>
-                            </o-dropdown>
-                        </div>
-
-                        <div class="level-item" v-if="selectedMediaCount">
-                            <o-dropdown class="is-up">
-                                <a slot="button" class="button is-light">
-                                    <span>
-                                        <template v-if="limit">
-                                            {{ selectedMediaCount }} of {{ limit }} 
-                                            file{{ limit !== 1 ? 's' : null }} selected
-                                        </template>
-
-                                        <template v-else>
-                                            {{ selectedMediaCount }} 
-                                            file{{ selectedMediaCount !== 1 ? 's' : null }} selected
-                                        </template>
-                                    </span>
-
-                                    <span class="icon is-small">
-                                        <icon icon="angle-up"></icon>
-                                    </span>
-                                </a>
-
-                                <div class="scroll">
-                                    <div
-                                        class="dropdown-item text-has-icon is-spaced"
-                                        :key="file.id"
-                                        v-for="file in selectedMedia"
-                                    >
-                                        <span class="overflow-wrap">{{ file.name }}</span>
-
-                                        <a class="icon" @click.stop="removeSelectedMediaItem(file.id)">
-                                            <icon :icon="['far', 'times-circle']"></icon>
-                                        </a>
-                                    </div>
-
-                                    <div class="dropdown-divider"></div>
-
-                                    <a class="dropdown-item" @click="clearSelectedMedia">
-                                        Clear all selected files
-                                    </a>
-                                </div>
-                            </o-dropdown>
-                        </div>
-                    </div>
-
-                    <div class="level-right">
-                        <div class="level-item">
-                            <a
-                                v-if="limit !== 0"
-                                class="button is-success"
-                                @click="confirm" 
-                                :disabled="insertIsDisabled"
-                            >Insert</a>
-
-                            <a class="button" @click="cancel">
-                                {{ limit === 0 ? 'Close' : 'Cancel' }}
-                            </a>
-                        </div>
-                    </div>
-                </div>
             </footer>
         </div>
 
@@ -229,20 +195,19 @@
         <manage-media ref="manageMedia"></manage-media>
         <manage-folder ref="manageFolder"></manage-folder>
 
-        <o-confirm
+        <o-confirmation
             ref="confirm"
-            type="danger"
             @confirm="deleteFocusedItems"
+            button-class="button-red"
+            button-text="Delete"
         >
-            <template slot="confirmButtonText">Delete</template>
-
             <template slot-scope="count">
                 Are you sure you want to delete
                 <strong v-if="count.folders">{{ count.folders }} folder{{ count.folders !== 1 ? 's' : null }}</strong>
                 <template v-if="count.folders && count.media"> and </template>
                 <strong v-if="count.media">{{ count.media }} media item{{ count.media !== 1 ? 's' : null }}</strong>
             </template>
-        </o-confirm>
+        </o-confirmation>
     </o-modal>
 </template>
 
@@ -291,6 +256,14 @@
 
             selectedMediaCount() {
                 return this.selectedMedia.length;
+            },
+
+            selectedMediaLabel() {
+                if (this.limit) {
+                    return this.selectedMediaCount + ' of ' + this.limit + ' file' + ((this.limit !== 1) ? 's' : '') + ' selected';
+                }
+
+                return this.selectedMediaCount + ' file' + ((this.selectedMediaCount !== 1) ? 's' : '') + ' selected';
             },
 
             limitIsExceeded() {
@@ -402,3 +375,141 @@
         }
     }
 </script>
+
+<style lang="scss" scoped>
+    .modal-content {
+        display: flex;
+        overflow: hidden;
+        flex-direction: column;
+    }
+
+    .nav-breadcrumb {
+        display: flex;
+
+        > li {
+            position: relative;
+
+            &:not(:first-child) {
+                margin-left: 1rem;
+
+                &:before {
+                    left: -1rem;
+                    width: 1rem;
+                    content: '/';
+                    text-align: center;
+                    position: absolute;
+                    color: config('colors.grey-light');
+                    font-weight: config('fontWeights.semibold');
+                }
+            }
+
+            > a {
+                font-weight: config('fontWeights.semibold');
+            }
+
+            &.active {
+                > a {
+                    color: config('colors.primary');
+                }
+            }
+        }
+    }
+
+    .folder {
+        .button.w-full {
+            max-width: 10rem;
+        }
+
+        &.focused {
+            .button.w-full {
+                color: config('colors.white');
+                background-color: config('colors.blue-light');
+            }
+        }
+    }
+
+    .media-card {
+        cursor: pointer;
+        position: relative;
+        border: solid 1px config('colors.grey-light');
+
+        &.selected {
+            border-color: config('colors.primary');
+            outline: 3px solid config('colors.primary');
+
+            .media-card-body {
+                color: config('colors.white');
+                background-color: config('colors.primary');
+            }
+        }
+
+        &.focused {
+            border-color: config('colors.blue-light');
+            outline: 3px solid config('colors.blue-light');
+
+            .media-card-body {
+                color: config('colors.white');
+                background-color: config('colors.blue-light');
+            }
+        }
+    }
+
+    .media-card-body {
+        padding: 0.5rem 1rem;
+        background-color: config('colors.grey-lighter');
+    }
+
+    .file {
+        display: block;
+        padding-top: 75%;
+        position: relative;
+        background-color: config('colors.grey-light');
+
+        .icon {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 4rem;
+            height: 4rem;
+            margin: auto;
+            position: absolute;
+        }
+    }
+</style>
+
+<style lang="scss">
+    .section-loader {
+        position: relative;
+
+        &.loading {
+            min-height: 10rem;
+            
+            > * {
+                opacity: 0;
+                visibility: hidden;
+                pointer-events: none;
+            }
+
+            &:before {
+                $size: 3em;
+
+                z-index: 10;
+                top: 5rem;
+                left: 50%;
+                content: '';
+                width: $size;
+                height: $size;
+                display: block;
+                position: absolute;
+                border-radius: 100px;
+                margin-top: -($size / 2);
+                margin-left: -($size / 2);
+                animation: spin 500ms infinite linear;
+                border: 3px solid config('colors.grey-dark');
+                border-top-color: transparent;
+                border-right-color: transparent;
+            }
+        }
+    }
+</style>

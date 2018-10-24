@@ -1,12 +1,15 @@
 <template>
-    <o-modal class="is-default" :active="isActive" @close="close">
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Media Properties</p>
-                <a class="delete" @click="close"></a>
+    <o-modal :active="isActive" @close="close">
+        <div class="modal-content bg-white rounded max-w-lg">
+            <header class="flex flex-no-shrink justify-between items-center bg-grey-lighter border-b border-grey-light rounded-t px-6 py-4">
+                <h4 class="title">Media Properties</h4>
+
+                <a class="icon" @click="close">
+                    <icon icon="times" size="lg"></icon>
+                </a>
             </header>
 
-            <section class="modal-card-body">
+            <section class="bg-white px-6 py-8">
                 <o-errors
                     v-if="form.errors.any()"
                     class="mb-2"
@@ -14,13 +17,13 @@
                 ></o-errors>
 
                 <template v-if="media">
-                    <div class="columns is-gapless" v-if="isImage(media.extension)">
-                        <div class="column is-narrow is-media-image">
+                    <div class="flex" v-if="isImage(media.extension)">
+                        <div class="w-1/3">
                             <img :src="media.url" :alt="media.name">
                         </div>
 
-                        <div class="column">
-                            <div class="pl-4">
+                        <div class="w-2/3">
+                            <div class="pl-8">
                                 <!-- Media name -->
                                 <o-form-field input="name" label="Media name" required>
                                     <o-input
@@ -97,15 +100,15 @@
                 </template>
             </section>
 
-            <footer class="modal-card-foot">
+            <footer class="flex flex-no-shrink justify-end items-center bg-grey-lighter border-t border-grey-light rounded-b px-6 py-4">
                 <a
-                    class="button is-success"
+                    class="button button-green"
                     @click="save"
-                    :class="{ 'is-loading': form.processing }"
+                    :class="{ 'loading': form.processing }"
                     :disabled="form.processing"
                 >Save</a>
-
-                <a class="button" @click="close">Cancel</a>
+                
+                <a class="button ml-3" @click="close">Cancel</a>
             </footer>
         </div>
     </o-modal>

@@ -1,5 +1,5 @@
 <template>
-    <li :class="{ 'is-active': isActive, 'is-selected': isSelected }" v-if="isOpen && isNotExcluded">
+    <li :class="{ 'active': isActive, 'selected': isSelected }" v-if="isOpen && isNotExcluded">
         <a @click="select">
             <span>{{ folder.name }}</span>
             
@@ -8,7 +8,7 @@
             </span>
         </a>
 
-        <ul v-if="hasChildren">
+        <ul class="list-reset" v-if="hasChildren">
             <move-folder
                 :key="child.id"
                 :folder="child"

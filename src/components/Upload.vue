@@ -1,96 +1,80 @@
 <template>
-    <div class="upload-preview-holder" v-show="files.length">
-        <transition name="notification">
-            <div class="notification is-danger p-2" v-if="error.active">
-                <ul>
-                    <template v-for="messages in error.messages">
-                        <li :key="index" v-for="(message, index) in messages">
-                            {{ message }}
-                        </li>
-                    </template>
-                </ul>
-            </div>
-        </transition>
+    <div class="uploads-holder absolute w-full max-w-xs z-10 rounded-t" v-show="files.length">
+        <o-errors
+            v-if="error.active"
+            class="p-2"
+            :errors="error.messages"
+        ></o-errors>
 
-        <div class="upload-preview">
-            <nav class="panel">
-                <div class="panel-heading">
-                    <div class="level">
-                        <div class="level-left">
-                            <div class="level-item" v-if="! isActive && ! isComplete">
-                                <span class="icon has-text-link">
-                                    <icon icon="spinner" spin></icon>
-                                </span>
-                            </div>
+        <div class="flex flex-col">
+            <header class="flex flex-no-shrink justify-between items-center bg-grey-lighter border-b border-grey-light rounded-t px-4 py-2">
+                <div class="flex items-center">
+                    <span class="icon mr-3" v-if="! isActive && ! isComplete">
+                        <icon icon="spinner" spin></icon>
+                    </span>
 
-                            <div class="level-item">
-                                {{ title }}
-                            </div>
-                        </div>
-
-                        <div class="level-right has-text-right">
-                            <div class="level-item">
-                                <a class="icon is-small" @click="isActive = ! isActive">
-                                    <icon icon="minus"></icon>
-                                </a>
-                            </div>
-
-                            <div class="level-item">
-                                <a class="icon is-small" @click="closePreview">
-                                    <icon icon="times"></icon>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                    <h4 class="title text-sm">{{ title }}</h4>
                 </div>
 
-                <div class="is-scrollable" v-if="isActive">
-                    <div
-                        :key="file.uuid"
-                        class="panel-block"
-                        v-for="file in files"
-                        @mouseover="showError(file.errors)"
-                        @mouseleave="error.active = false"
+                <a class="icon is-small" @click="closePreview">
+                    <icon icon="times"></icon>
+                </a>
+            </header>
+
+            <div class="bg-white overflow-auto" v-if="isActive">
+                <div
+                    :key="file.uuid"
+                    class="flex justify-between items-center relative border-b border-grey-light px-4 py-1"
+                    v-for="file in files"
+                    @mouseover="showError(file.errors)"
+                    @mouseleave="error.active = false"
+                >
+                    <span class="icon flex-no-shrink">
+                        <icon
+                            :icon="fileIcon(file).icon"
+                            :spin="fileIcon(file).spin"
+                            :class="fileIcon(file).class"
+                        ></icon>
+                    </span>
+
+                    <span class="flex-grow mx-2">{{ file.name }}</span>
+
+                    <a
+                        v-if="! file.complete"
+                        class="icon flex-no-shrink"
+                        @click="remove(file.uuid)"
                     >
-                        <progress
-                            max="100"
-                            v-if="file.uploading"
-                            class="progress is-primary"
-                            :value="file.progress"
-                        >{{ file.progress }}%</progress>
+                        <icon :icon="['far', 'times-circle']"></icon>
+                    </a>
 
-                        <span class="panel-icon">
-                            <icon
-                                :icon="fileIcon(file).icon"
-                                :spin="fileIcon(file).spin"
-                                :class="fileIcon(file).class"
-                            ></icon>
-                        </span>
-
-                        <span class="panel-label">{{ file.name }}</span>
-
-                        <a class="panel-icon" v-if="! file.complete" @click="remove(file.uuid)">
-                            <icon :icon="['far', 'times-circle']"></icon>
-                        </a>
-                    </div>
+                    <progress
+                        max="100"
+                        v-if="file.uploading"
+                        class="absolute pin-x pin-b appearance-none"
+                        :value="file.progress"
+                    >{{ file.progress }}%</progress>
                 </div>
-            </nav>
+            </div>
         </div>
 
-        <input ref="file" type="file" class="is-hidden" multiple @change="upload">
+        <input
+            ref="file" 
+            type="file"
+            class="hidden" 
+            @change="upload"
+            multiple
+        >
     </div>
 </template>
 
 <script>
     import { CancelToken } from 'axios';
-import { mapGetters, mapMutations } from 'vuex';
+    import { mapGetters, mapMutations } from 'vuex';
 
     export default {
         data() {
             return {
                 isActive: false,
-
-                title: null,
 
                 error: {
                     active: false,
@@ -108,12 +92,10 @@ import { mapGetters, mapMutations } from 'vuex';
 
             isComplete() {
                 return ! this.files.filter(file => ! file.complete && ! file.error).length;
-            }
-        },
+            },
 
-        watch: {
-            isComplete(value) {
-                this.title = value ? 'Uploading Complete' : 'Uploading Media…';
+            title() {
+                return this.isComplete ? 'Uploading Complete' : 'Uploading Media…';
             }
         },
 
@@ -223,25 +205,25 @@ import { mapGetters, mapMutations } from 'vuex';
                 if (file.errors) {
                     return {
                         icon: 'exclamation-triangle',
-                        class: 'has-text-danger',
+                        class: 'text-red',
                         spin: false
                     }
                 } else if (! file.uploading && ! file.complete) {
                     return {
                         icon: ['far', 'clock'],
-                        class: 'has-text-default',
+                        class: null,
                         spin: false
                     }
                 } else if (file.uploading && ! file.errors) {
                     return {
                         icon: 'spinner',
-                        class: 'has-text-link',
+                        class: 'text-blue',
                         spin: true
                     }
                 } else if (file.complete) {
                     return {
                         icon: 'check',
-                        class: 'has-text-success',
+                        class: 'text-green',
                         spin: false
                     }
                 }
@@ -267,3 +249,38 @@ import { mapGetters, mapMutations } from 'vuex';
         }
     }
 </script>
+
+<style lang="scss" scoped>
+    .uploads-holder {
+        right: 2rem;
+        bottom: 100%;
+        border-top: 1px solid config('colors.grey-light');
+        border-left: 1px solid config('colors.grey-light');
+        border-right: 1px solid config('colors.grey-light');
+    }
+
+    .overflow-auto {
+        max-height: 20rem;
+    }
+
+    progress {
+        height: 2px;
+
+        &::-webkit-progress-bar {
+            background-color: config('colors.grey-light');
+        }
+        
+        &::-webkit-progress-value {
+            background-color: config('colors.primary');
+        }
+
+        &::-moz-progress-bar {
+            background-color: config('colors.primary');
+        }
+
+        &::-ms-fill {
+            border: none;
+            background-color: config('colors.primary');
+        }
+    }
+</style>

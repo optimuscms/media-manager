@@ -1,5 +1,5 @@
 <template>
-    <div class="control">
+    <div>
         <div class="field" v-if="selectedMediaIds.length">
             <div class="control">
                 <div class="media-picker is-single-image" v-if="hasPreview">
@@ -28,18 +28,12 @@
         </div>
 
         <div class="field" v-if="! limitMet">
-            <div class="file is-light">
-                <label class="file-label" @click="open">
-                    <span class="file-cta">
-                        <span class="file-icon">
-                            <icon icon="upload"></icon>
-                        </span>
+            <div class="button button-grey" @click="open">
+                <span class="icon">
+                    <icon icon="upload"></icon>
+                </span>
 
-                        <span class="file-label">
-                            Choose media…
-                        </span>
-                    </span>
-                </label>
+                <span class="font-normal normal-case">Choose media…</span>
             </div>
         </div>
     </div>

@@ -30,12 +30,6 @@ Within your application include the following component:
 <media-manager></media-manager>
 ```
 
-#### Import the SCSS:
-
-```scss
-@import "~@optimuscms/media-manager/src/sass/_all";
-```
-
 ## Usage
 
 ### Components

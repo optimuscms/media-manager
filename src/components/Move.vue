@@ -1,13 +1,16 @@
 <template>
-    <o-modal class="is-media-move" :active="isActive" @close="close">
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <div class="modal-card-title">Move</div>
-                <a class="delete" @click="close"></a>
+    <o-modal :active="isActive" @close="close">
+        <div class="modal-content bg-white rounded max-w-xs">
+            <header class="flex flex-no-shrink justify-between items-center bg-grey-lighter border-b border-grey-light rounded-t p-4">
+                <h4 class="title">Move</h4>
+
+                <a class="icon" @click="close">
+                    <icon icon="times" size="lg"></icon>
+                </a>
             </header>
 
-            <section class="modal-card-body" :class="{ 'is-loading': isLoading }">
-                <ul class="move-list" v-if="folders.hasOwnProperty(null)">
+            <section class="section-loader bg-white" :class="{ 'loading': isLoading }">
+                <ul class="list-reset move-list" v-if="folders.hasOwnProperty(null)">
                     <move-folder
                         :key="folder.id"
                         v-for="folder in folders[null]"
@@ -16,11 +19,11 @@
                 </ul>
             </section>
 
-            <footer class="modal-card-foot">
+            <footer class="flex flex-no-shrink justify-end items-center bg-grey-lighter rounded-b p-4">
                 <a
-                    class="button is-success is-fullwidth"
+                    class="button button-green w-full"
                     @click="move"
-                    :class="{ 'is-loading': isSaving }"
+                    :class="{ 'loading': isSaving }"
                     :disabled="isSaving || isLoading"
                 >Move</a>
             </footer>
@@ -131,3 +134,67 @@
         }
     }
 </script>
+
+<style lang="scss">
+    .move-list {
+        > li {
+            > a {
+                display: flex;
+                align-items: center;
+                padding: 0.75rem 1rem;
+                justify-content: space-between;
+                border-bottom: solid 1px config('colors.grey-light');
+                
+                &:hover {
+                    background-color: config('colors.grey-lighter');
+                }
+            }
+
+            &.active {
+                > a {
+                    color: config('colors.white');
+                    background-color: config('colors.primary');
+                    border-bottom-color: rgba(255, 255, 255, 0.5);
+                }
+            }
+
+            &.selected {
+                > a {
+                    color: config('colors.grey-darker');
+                    background-color: config('colors.grey-lighter');
+                }
+            }
+
+            ul {
+                > li {
+                    > a {
+                        display: flex;
+                        align-items: center;
+                        padding: 0.75rem 1rem;
+                        justify-content: space-between;
+                        border-bottom: solid 1px config('colors.grey-light');
+
+                        &:hover {
+                            background-color: config('colors.grey-lighter');
+                        }
+                    }
+
+                    &.active {
+                        > a {
+                            color: config('colors.white');
+                            background-color: config('colors.primary');
+                            border-bottom-color: rgba(255, 255, 255, 0.5);
+                        }
+                    }
+
+                    &.selected {
+                        > a {
+                            color: config('colors.grey-darker');
+                            background-color: config('colors.grey-lighter');
+                        }
+                    }
+                }
+            }
+        }
+    }
+</style>
