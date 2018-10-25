@@ -2,26 +2,31 @@
     <div>
         <div class="field" v-if="selectedMediaIds.length">
             <div class="control">
-                <div class="media-picker is-single-image" v-if="hasPreview">
+                <div class="media-preview" v-if="hasPreview">
                     <img :src="firstMedia.thumbnail_url">
-                    <a class="picker-clear" @click="remove(firstMedia.id)"></a>
+
+                    <a class="icon" @click="remove(firstMedia.id)">
+                        <icon icon="times"></icon>
+                    </a>
                 </div>
 
-                <div class="media-picker is-multiple" v-else>
-                    <div class="media" :key="media.id" v-for="media in activeMedia(selectedMediaIds)">
-                        <div class="media-left">
-                            <div class="icon is-large">
-                                <icon :icon="icon(media.extension)" size="2x"></icon>
-                            </div>
+                <div class="media-items" v-else>
+                    <div
+                        :key="media.id"
+                        class="media-item"
+                        v-for="media in activeMedia(selectedMediaIds)"
+                    >
+                        <div class="icon medium">
+                            <icon :icon="icon(media.extension)" size="2x"></icon>
                         </div>
                         
-                        <div class="media-content">
+                        <div class="media-item-body truncate">
                             {{ media.name }}
                         </div>
 
-                        <div class="media-right">
-                            <a class="delete is-small" @click="remove(media.id)"></a>
-                        </div>
+                        <a class="icon" @click="remove(media.id)">
+                            <icon icon="times"></icon>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -156,3 +161,81 @@
         }
     }
 </script>
+
+<style lang="scss" scoped>
+    .media-preview {
+        position: relative;
+        display: inline-flex;
+        border: 1px solid config('colors.grey-light');
+        border-radius: config('borderRadius.default');
+
+        &:before {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0;
+            content: '';
+            position: absolute;
+            transition: all 125ms ease-in-out;
+            background-color: config('colors.black');
+        }
+
+        img {
+            display: block;
+            max-height: 14rem;
+            border-radius: config('borderRadius.default');
+        }
+
+        .icon {
+            top: 1rem;
+            right: 1rem;
+            position: absolute;
+            color: config('colors.black');
+            border-radius: config('borderRadius.full');
+            background-color: rgba(255, 255, 255, 0.5);
+        }
+
+        &:hover {
+            &:before {
+                opacity: 0.25;
+            }
+        }
+    }
+
+    .media-items {
+        display: flex;
+        flex-wrap: wrap;
+        position: relative;
+        padding: 0.75rem 0.5rem;
+        background-color: config('colors.white');
+        border: 1px solid config('colors.grey-light');
+        border-radius: config('borderRadius.default');
+
+        .media-item {
+            display: flex;
+            padding: 0.5rem;
+            align-items: center;
+            margin: 0.25rem 0.5rem;
+            justify-content: space-between;
+            border-radius: config('borderRadius.default');
+            border: 1px solid config('colors.grey-light');
+            background-color: config('colors.grey-lighter');
+
+            .icon {
+                flex-shrink: 0;
+            }
+
+            .media-item-body {
+                flex-grow: 1;
+                max-width: 8rem;
+                margin-left: 0.5rem;
+                margin-right: 0.5rem;
+            }
+
+            &:hover {
+                border-color: config('colors.grey');
+            }
+        }
+    }
+</style>
