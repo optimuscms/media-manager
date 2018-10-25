@@ -62,9 +62,17 @@ const getters = {
     },
 
     currentMedia: (state, getters) => {
-        return state.media.hasOwnProperty(getters.activeFolderId)
+        let currentMedia = state.media.hasOwnProperty(getters.activeFolderId)
             ? state.media[getters.activeFolderId]
             : [];
+
+        if (state.acceptedExtensions.length) {
+            currentMedia = currentMedia.filter(({ extension }) => {
+                return state.acceptedExtensions.includes(extension)
+            });
+        }
+
+        return currentMedia;
     },
 
     focusedMediaIds: state => {
@@ -338,7 +346,7 @@ const mutations = {
         state.acceptedExtensions = extensions;
     },
 
-    setMedia(state, { folder, media }) {
+    setMedia(state, { folder, media }) {        
         Vue.set(state.media, folder, media);
     },
 

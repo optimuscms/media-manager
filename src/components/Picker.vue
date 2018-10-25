@@ -16,7 +16,7 @@
                         class="media-item"
                         v-for="media in activeMedia(selectedMediaIds)"
                     >
-                        <div class="icon medium">
+                        <div class="icon icon-medium">
                             <icon :icon="icon(media.extension)" size="2x"></icon>
                         </div>
                         

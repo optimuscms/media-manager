@@ -79,7 +79,7 @@
 
                                 <div class="control">
                                     <a class="button" title="Select folder" @click.stop="focusFolder(folder.id)">
-                                        <span class="icon is-small">
+                                        <span class="icon">
                                             <icon icon="crosshairs"></icon>
                                         </span>
                                     </a>
@@ -110,7 +110,7 @@
                                     @click.stop="focusMedia(file.id)"
                                 >   
                                     <div class="media-card-image">
-                                        <figure class="image 4by3" v-if="isImage(file.extension)">
+                                        <figure class="image image-4by3" v-if="isImage(file.extension)">
                                             <img :src="file.thumbnail_url" :alt="file.name" :title="file.name">
                                         </figure>
 

@@ -16,7 +16,7 @@
                     <h4 class="title text-sm">{{ title }}</h4>
                 </div>
 
-                <a class="icon is-small" @click="closePreview">
+                <a class="icon" @click="closePreview">
                     <icon icon="times"></icon>
                 </a>
             </header>
