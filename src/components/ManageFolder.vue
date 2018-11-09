@@ -10,11 +10,7 @@
             </header>
             
             <section class="bg-white px-6 py-8">
-                <o-errors
-                    v-if="form.errors.any()"
-                    class="mb-2"
-                    :errors="form.errors.all()"
-                ></o-errors>
+                <o-errors v-if="anyErrors" class="mb-2" :errors="errors"></o-errors>
 
                 <o-form-field input="name" label="Folder Name" required>
                     <o-input
@@ -23,7 +19,7 @@
                         v-model="form.name"
                         required
                         :disabled="form.processing"
-                        @keydown.enter.prevent.native="save"
+                        @keydown.enter.prevent.native="submit"
                     ></o-input>
                 </o-form-field>
             </section>
@@ -31,9 +27,9 @@
             <footer class="flex flex-no-shrink justify-end items-center bg-grey-lighter border-t border-grey-light rounded-b px-6 py-4">
                 <a
                     class="button button-green"
-                    @click="save"
-                    :class="{ 'loading': form.processing }"
-                    :disabled="form.processing"
+                    @click="submit"
+                    :class="{ 'loading': isProcessing }"
+                    :disabled="isProcessing"
                 >Save</a>
                 
                 <a class="button ml-3" @click="close">Cancel</a>
@@ -44,9 +40,19 @@
 
 <script>
     import { mapGetters, mapMutations } from 'vuex';
-    import Form from 'form-backend-validation';
+    import formMixin from '../mixins/form';
+
+    const initialValues = function () {
+        return {
+            id: null,
+            parent_id: null,
+            name: ''
+        }
+    };
 
     export default {
+        mixins: [ formMixin ],
+
         data() {
             return {
                 isActive: false,
@@ -55,11 +61,7 @@
                 method: 'post',
                 action: '/api/media-folders',
 
-                form: new Form({
-                    id: null,
-                    parent_id: null,
-                    name: ''
-                }, { resetOnSuccess: false })
+                form: initialValues()
             }
         },
 
@@ -90,40 +92,37 @@
             }),
 
             open(folder) {
-                this.form.populate({
+                this.form = {
                     id: folder ? folder.id : null,
                     parent_id: this.activeFolderId,
                     name: folder ? folder.name : '',
-                });
+                };
                 
                 this.isActive = true;
                 this.$nextTick(() => this.$refs.name.$el.focus());
             },
 
-            save() {
-                this.form[this.method](this.action)
-                    .then(response => {
-                        if (this.editing) {
-                            this.updateFolder({
-                                parent: this.activeFolderId,
-                                id: this.form.id,
-                                properties: {
-                                    name: this.form.name
-                                }
-                            });
-                        } else {
-                            this.addFolder({
-                                parent: this.activeFolderId,
-                                folder: response.data
-                            });
+            onSuccess(response) {
+                if (this.editing) {
+                    this.updateFolder({
+                        parent: this.activeFolderId,
+                        id: this.form.id,
+                        properties: {
+                            name: this.form.name
                         }
-
-                        this.close();
                     });
+                } else {
+                    this.addFolder({
+                        parent: this.activeFolderId,
+                        folder: response.data.data
+                    });
+                }
+
+                this.close();
             },
 
             close() {
-                this.form.reset();
+                this.form = initialValues();
                 this.isActive = false;
             }
         }

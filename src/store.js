@@ -154,7 +154,8 @@ const getters = {
 const actions = {
     open({ commit, getters, dispatch }, { limit, selectedMediaIds, acceptedExtensions }) {
         commit('setLimit', limit);
-        commit('setAcceptedExtensions', acceptedExtensions);
+        
+        commit('setAcceptedExtensions', Array.isArray(acceptedExtensions) ? acceptedExtensions : []);
 
         commit('setSelectedMedia', (Array.isArray(selectedMediaIds) && selectedMediaIds.length)
             ? getters.activeMedia(selectedMediaIds)
