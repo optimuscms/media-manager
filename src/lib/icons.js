@@ -3,6 +3,7 @@ import { library } from '@fortawesome/fontawesome-svg-core'
 library.add(
     require('@fortawesome/free-solid-svg-icons/faAngleUp').definition,
     require('@fortawesome/free-solid-svg-icons/faCheck').definition,
+    require('@fortawesome/free-solid-svg-icons/faCopy').definition,
     require('@fortawesome/free-solid-svg-icons/faCrosshairs').definition,
     require('@fortawesome/free-solid-svg-icons/faEllipsisH').definition,
     require('@fortawesome/free-regular-svg-icons/faClock').definition,

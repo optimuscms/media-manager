@@ -16,7 +16,7 @@
                 <template v-if="media">
                     <div class="columns is-gapless" v-if="isImage(media.extension)">
                         <div class="column is-narrow is-media-image">
-                            <img :src="media.url" :alt="media.name">
+                            <img :src="media.thumbnail_url" :alt="media.name">
                         </div>
 
                         <div class="column">
@@ -41,22 +41,26 @@
                                     ></o-input>
                                 </o-form-field>
 
-                                <!-- <div class="field">
-                                    <div class="control">
-                                        <div class="content">
-                                            <hr>
+                                <!-- Copy media url -->
+                                <o-form-field input="url" label="File url">
+                                    <div class="control has-icons-right">
+                                        <input
+                                            id="url"
+                                            ref="url"
+                                            type="text"
+                                            class="input"
+                                            :value="media.url"
+                                            readonly
+                                        >
 
-                                            <p>
-                                                <strong>Details</strong>
-                                            </p>
-
-                                            <p>
-                                                <i><strong>Dimensions:</strong> 1940 x 1000px</i><br>
-                                                <i><strong>File size:</strong> 1.4mb</i>
-                                            </p>
-                                        </div>
+                                        <a
+                                            class="icon is-small is-right has-text-grey-darker"
+                                            @click="copyUrl"
+                                        >
+                                            <icon icon="copy"></icon>
+                                        </a>
                                     </div>
-                                </div> -->
+                                </o-form-field>
                             </div>
                         </div>
                     </div>
@@ -73,26 +77,26 @@
                             ></o-input>
                         </o-form-field>
 
-                        <!-- <div class="field">
-                            <div class="control">
-                                <div class="content">
-                                    <hr>
+                        <!-- Copy media url -->
+                        <o-form-field input="url" label="File url">
+                            <div class="control has-icons-right">
+                                <input
+                                    id="url"
+                                    ref="url"
+                                    type="text"
+                                    class="input"
+                                    :value="media.url"
+                                    readonly
+                                >
 
-                                    <p>
-                                        <strong>Details</strong>
-                                    </p>
-
-                                    <p>
-                                        <i>
-                                            <strong>View:</strong>
-                                            <a :href="media.url" target="_blank">{{ media.name }}</a>
-                                        </i><br>
-                                        
-                                        <i><strong>File size:</strong> 1.4mb</i>
-                                    </p>
-                                </div>
+                                <a
+                                    class="icon is-small is-right has-text-grey-darker"
+                                    @click="copyUrl"
+                                >
+                                    <icon icon="copy"></icon>
+                                </a>
                             </div>
-                        </div> -->
+                        </o-form-field>
                     </template>
                 </template>
             </section>
@@ -175,6 +179,11 @@
                     });
             },
 
+            copyUrl() {
+                this.$refs.url.select();
+                document.execCommand('copy');
+            },
+
             close() {
                 this.form.reset();
                 this.isActive = false;
@@ -182,3 +191,11 @@
         }
     }
 </script>
+
+<style lang="scss" scoped>
+    .has-icons-right {
+        .is-right {
+            pointer-events: all;
+        }
+    }
+</style>

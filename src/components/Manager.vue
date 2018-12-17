@@ -365,7 +365,8 @@
                 this.$refs.manageMedia.open({
                     id: media.id,
                     name: media.name,
-                    url: media.thumbnail_url,
+                    url: media.url,
+                    thumbnail_url: media.thumbnail_url,
                     extension: media.extension
                 });
             },
