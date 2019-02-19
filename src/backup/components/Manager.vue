@@ -1,8 +1,8 @@
 <template>
-    <o-modal :active="isOpen" @close="close">
+    <o-modal :active="isOpen" @close="$mediaManager.close()">
         <div class="modal-content bg-white rounded h-full">
             <header class="flex flex-no-shrink justify-between items-center bg-grey-lighter border-b border-grey-light rounded-t px-6 py-4">
-                <!-- <ul class="list-reset nav-breadcrumb text-base">
+                <ul class="list-reset nav-breadcrumb text-base">
                     <li
                         :key="folder.id"
                         v-for="folder in openFolders"
@@ -48,7 +48,7 @@
 
                         <span class="flex-grow">Delete</span>
                     </a>
-                </o-dropdown> -->
+                </o-dropdown>
             </header>
 
             <section
@@ -56,8 +56,7 @@
                 :class="{ 'loading': isLoading }"
                 @click="clearFocused"
             >
-
-                <!-- <template v-if="currentFolders.length">
+                <template v-if="currentFolders.length">
                     <h2 class="title mb-4">Folders</h2>
 
                     <div class="flex flex-wrap -m-2">
@@ -90,7 +89,7 @@
                     </div>
 
                     <hr class="bg-grey-light my-6">
-                </template> -->
+                </template>
 
                 <template v-if="currentMedia.length">
                     <h2 class="title mb-4">Media</h2>
@@ -109,7 +108,7 @@
                                         'selected': selectedMediaIds.includes(file.id)
                                     }"
                                     @click.stop="focusMedia(file.id)"
-                                >
+                                >   
                                     <div class="media-card-image">
                                         <figure class="image image-4by3" v-if="isImage(file.extension)">
                                             <img :src="file.thumbnail_url" :alt="file.name" :title="file.name">
@@ -129,22 +128,22 @@
                     </div>
                 </template>
 
-                <!-- <o-notification
+                <o-notification
                     class="bg-blue-light text-white rounded"
                     v-else
                     :active="! currentMedia.length"
                     :closeable="false"
-                >No media, add new media by clicking the <strong>New</strong> button below.</o-notification> -->
+                >No media, add new media by clicking the <strong>New</strong> button below.</o-notification>
             </section>
             
             <footer class="flex flex-no-shrink justify-between relative bg-grey-lighter border-t border-grey-light rounded-b px-6 py-4">
                 <div>
                     <o-dropdown icon="angle-up" class="up" placeholder="New">
-                        <!-- <a class="dropdown-item" @click="$refs.manageFolder.open()">New Folder</a> -->
+                        <a class="dropdown-item" @click="$refs.manageFolder.open()">New Folder</a>
                         <a class="dropdown-item" @click="$refs.upload.focus()">Upload Media</a>
                     </o-dropdown>
 
-                    <!-- <o-dropdown class="up ml-3">
+                    <o-dropdown class="up ml-3">
                         <template slot="button">
                             <span class="button button-grey">
                                 <span class="font-normal normal-case">{{ selectedMediaLabel }}</span>
@@ -172,7 +171,7 @@
                         <a class="dropdown-item" @click="clearSelectedMedia">
                             Clear all selected files
                         </a>
-                    </o-dropdown> -->
+                    </o-dropdown>
                 </div>
 
                 <div>
@@ -180,19 +179,19 @@
                         v-if="limit !== 0"
                         class="button button-green"
                         @click="confirm" 
+                        :disabled="insertIsDisabled"
                     >Insert</a>
-                        <!-- :disabled="insertIsDisabled" -->
 
-                    <!-- <a class="button ml-3" @click="cancel">
+                    <a class="button ml-3" @click="cancel">
                         {{ limit === 0 ? 'Close' : 'Cancel' }}
-                    </a> -->
+                    </a>
                 </div>
 
                 <upload ref="upload"></upload>
             </footer>
         </div>
 
-        <!-- <move ref="move"></move>
+        <move ref="move"></move>
         <manage-media ref="manageMedia"></manage-media>
         <manage-folder ref="manageFolder"></manage-folder>
 
@@ -208,7 +207,7 @@
                 <template v-if="count.folders && count.media"> and </template>
                 <strong v-if="count.media">{{ count.media }} media item{{ count.media !== 1 ? 's' : null }}</strong>
             </template>
-        </o-confirmation> -->
+        </o-confirmation>
     </o-modal>
 </template>
 
@@ -216,16 +215,16 @@
     import { mapGetters, mapMutations, mapActions } from 'vuex';
 
     // Components
-    // import ManageFolder from './ManageFolder';
-    // import ManageMedia from './ManageMedia';
-    // import Move from './Move';
+    import ManageFolder from './ManageFolder';
+    import ManageMedia from './ManageMedia';
+    import Move from './Move';
     import Upload from './Upload';
 
     export default {
         components: {
-            // ManageFolder,
-            // ManageMedia,
-            // Move,
+            ManageFolder,
+            ManageMedia,
+            Move,
             Upload
         },
 
@@ -235,60 +234,60 @@
                 isLoading: 'mediaManager/isLoading',
 
                 limit: 'mediaManager/limit',
-                // acceptedExtensions: 'mediaManager/acceptedExtensions',
+                acceptedExtensions: 'mediaManager/acceptedExtensions',
 
                 currentMedia: 'mediaManager/currentMedia',
                 focusedMediaIds: 'mediaManager/focusedMediaIds',
-                // selectedMedia: 'mediaManager/selectedMedia',
+                selectedMedia: 'mediaManager/selectedMedia',
                 selectedMediaIds: 'mediaManager/selectedMediaIds',
 
-                // activeFolderId: 'mediaManager/activeFolderId',
-                // currentFolders: 'mediaManager/currentFolders',
-                // focusedFolderIds: 'mediaManager/focusedFolderIds',
-                // openFolders: 'mediaManager/openFolders',
+                activeFolderId: 'mediaManager/activeFolderId',
+                currentFolders: 'mediaManager/currentFolders',
+                focusedFolderIds: 'mediaManager/focusedFolderIds',
+                openFolders: 'mediaManager/openFolders',
 
-                // icon: 'mediaManager/icon',
+                icon: 'mediaManager/icon',
                 isImage: 'mediaManager/isImage'
             }),
 
-            // focusedItemCount() {
-            //     return this.focusedFolderIds.length + this.focusedMediaIds.length;
-            // },
+            focusedItemCount() {
+                return this.focusedFolderIds.length + this.focusedMediaIds.length;
+            },
 
-            // selectedMediaCount() {
-            //     return this.selectedMedia.length;
-            // },
+            selectedMediaCount() {
+                return this.selectedMedia.length;
+            },
 
-            // selectedMediaLabel() {
-            //     if (this.limit) {
-            //         return this.selectedMediaCount + ' of ' + this.limit + ' file' + ((this.limit !== 1) ? 's' : '') + ' selected';
-            //     }
+            selectedMediaLabel() {
+                if (this.limit) {
+                    return this.selectedMediaCount + ' of ' + this.limit + ' file' + ((this.limit !== 1) ? 's' : '') + ' selected';
+                }
 
-            //     return this.selectedMediaCount + ' file' + ((this.selectedMediaCount !== 1) ? 's' : '') + ' selected';
-            // },
+                return this.selectedMediaCount + ' file' + ((this.selectedMediaCount !== 1) ? 's' : '') + ' selected';
+            },
 
-            // limitIsExceeded() {
-            //     if (this.limit) {
-            //         let newlySelectedMedia = this.focusedMediaIds.filter(id => {
-            //             return ! this.selectedMediaIds.includes(id)
-            //         });
+            limitIsExceeded() {
+                if (this.limit) {
+                    let newlySelectedMedia = this.focusedMediaIds.filter(id => {
+                        return ! this.selectedMediaIds.includes(id)
+                    });
                     
-            //         return (this.selectedMediaCount + newlySelectedMedia.length) > this.limit;
-            //     }
+                    return (this.selectedMediaCount + newlySelectedMedia.length) > this.limit;
+                }
 
-            //     return false;
-            // },
+                return false;
+            },
 
-            // insertIsDisabled() {
-            //     return this.limitIsExceeded || ! (this.focusedMediaIds.length || this.selectedMediaCount)
-            // }
+            insertIsDisabled() {
+                return this.limitIsExceeded || ! (this.focusedMediaIds.length || this.selectedMediaCount)
+            }
         },
 
         watch: {
-            // activeFolderId() {
-            //     this.clearFocused();
-            //     this.getMediaAndFolders();
-            // }
+            activeFolderId() {
+                this.clearFocused();
+                this.getMediaAndFolders();
+            }
         },
 
         mounted() {
@@ -302,12 +301,11 @@
 
         methods: {
             ...mapActions({
-            //     open: 'mediaManager/open',
-                reset: 'mediaManager/reset',
-                close: 'mediaManager/close',
+                open: 'mediaManager/open',
 
-            //     getMediaAndFolders: 'mediaManager/getMediaAndFolders',
-            //     deleteFocusedItems: 'mediaManager/deleteFocusedItems',
+                resetMediaManager: 'mediaManager/reset',
+                getMediaAndFolders: 'mediaManager/getMediaAndFolders',
+                deleteFocusedItems: 'mediaManager/deleteFocusedItems',
                 
                 selectMedia: 'mediaManager/selectMedia'
             }),
@@ -317,62 +315,62 @@
 
                 focusMedia: 'mediaManager/focusMedia',
                 clearFocusedMediaIds: 'mediaManager/clearFocusedMediaIds',
-            //     removeSelectedMediaItem: 'mediaManager/removeSelectedMediaItem',
-            //     clearSelectedMedia: 'mediaManager/clearSelectedMedia',
+                removeSelectedMediaItem: 'mediaManager/removeSelectedMediaItem',
+                clearSelectedMedia: 'mediaManager/clearSelectedMedia',
 
-            //     focusFolder: 'mediaManager/focusFolder',
-            //     clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds',
-            //     openFolder: 'mediaManager/openFolder'
+                focusFolder: 'mediaManager/focusFolder',
+                clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds',
+                openFolder: 'mediaManager/openFolder'
             }),
 
-            // edit() {
-            //     if (this.focusedItemCount === 1) {
-            //         this.focusedMediaIds.length
-            //             ? this.editMedia(this.focusedMediaIds[0])
-            //             : this.editFolder(this.focusedFolderIds[0]);
-            //     }
-            // },
+            edit() {
+                if (this.focusedItemCount === 1) {
+                    this.focusedMediaIds.length
+                        ? this.editMedia(this.focusedMediaIds[0])
+                        : this.editFolder(this.focusedFolderIds[0]);
+                }
+            },
 
-            // editMedia(mediaId) {
-            //     let media = this.currentMedia.find(({ id }) => id === mediaId);
+            editMedia(mediaId) {
+                let media = this.currentMedia.find(({ id }) => id === mediaId);
 
-            //     this.$refs.manageMedia.open({
-            //         id: media.id,
-            //         name: media.name,
-            //         url: media.thumbnail_url,
-            //         extension: media.extension
-            //     });
-            // },
+                this.$refs.manageMedia.open({
+                    id: media.id,
+                    name: media.name,
+                    url: media.thumbnail_url,
+                    extension: media.extension
+                });
+            },
 
-            // editFolder(folderId) {
-            //     let folder = this.currentFolders.find(({ id }) => id === folderId);
+            editFolder(folderId) {
+                let folder = this.currentFolders.find(({ id }) => id === folderId);
 
-            //     this.$refs.manageFolder.open({
-            //         id: folder.id,
-            //         name: folder.name
-            //     });
-            // },
+                this.$refs.manageFolder.open({
+                    id: folder.id,
+                    name: folder.name
+                });
+            },
 
             clearFocused() {
                 this.clearFocusedMediaIds();
-                // this.clearFocusedFolderIds();
+                this.clearFocusedFolderIds();
             },
 
             confirm() {
-                // if (! this.insertIsDisabled) {
-                    this.selectMedia();
+                if (! this.insertIsDisabled) {
+                    this.selectMedia(); 
 
-                //     this.$mediaManager.mediaSelected(this.selectedMediaIds);
-                    this.reset();
-                    this.close();
-                //     this.$mediaManager.close();
-                // }
+                    this.$mediaManager.mediaSelected(this.selectedMediaIds);
+                    
+                    this.resetMediaManager();
+                    this.$mediaManager.close();
+                }
             },
 
-            // cancel() {
-            //     this.clearFocused();
-            //     this.$mediaManager.close();
-            // }
+            cancel() {
+                this.clearFocused();
+                this.$mediaManager.close();
+            }
         }
     }
 </script>

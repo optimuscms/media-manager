@@ -1,9 +1,6 @@
 import mediaStore from './store';
 import icons from './lib/icons';
 
-import Manager from './components/Manager';
-import Picker from './components/Picker';
-
 // todo docs
 // <media-manager></media-manager>
 // <media-picker></media-picker> props: value Number/Array, accept [], limit Number, preview Boolean
@@ -20,8 +17,8 @@ export default function install(Vue, options = {}) {
     options.store.registerModule('mediaManager', mediaStore);
     
     // Register components
-    Vue.component('media-manager', Manager);
-    Vue.component('media-picker', Picker);
+    Vue.component('media-manager', require('./components/Manager'));
+    Vue.component('media-picker', require('./components/Picker'));
 
     // const eventBus = new Vue();
 

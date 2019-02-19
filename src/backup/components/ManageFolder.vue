@@ -59,7 +59,7 @@
 
                 title: 'Create Folder',
                 method: 'post',
-                action: '/api/media-folders',
+                action: '/admin/media-folders',
 
                 form: initialValues()
             }
@@ -80,7 +80,7 @@
                 if (editing) {
                     this.title = 'Edit Folder';
                     this.method = 'patch';
-                    this.action = '/api/media-folders/' + this.form.id;
+                    this.action = '/admin/media-folders/' + this.form.id;
                 }
             }
         },

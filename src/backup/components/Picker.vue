@@ -32,46 +32,7 @@
             </div>
         </div> -->
 
-        <div class="field" v-if="pickerMedia.length">
-            <div class="control flex">
-                <div class="media-preview" v-if="hasPreview">
-                    <img :src="firstMedia.thumbnail_url">
-
-                    <a
-                        class="icon"
-                        @click="removeSelectedMedia({
-                            pickerId: id,
-                            id: firstMedia.id
-                        })"
-                    >
-                        <icon icon="times"></icon>
-                    </a>
-                </div>
-
-                <div class="media-items" v-else>
-                    <!-- <div
-                        :key="media.id"
-                        class="media-item"
-                        v-for="media in activeMedia(selectedMediaIds)"
-                    >
-                        <div class="icon icon-medium">
-                            <icon :icon="icon(media.extension)" size="2x"></icon>
-                        </div>
-                        
-                        <div class="media-item-body truncate">
-                            {{ media.name }}
-                        </div>
-
-                        <a class="icon" @click="remove(media.id)">
-                            <icon icon="times"></icon>
-                        </a>
-                    </div> -->
-                </div>
-            </div>
-        </div>
-
-        <!-- v-if="! limitMet" -->
-        <div class="field">
+        <div class="field" v-if="! limitMet">
             <div class="button button-grey" @click="open">
                 <span class="icon">
                     <icon icon="upload"></icon>
@@ -85,25 +46,21 @@
 
 <script>
     import { mapActions, mapGetters } from 'vuex';
-    import isEqual from 'lodash/isEqual';
 
     export default {
         props: {
-            value: [ Array, Number ],
-
             id: {
                 type: String,
                 required: true
             },
 
-            media: {
-                type: [ Array, Object ],
-                default: () => []
+            value: {
+                type: [ Array, Number ]
             },
 
-            // acceptedExtensions: {
-            //     type: [ Array, String ]
-            // },
+            acceptedExtensions: {
+                type: [ Array, String ]
+            },
 
             limit: {
                 type: Number,
@@ -116,111 +73,116 @@
             }
         },
 
+        // data() {
+        //     return {
+        //         selectedMediaIds: []
+        //     }
+        // },
+
         computed: {
             ...mapGetters({
-                getPickerMedia: 'mediaManager/selectedMedia'
-            //     icon: 'mediaManager/icon',
-            //     imageExtensions: 'mediaManager/imageExtensions'
+                icon: 'mediaManager/icon',
+                // activeMedia: 'mediaManager/activeMedia',
+                selectedMedia: 'mediaManager/selectedMedia',
+                imageExtensions: 'mediaManager/imageExtensions'
             }),
 
             pickerMedia() {
-                console.log('get picker media from vuex', this.id);
-                return this.getPickerMedia(this.id);
-            },
-            
-            firstMedia() {
-                return this.pickerMedia.length ? this.pickerMedia[0] : null;
+                return this.selectedMedia(this.id);
             },
 
-            // limitMet() {
-            //     // return this.limit === this.selectedMediaIds.length;
-            //     return false;
+            selectedMediaIds() {
+                return Array.isArray(this.value) ? this.value : [this.value];
+            },
+
+            // firstMedia() {
+            //     return this.activeMedia(this.selectedMediaIds)[0];
             // },
 
-            hasPreview() {
-                return this.limit === 1 && this.preview && this.firstMedia;
-            }
+            limitMet() {
+                // return this.limit === this.selectedMediaIds.length;
+                return false;
+            },
+
+            // hasPreview() {
+            //     return this.limit === 1 && this.preview;
+            // }
         },
 
         watch: {
-            media(value, oldValue) {
-                console.log('watch media, set selected media');
-
-                this.setSelectedMedia({
-                    pickerId: this.id,
-                    media: this.formatMedia(this.media)
-                });
-            },
-
-            pickerMedia() {
-                let selectedIds = this.pickerMedia.map(({ id }) => id);
-                console.log('watch picker media, emit ids', selectedIds);
-
+            selectedMediaIds(selectedMediaIds) {
+                let value;
+                
                 if (this.limit === 1) {
-                    return this.$emit('select', selectedIds.length
-                        ? selectedIds[0]
-                        : null
-                    );
+                    value = selectedMediaIds.length ? selectedMediaIds[0] : null;
+                } else {
+                    value = selectedMediaIds;
                 }
 
-                return this.$emit('select', selectedIds);
+                this.$emit('input', value);
             }
         },
 
-        created() {
-            console.log('created set selected media');
+        mounted() {
+            // this.setSelectedMediaIds(this.value);
 
-            this.setSelectedMedia({
-                pickerId: this.id,
-                media: this.formatMedia(this.media)
-            });
-        },
-
-        destroyed() {
-            this.clearSelectedMedia(this.id);
+            // this.$mediaManager.onMediaDeleted(mediaIds => {
+            //     this.selectedMediaIds = this.selectedMediaIds.filter(id => ! mediaIds.includes(id));
+            // });
         },
 
         methods: {
             ...mapActions({
-                openManager: 'mediaManager/open',
-                setSelectedMedia: 'mediaManager/setSelectedMedia',
-                clearSelectedMedia: 'mediaManager/setSelectedMedia',
-                removeSelectedMedia: 'mediaManager/removeSelectedMedia',
+                openManager: 'mediaManager/open'
             }),
-
-            formatMedia(media) {
-                console.log('get selected media from prop', media);
-
-                if (! media) {
-                    return [];
-                }
-
-                if (Array.isArray(media)) {
-                    return media;
-                }
-
-                return [media];
-            },
 
             open() {
                 this.openManager({
                     pickerId: this.id,
                     limit: this.limit,
-                    // acceptedExtensions: this.acceptedExtensions
-                    //     ? this.setAcceptedExtensions(this.acceptedExtensions)
-                    //     : null
+                    selectedMediaIds: this.selectedMediaIds,
+                    acceptedExtensions: this.acceptedExtensions
+                        ? this.setAcceptedExtensions(this.acceptedExtensions)
+                        : null
                 });
-            }
 
-            // setAcceptedExtensions(acceptedExtensions) {
-            //     if (acceptedExtensions === 'image') {
-            //         return this.imageExtensions;
+                // this.$mediaManager.open({
+                //     limit: this.limit,
+                //     selectedMediaIds: this.selectedMediaIds,
+                //     acceptedExtensions: this.acceptedExtensions
+                //         ? this.setAcceptedExtensions(this.acceptedExtensions)
+                //         : []
+                // });
+
+                // this.$mediaManager.onMediaSelected(this.setSelectedMediaIds);
+
+                // this.$mediaManager.onClose(() => {
+                //     this.$mediaManager.removeMediaSelectedListener(this.setSelectedMediaIds);
+                // });
+            },
+
+            setAcceptedExtensions(acceptedExtensions) {
+                if (acceptedExtensions === 'image') {
+                    return this.imageExtensions;
+                }
+
+                return Array.isArray(acceptedExtensions)
+                    ? acceptedExtensions
+                    : [acceptedExtensions];
+            },
+
+            // setSelectedMediaIds(value) {
+            //     if (value) {
+            //         this.selectedMediaIds = Array.isArray(value) ? value : [value];
             //     }
-
-            //     return Array.isArray(acceptedExtensions)
-            //         ? acceptedExtensions
-            //         : [acceptedExtensions];
             // },
+
+            remove(id) {
+                
+                // this.selectedMediaIds = this.selectedMediaIds.filter(mediaId => {
+                //     return mediaId !== id;
+                // });
+            }
         }
     }
 </script>

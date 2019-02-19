@@ -84,7 +84,7 @@
             getFolders() {
                 this.isLoading = true;
 
-                axios.get('/api/media-folders').then(response => {
+                axios.get('/admin/media-folders').then(response => {
                     this.setFolders(
                         groupBy(response.data.data, folder => folder.parent_id)
                     );
@@ -99,7 +99,7 @@
 
                 if (this.focusedMediaIds.length) {
                     this.focusedMediaIds.forEach(mediaId => {
-                        requests.push(axios.patch('/api/media/' + mediaId, {
+                        requests.push(axios.patch('/admin/media/' + mediaId, {
                             folder_id: this.selectedFolder
                         }));
                     });
@@ -107,7 +107,7 @@
 
                 if (this.focusedFolderIds.length) {
                     this.focusedFolderIds.forEach(folderId => {
-                        requests.push(axios.patch('/api/media-folders/' + folderId, {
+                        requests.push(axios.patch('/admin/media-folders/' + folderId, {
                             parent_id: this.selectedFolder
                         }));
                     });
