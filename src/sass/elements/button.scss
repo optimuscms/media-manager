@@ -1,0 +1,139 @@
+$mm-button-padding: 0 1.5rem !default;
+$mm-button-weight: $mm-font-weight-bold !default;
+$mm-button-border-radius: $mm-border-radius-default !default;
+
+$mm-button-color: $mm-grey-darker !default;
+$mm-button-hover-color: $mm-black !default;
+
+$mm-button-background-color: $mm-white !default;
+$mm-button-hover-background-color: $mm-grey-lightest !default;
+
+$mm-button-border-width: 1px !default;
+$mm-button-border-color: $mm-grey-light !default;
+$mm-button-hover-border-color: $mm-grey !default;
+
+// $button-disabled-opacity: 0.5 !default;
+// $button-disabled-border-color: config('colors.grey-light') !default;
+// $button-disabled-background-color: config('colors.white') !default;
+
+// $button-static-color: config('colors.grey') !default;
+// $button-static-border-color: config('colors.grey-light') !default;
+// $button-static-background-color: config('colors.grey-lightest') !default;
+
+.mm-button {
+    @include mm-control;
+
+    cursor: pointer;
+    text-align: center;
+    align-items: center;
+    white-space: nowrap;
+    text-decoration: none;
+    justify-content: center;
+    color: $mm-button-color;
+    text-transform: uppercase;
+    padding: $mm-button-padding;
+    font-weight: $mm-button-weight;
+    border-width: $mm-button-border-width;
+    border-color: $mm-button-border-color;
+    border-radius: $mm-button-border-radius;
+    background-color: $mm-button-background-color;
+
+    .mm-icon {
+        &:first-child:not(:last-child) {
+            margin-right: 0.1875em;
+            margin-left: calc(-0.5em - 2px);
+        }
+        
+        &:last-child:not(:first-child) {
+            margin-left: 0.1875em;
+            margin-right: calc(-0.5em - 2px);
+        }
+
+        &:first-child:last-child {
+            margin-left: calc(-0.5em - 2px);
+            margin-right: calc(-0.5em - 2px);
+        }
+    }
+
+    &:hover {
+        color: $mm-button-hover-color;
+        border-color: $mm-button-hover-border-color;
+        background-color: $mm-button-hover-background-color;
+    }
+
+    // @each $name, $colors in $button-colours {
+    //     &.button-#{$name} {
+    //         color: config('colors.#{nth($colors, 2)}');
+    //         border-color: config('colors.#{nth($colors, 1)}');
+    //         background-color: config('colors.#{nth($colors, 1)}');
+    
+    //         &:hover {
+    //             color: config('colors.#{nth($colors, 4)}');
+    //             border-color: config('colors.#{nth($colors, 3)}');
+    //             background-color: config('colors.#{nth($colors, 3)}');
+    //         }
+
+    //         &[disabled] {
+    //             border-color: transparent;
+    //             background-color: config('colors.#{nth($colors, 1)}');
+    //         }
+
+    //         &.loading {
+    //             &:after {
+    //                 border-left-color: config('colors.#{nth($colors, 2)}');
+    //                 border-bottom-color: config('colors.#{nth($colors, 2)}');
+    //             }
+    //         }
+
+    //         &.outlined {
+    //             color: config('colors.#{nth($colors, 1)}');
+        
+    //             &:hover {
+    //                 color: config('colors.#{nth($colors, 2)}');
+    //                 background-color: config('colors.#{nth($colors, 3)}');
+    //             }
+    //         }
+    //     }
+    // }
+
+    // &.outlined {
+    //     background-color: transparent;
+
+    //     &:hover {
+    //         background-color: transparent;
+    //     }
+    // }
+
+    // &.static {
+    //     pointer-events: none;
+    //     color: $button-static-color;
+    //     border-color: $button-static-border-color;
+    //     background-color: $button-static-background-color;
+    // }
+
+    // &[disabled] {
+    //     opacity: $button-disabled-opacity;
+    //     border-color: $button-disabled-border-color;
+    //     background-color: $button-disabled-background-color;
+    // }
+
+    // &.loading {
+    //     color: transparent;
+    //     pointer-events: none;
+
+    //     &:after {
+    //         content: '';
+    //         width: 1rem;
+    //         height: 1rem;
+    //         display: block;
+    //         position: absolute;
+    //         border-radius: 100px;
+    //         top: calc(50% - (1rem / 2));
+    //         left: calc(50% - (1rem / 2));
+    //         border: 2px solid transparent;
+    //         animation: spin 500ms infinite linear;
+    //         border-left-color: $button-border-color;
+    //         border-bottom-color: $button-border-color;
+    //     }
+    // }
+}

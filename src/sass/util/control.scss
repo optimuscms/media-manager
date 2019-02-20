@@ -1,0 +1,20 @@
+@mixin mm-control {
+    height: 2.75rem;
+    box-shadow: none;
+    appearance: none;
+    border-width: 1px;
+    position: relative;
+    border-style: solid;
+    vertical-align: top;
+    display: inline-flex;
+    justify-content: flex-start;
+
+    &:focus,
+    &:active {
+        outline: none
+    }
+    
+    &[disabled] {
+        cursor: not-allowed
+    }
+}

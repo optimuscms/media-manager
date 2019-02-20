@@ -1,0 +1,95 @@
+.mm-button-picker {
+    text-transform: none;
+    color: $mm-picker-button-color;
+    font-weight: $mm-picker-button-font-weight;
+    border-color: $mm-picker-button-border-color;
+    background-color: $mm-picker-button-background-color;
+
+    &:hover {
+        border-color: $mm-picker-button-hover-border-color;
+        background-color: $mm-picker-button-hover-background-color;
+    }
+}
+
+.mm-picker-preview {
+    position: relative;
+    vertical-align: top;
+    margin-bottom: 1rem;
+    display: inline-flex;
+    border-radius: $mm-picker-preview-border-radius;
+    border: 1px solid $mm-picker-preview-border-color;
+
+    &:before {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        opacity: 0;
+        content: '';
+        position: absolute;
+        transition: all 125ms ease-in-out;
+        background-color: $mm-picker-preview-overlay-color;
+    }
+
+    img {
+        display: block;
+        max-height: 14rem;
+        border-radius: $mm-picker-preview-border-radius;
+    }
+
+    .mm-icon {
+        top: 1rem;
+        right: 1rem;
+        color: #333;
+        position: absolute;
+        border-radius: 50%;
+        background-color: rgba(255, 255, 255, 0.5);
+    }
+
+    &:hover {
+        &:before {
+            opacity: $mm-picker-preview-overlay-opacity;
+        }
+    }
+}
+
+.mm-picker-items {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    margin-bottom: 1rem;
+    padding: 0.75rem 0.5rem;
+    border-radius: $mm-picker-items-border-radius;
+    border: 1px solid $mm-picker-items-border-color;
+    background-color: $mm-picker-items-background-color;
+}
+
+.mm-picker-item {
+    display: flex;
+    padding: 0.5rem;
+    align-items: center;
+    margin: 0.25rem 0.5rem;
+    justify-content: space-between;
+    border-radius: $mm-picker-item-border-radius;
+    border: 1px solid $mm-picker-item-border-color;
+    background-color: $mm-picker-item-background-color;
+
+    .mm-icon {
+        flex-shrink: 0;
+    }
+
+    .mm-picker-item-body {
+        flex-grow: 1;
+        max-width: 8rem;
+        overflow: hidden;
+        white-space: nowrap;
+        margin-left: 0.5rem;
+        margin-right: 0.5rem;
+        text-overflow: ellipsis;
+    }
+
+    &:hover {
+        border-color: $mm-picker-item-hover-border-color;
+        background-color: $mm-picker-item-hover-background-color;
+    }
+}

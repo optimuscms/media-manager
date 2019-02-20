@@ -1,0 +1,113 @@
+.mm-modal {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 50;
+    display: none;
+    position: fixed;
+    overflow: hidden;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+
+    &.active {
+        display: flex;
+    }
+}
+
+.mm-modal-background {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: absolute;
+    background-color: $mm-modal-background-color;
+}
+
+.mm-modal-wrap {
+    width: 100%;
+    margin: 0 auto;
+    overflow: auto;
+    position: relative;
+    border-radius: $mm-modal-border-radius;
+    max-width: calc(100vw - #{$mm-modal-padding} * 2);
+    max-height: calc(100vh - #{$mm-modal-padding} * 2);
+}
+
+.mm-modal-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    justify-content: space-between;
+    background-color: $mm-modal-header-background-color;
+    border-bottom: solid 1px $mm-modal-header-border-color;
+    border-radius: $mm-modal-border-radius $mm-modal-border-radius 0 0;
+}
+
+.mm-modal-content {
+    position: relative;
+    background-color: $mm-modal-content-background-color;
+
+    &.loading {
+        min-height: 10rem;
+        
+        > * {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        &:before {
+            top: 5rem;
+            left: 50%;
+            z-index: 10;
+            content: '';
+            display: block;
+            position: absolute;
+            border-radius: 100px;
+            width: $mm-modal-loader-size;
+            height: $mm-modal-loader-size;
+            border-top: 3px solid transparent;
+            border-right: 3px solid transparent;
+            margin-top: -($mm-modal-loader-size / 2);
+            margin-left: -($mm-modal-loader-size / 2);
+            border-left: 3px solid $mm-modal-loader-color;
+            border-bottom: 3px solid $mm-modal-loader-color;
+            animation: mm-loader-spin 500ms infinite linear;
+        }
+    }
+}
+
+@keyframes mm-loader-spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(359deg);
+    }
+}
+
+.mm-modal-footer {
+    display: flex;
+    flex-shrink: 0;
+    position: relative;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    justify-content: space-between;
+    background-color: $mm-modal-footer-background-color;
+    border-top: solid 1px $mm-modal-footer-border-color;
+    border-radius: 0 0 $mm-modal-border-radius $mm-modal-border-radius;
+}
+
+.mm-modal-fade-enter-active,
+.mm-modal-fade-leave-active {
+    transition: opacity 250ms;
+}
+
+.mm-modal-fade-enter,
+.mm-modal-fade-leave-to {
+    opacity: 0;
+}

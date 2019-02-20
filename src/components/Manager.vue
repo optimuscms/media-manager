@@ -1,8 +1,8 @@
 <template>
-    <o-modal :active="isOpen" @close="close">
-        <div class="modal-content bg-white rounded h-full">
-            <header class="flex flex-no-shrink justify-between items-center bg-grey-lighter border-b border-grey-light rounded-t px-6 py-4">
-                <!-- <ul class="list-reset nav-breadcrumb text-base">
+    <modal :active="isOpen" @close="close">
+        <div class="mm-modal-wrap mm-manager">
+            <header class="mm-modal-header">
+                <ul class="mm-breadcrumb">
                     <li
                         :key="folder.id"
                         v-for="folder in openFolders"
@@ -12,7 +12,7 @@
                     </li>
                 </ul>
 
-                <o-dropdown class="right" :class="{ 'invisible pointer-events-none': ! focusedItemCount }">
+                <!-- <o-dropdown class="right" :class="{ 'invisible pointer-events-none': ! focusedItemCount }">
                     <a slot="button" class="icon">
                         <icon icon="ellipsis-h" size="lg"></icon>
                     </a>
@@ -52,7 +52,7 @@
             </header>
 
             <section
-                class="section-loader bg-white overflow-auto flex-grow px-6 py-4"
+                class="mm-modal-content mm-manager-content"
                 :class="{ 'loading': isLoading }"
                 @click="clearFocused"
             >
@@ -90,7 +90,7 @@
                     </div>
 
                     <hr class="bg-grey-light my-6">
-                </template> -->
+                </template>
 
                 <template v-if="currentMedia.length">
                     <h2 class="title mb-4">Media</h2>
@@ -129,7 +129,7 @@
                     </div>
                 </template>
 
-                <!-- <o-notification
+                <o-notification
                     class="bg-blue-light text-white rounded"
                     v-else
                     :active="! currentMedia.length"
@@ -137,23 +137,23 @@
                 >No media, add new media by clicking the <strong>New</strong> button below.</o-notification> -->
             </section>
             
-            <footer class="flex flex-no-shrink justify-between relative bg-grey-lighter border-t border-grey-light rounded-b px-6 py-4">
-                <div>
+            <footer class="mm-modal-footer">
+                <!-- <div>
                     <o-dropdown icon="angle-up" class="up" placeholder="New">
-                        <!-- <a class="dropdown-item" @click="$refs.manageFolder.open()">New Folder</a> -->
+                        <a class="dropdown-item" @click="$refs.manageFolder.open()">New Folder</a>
                         <a class="dropdown-item" @click="$refs.upload.focus()">Upload Media</a>
                     </o-dropdown>
 
-                    <!-- <o-dropdown class="up ml-3">
-                        <template slot="button">
-                            <span class="button button-grey">
-                                <span class="font-normal normal-case">{{ selectedMediaLabel }}</span>
-
-                                <span class="icon">
-                                    <icon icon="angle-up"></icon>
-                                </span>
+                    <o-dropdown class="up ml-3" v-if="selectedMedia.length">
+                        <span class="button button-grey" slot="button">
+                            <span class="font-normal normal-case">
+                                {{ selectedMediaLabel }}
                             </span>
-                        </template>
+
+                            <span class="icon">
+                                <icon icon="angle-up"></icon>
+                            </span>
+                        </span>
                         
                         <a
                             :key="file.id"
@@ -162,7 +162,13 @@
                         >
                             <span class="flex-grow truncate">{{ file.name }}</span>
 
-                            <a class="icon flex-no-shrink ml-2" @click.stop="removeSelectedMediaItem(file.id)">
+                            <a
+                                class="icon flex-no-shrink ml-2"
+                                @click.stop="removeSelectedMedia({
+                                    pickerId: pickerId,
+                                    id: file.id
+                                })"
+                            >
                                 <icon :icon="['far', 'times-circle']"></icon>
                             </a>
                         </a>
@@ -172,7 +178,11 @@
                         <a class="dropdown-item" @click="clearSelectedMedia">
                             Clear all selected files
                         </a>
-                    </o-dropdown> -->
+                    </o-dropdown>
+
+                    <span class="button static font-normal normal-case ml-3" v-else>
+                        {{ selectedMediaLabel }}
+                    </span>
                 </div>
 
                 <div>
@@ -180,23 +190,23 @@
                         v-if="limit !== 0"
                         class="button button-green"
                         @click="confirm" 
+                        :disabled="insertIsDisabled"
                     >Insert</a>
-                        <!-- :disabled="insertIsDisabled" -->
 
-                    <!-- <a class="button ml-3" @click="cancel">
+                    <a class="button ml-3" @click="cancel">
                         {{ limit === 0 ? 'Close' : 'Cancel' }}
-                    </a> -->
+                    </a>
                 </div>
 
-                <upload ref="upload"></upload>
+                <upload ref="upload"></upload> -->
             </footer>
         </div>
 
         <!-- <move ref="move"></move>
         <manage-media ref="manageMedia"></manage-media>
-        <manage-folder ref="manageFolder"></manage-folder>
+        <manage-folder ref="manageFolder"></manage-folder> -->
 
-        <o-confirmation
+        <!-- <o-confirmation
             ref="confirm"
             @confirm="deleteFocusedItems"
             button-class="button-red"
@@ -209,23 +219,27 @@
                 <strong v-if="count.media">{{ count.media }} media item{{ count.media !== 1 ? 's' : null }}</strong>
             </template>
         </o-confirmation> -->
-    </o-modal>
+    </modal>
 </template>
 
 <script>
     import { mapGetters, mapMutations, mapActions } from 'vuex';
 
     // Components
-    // import ManageFolder from './ManageFolder';
-    // import ManageMedia from './ManageMedia';
-    // import Move from './Move';
+    import Modal from './ui/Modal';
+
+    import ManageFolder from './ManageFolder';
+    import ManageMedia from './ManageMedia';
+    import Move from './Move';
     import Upload from './Upload';
 
     export default {
         components: {
-            // ManageFolder,
-            // ManageMedia,
-            // Move,
+            Modal,
+
+            ManageFolder,
+            ManageMedia,
+            Move,
             Upload
         },
 
@@ -235,81 +249,82 @@
                 isLoading: 'mediaManager/isLoading',
 
                 limit: 'mediaManager/limit',
+                pickerId: 'mediaManager/pickerId',
                 // acceptedExtensions: 'mediaManager/acceptedExtensions',
 
                 currentMedia: 'mediaManager/currentMedia',
                 focusedMediaIds: 'mediaManager/focusedMediaIds',
-                // selectedMedia: 'mediaManager/selectedMedia',
+                getSelectedMedia: 'mediaManager/selectedMedia',
                 selectedMediaIds: 'mediaManager/selectedMediaIds',
 
-                // activeFolderId: 'mediaManager/activeFolderId',
-                // currentFolders: 'mediaManager/currentFolders',
-                // focusedFolderIds: 'mediaManager/focusedFolderIds',
-                // openFolders: 'mediaManager/openFolders',
+                activeFolderId: 'mediaManager/activeFolderId',
+                currentFolders: 'mediaManager/currentFolders',
+                focusedFolderIds: 'mediaManager/focusedFolderIds',
+                openFolders: 'mediaManager/openFolders',
 
-                // icon: 'mediaManager/icon',
+                icon: 'mediaManager/icon',
                 isImage: 'mediaManager/isImage'
             }),
 
-            // focusedItemCount() {
-            //     return this.focusedFolderIds.length + this.focusedMediaIds.length;
-            // },
+            focusedItemCount() {
+                return this.focusedFolderIds.length + this.focusedMediaIds.length;
+            },
 
-            // selectedMediaCount() {
-            //     return this.selectedMedia.length;
-            // },
+            selectedMedia() {
+                return this.pickerId ? this.getSelectedMedia(this.pickerId) : [];
+            },
 
-            // selectedMediaLabel() {
-            //     if (this.limit) {
-            //         return this.selectedMediaCount + ' of ' + this.limit + ' file' + ((this.limit !== 1) ? 's' : '') + ' selected';
-            //     }
+            selectedMediaCount() {
+                return this.selectedMedia.length;
+            },
 
-            //     return this.selectedMediaCount + ' file' + ((this.selectedMediaCount !== 1) ? 's' : '') + ' selected';
-            // },
+            selectedMediaLabel() {
+                if (this.limit) {
+                    return this.selectedMediaCount + 
+                        ' of ' + this.limit +
+                        ' file' + ((this.limit !== 1) ? 's' : '') +
+                        ' selected';
+                }
 
-            // limitIsExceeded() {
-            //     if (this.limit) {
-            //         let newlySelectedMedia = this.focusedMediaIds.filter(id => {
-            //             return ! this.selectedMediaIds.includes(id)
-            //         });
+                return this.selectedMediaCount +
+                    ' file' + ((this.selectedMediaCount !== 1) ? 's' : '') +
+                    ' selected';
+            },
+
+            limitIsExceeded() {
+                if (this.limit) {
+                    let newlySelectedMedia = this.focusedMediaIds.filter(id => {
+                        return ! this.selectedMediaIds.includes(id)
+                    });
                     
-            //         return (this.selectedMediaCount + newlySelectedMedia.length) > this.limit;
-            //     }
+                    return (this.selectedMediaCount + newlySelectedMedia.length) > this.limit;
+                }
 
-            //     return false;
-            // },
+                return false;
+            },
 
-            // insertIsDisabled() {
-            //     return this.limitIsExceeded || ! (this.focusedMediaIds.length || this.selectedMediaCount)
-            // }
+            insertIsDisabled() {
+                return this.limitIsExceeded || ! (this.focusedMediaIds.length || this.selectedMediaCount);
+            }
         },
 
         watch: {
-            // activeFolderId() {
-            //     this.clearFocused();
-            //     this.getMediaAndFolders();
-            // }
-        },
-
-        mounted() {
-            // this.$mediaManager.onOpen(this.open);
-            // this.$mediaManager.onClose(this.close);
-        },
-
-        beforeDestroy() {
-            // this.$mediaManager.destroy(this.open);
+            activeFolderId() {
+                this.clearFocused();
+                this.getMediaAndFolders();
+            }
         },
 
         methods: {
             ...mapActions({
-            //     open: 'mediaManager/open',
                 reset: 'mediaManager/reset',
                 close: 'mediaManager/close',
 
-            //     getMediaAndFolders: 'mediaManager/getMediaAndFolders',
-            //     deleteFocusedItems: 'mediaManager/deleteFocusedItems',
+                getMediaAndFolders: 'mediaManager/getMediaAndFolders',
+                deleteFocusedItems: 'mediaManager/deleteFocusedItems',
                 
-                selectMedia: 'mediaManager/selectMedia'
+                selectMedia: 'mediaManager/selectMedia',
+                removeSelectedMedia: 'mediaManager/removeSelectedMedia'
             }),
 
             ...mapMutations({
@@ -317,105 +332,63 @@
 
                 focusMedia: 'mediaManager/focusMedia',
                 clearFocusedMediaIds: 'mediaManager/clearFocusedMediaIds',
-            //     removeSelectedMediaItem: 'mediaManager/removeSelectedMediaItem',
-            //     clearSelectedMedia: 'mediaManager/clearSelectedMedia',
+                clearSelectedMedia: 'mediaManager/clearSelectedMedia',
 
-            //     focusFolder: 'mediaManager/focusFolder',
-            //     clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds',
-            //     openFolder: 'mediaManager/openFolder'
+                focusFolder: 'mediaManager/focusFolder',
+                clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds',
+                openFolder: 'mediaManager/openFolder'
             }),
 
-            // edit() {
-            //     if (this.focusedItemCount === 1) {
-            //         this.focusedMediaIds.length
-            //             ? this.editMedia(this.focusedMediaIds[0])
-            //             : this.editFolder(this.focusedFolderIds[0]);
-            //     }
-            // },
+            edit() {
+                if (this.focusedItemCount === 1) {
+                    this.focusedMediaIds.length
+                        ? this.editMedia(this.focusedMediaIds[0])
+                        : this.editFolder(this.focusedFolderIds[0]);
+                }
+            },
 
-            // editMedia(mediaId) {
-            //     let media = this.currentMedia.find(({ id }) => id === mediaId);
+            editMedia(mediaId) {
+                let media = this.currentMedia.find(({ id }) => id === mediaId);
 
-            //     this.$refs.manageMedia.open({
-            //         id: media.id,
-            //         name: media.name,
-            //         url: media.thumbnail_url,
-            //         extension: media.extension
-            //     });
-            // },
+                this.$refs.manageMedia.open({
+                    id: media.id,
+                    name: media.name,
+                    url: media.thumbnail_url,
+                    extension: media.extension
+                });
+            },
 
-            // editFolder(folderId) {
-            //     let folder = this.currentFolders.find(({ id }) => id === folderId);
+            editFolder(folderId) {
+                let folder = this.currentFolders.find(({ id }) => id === folderId);
 
-            //     this.$refs.manageFolder.open({
-            //         id: folder.id,
-            //         name: folder.name
-            //     });
-            // },
+                this.$refs.manageFolder.open({
+                    id: folder.id,
+                    name: folder.name
+                });
+            },
 
             clearFocused() {
                 this.clearFocusedMediaIds();
-                // this.clearFocusedFolderIds();
+                this.clearFocusedFolderIds();
             },
 
             confirm() {
-                // if (! this.insertIsDisabled) {
+                if (! this.insertIsDisabled) {
                     this.selectMedia();
-
-                //     this.$mediaManager.mediaSelected(this.selectedMediaIds);
                     this.reset();
                     this.close();
-                //     this.$mediaManager.close();
-                // }
+                }
             },
 
-            // cancel() {
-            //     this.clearFocused();
-            //     this.$mediaManager.close();
-            // }
+            cancel() {
+                this.clearFocused();
+                this.close();
+            }
         }
     }
 </script>
 
 <style lang="scss" scoped>
-    .modal-content {
-        display: flex;
-        overflow: hidden;
-        flex-direction: column;
-    }
-
-    .nav-breadcrumb {
-        display: flex;
-
-        > li {
-            position: relative;
-
-            &:not(:first-child) {
-                margin-left: 1rem;
-
-                &:before {
-                    left: -1rem;
-                    width: 1rem;
-                    content: '/';
-                    text-align: center;
-                    position: absolute;
-                    color: config('colors.grey-light');
-                    font-weight: config('fontWeights.semibold');
-                }
-            }
-
-            > a {
-                font-weight: config('fontWeights.semibold');
-            }
-
-            &.active {
-                > a {
-                    color: config('colors.primary');
-                }
-            }
-        }
-    }
-
     .folder {
         .button.w-full {
             max-width: 10rem;
@@ -475,42 +448,6 @@
             height: 4rem;
             margin: auto;
             position: absolute;
-        }
-    }
-</style>
-
-<style lang="scss">
-    .section-loader {
-        position: relative;
-
-        &.loading {
-            min-height: 10rem;
-            
-            > * {
-                opacity: 0;
-                visibility: hidden;
-                pointer-events: none;
-            }
-
-            &:before {
-                $size: 3em;
-
-                z-index: 10;
-                top: 5rem;
-                left: 50%;
-                content: '';
-                width: $size;
-                height: $size;
-                display: block;
-                position: absolute;
-                border-radius: 100px;
-                margin-top: -($size / 2);
-                margin-left: -($size / 2);
-                animation: spin 500ms infinite linear;
-                border: 3px solid config('colors.grey-dark');
-                border-top-color: transparent;
-                border-right-color: transparent;
-            }
         }
     }
 </style>

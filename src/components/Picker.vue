@@ -1,84 +1,41 @@
 <template>
     <div>
-        <!-- <div class="field" v-if="selectedMediaIds.length">
-            <div class="control">
-                <div class="media-preview" v-if="hasPreview">
-                    <img :src="firstMedia.thumbnail_url">
+        <div v-if="pickerMedia.length">
+            <div class="mm-picker-preview" v-if="hasPreview">
+                <img :src="firstMedia.thumbnail_url">
 
-                    <a class="icon" @click="remove(firstMedia.id)">
-                        <icon icon="times"></icon>
-                    </a>
-                </div>
-
-                <div class="media-items" v-else>
-                    <div
-                        :key="media.id"
-                        class="media-item"
-                        v-for="media in activeMedia(selectedMediaIds)"
-                    >
-                        <div class="icon icon-medium">
-                            <icon :icon="icon(media.extension)" size="2x"></icon>
-                        </div>
-                        
-                        <div class="media-item-body truncate">
-                            {{ media.name }}
-                        </div>
-
-                        <a class="icon" @click="remove(media.id)">
-                            <icon icon="times"></icon>
-                        </a>
-                    </div>
-                </div>
+                <a class="mm-icon" @click="removeMedia(firstMedia.id)">
+                    <icon icon="times"></icon>
+                </a>
             </div>
-        </div> -->
 
-        <div class="field" v-if="pickerMedia.length">
-            <div class="control flex">
-                <div class="media-preview" v-if="hasPreview">
-                    <img :src="firstMedia.thumbnail_url">
+            <div class="mm-picker-items" v-else>
+                <div
+                    :key="media.id"
+                    class="mm-picker-item"
+                    v-for="media in pickerMedia"
+                >
+                    <div class="mm-icon mm-icon-md">
+                        <icon :icon="icon(media.extension)" size="2x"></icon>
+                    </div>
+                    
+                    <div class="mm-picker-item-body">
+                        {{ media.name }}
+                    </div>
 
-                    <a
-                        class="icon"
-                        @click="removeSelectedMedia({
-                            pickerId: id,
-                            id: firstMedia.id
-                        })"
-                    >
+                    <a class="mm-icon" @click="removeMedia(media.id)">
                         <icon icon="times"></icon>
                     </a>
-                </div>
-
-                <div class="media-items" v-else>
-                    <!-- <div
-                        :key="media.id"
-                        class="media-item"
-                        v-for="media in activeMedia(selectedMediaIds)"
-                    >
-                        <div class="icon icon-medium">
-                            <icon :icon="icon(media.extension)" size="2x"></icon>
-                        </div>
-                        
-                        <div class="media-item-body truncate">
-                            {{ media.name }}
-                        </div>
-
-                        <a class="icon" @click="remove(media.id)">
-                            <icon icon="times"></icon>
-                        </a>
-                    </div> -->
                 </div>
             </div>
         </div>
 
-        <!-- v-if="! limitMet" -->
-        <div class="field">
-            <div class="button button-grey" @click="open">
-                <span class="icon">
-                    <icon icon="upload"></icon>
-                </span>
+        <div class="mm-button mm-button-picker" @click="open" v-if="! limitMet">
+            <span class="mm-icon">
+                <icon icon="upload"></icon>
+            </span>
 
-                <span class="font-normal normal-case">Choose media…</span>
-            </div>
+            <span>Choose media…</span>
         </div>
     </div>
 </template>
@@ -118,13 +75,12 @@
 
         computed: {
             ...mapGetters({
+                icon: 'mediaManager/icon',
                 getPickerMedia: 'mediaManager/selectedMedia'
-            //     icon: 'mediaManager/icon',
             //     imageExtensions: 'mediaManager/imageExtensions'
             }),
 
             pickerMedia() {
-                console.log('get picker media from vuex', this.id);
                 return this.getPickerMedia(this.id);
             },
             
@@ -132,10 +88,9 @@
                 return this.pickerMedia.length ? this.pickerMedia[0] : null;
             },
 
-            // limitMet() {
-            //     // return this.limit === this.selectedMediaIds.length;
-            //     return false;
-            // },
+            limitMet() {
+                return this.limit === this.pickerMedia.length;
+            },
 
             hasPreview() {
                 return this.limit === 1 && this.preview && this.firstMedia;
@@ -144,32 +99,29 @@
 
         watch: {
             media(value, oldValue) {
-                console.log('watch media, set selected media');
-
-                this.setSelectedMedia({
-                    pickerId: this.id,
-                    media: this.formatMedia(this.media)
-                });
+                if (! isEqual(value, oldValue)) {
+                    this.setSelectedMedia({
+                        pickerId: this.id,
+                        media: this.formatMedia(this.media)
+                    });
+                }
             },
 
             pickerMedia() {
                 let selectedIds = this.pickerMedia.map(({ id }) => id);
-                console.log('watch picker media, emit ids', selectedIds);
 
                 if (this.limit === 1) {
-                    return this.$emit('select', selectedIds.length
+                    return this.$emit('input', selectedIds.length
                         ? selectedIds[0]
                         : null
                     );
                 }
 
-                return this.$emit('select', selectedIds);
+                return this.$emit('input', selectedIds);
             }
         },
 
         created() {
-            console.log('created set selected media');
-
             this.setSelectedMedia({
                 pickerId: this.id,
                 media: this.formatMedia(this.media)
@@ -188,9 +140,13 @@
                 removeSelectedMedia: 'mediaManager/removeSelectedMedia',
             }),
 
-            formatMedia(media) {
-                console.log('get selected media from prop', media);
+            removeMedia(id) {
+                this.removeSelectedMedia({
+                    pickerId: this.id, id
+                });
+            },
 
+            formatMedia(media) {
                 if (! media) {
                     return [];
                 }
@@ -224,81 +180,3 @@
         }
     }
 </script>
-
-<style lang="scss" scoped>
-    .media-preview {
-        position: relative;
-        display: inline-flex;
-        border: 1px solid config('colors.grey-light');
-        border-radius: config('borderRadius.default');
-
-        &:before {
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            opacity: 0;
-            content: '';
-            position: absolute;
-            transition: all 125ms ease-in-out;
-            background-color: config('colors.black');
-        }
-
-        img {
-            display: block;
-            max-height: 14rem;
-            border-radius: config('borderRadius.default');
-        }
-
-        .icon {
-            top: 1rem;
-            right: 1rem;
-            position: absolute;
-            color: config('colors.black');
-            border-radius: config('borderRadius.full');
-            background-color: rgba(255, 255, 255, 0.5);
-        }
-
-        &:hover {
-            &:before {
-                opacity: 0.25;
-            }
-        }
-    }
-
-    .media-items {
-        display: flex;
-        flex-wrap: wrap;
-        position: relative;
-        padding: 0.75rem 0.5rem;
-        background-color: config('colors.white');
-        border: 1px solid config('colors.grey-light');
-        border-radius: config('borderRadius.default');
-
-        .media-item {
-            display: flex;
-            padding: 0.5rem;
-            align-items: center;
-            margin: 0.25rem 0.5rem;
-            justify-content: space-between;
-            border-radius: config('borderRadius.default');
-            border: 1px solid config('colors.grey-light');
-            background-color: config('colors.grey-lighter');
-
-            .icon {
-                flex-shrink: 0;
-            }
-
-            .media-item-body {
-                flex-grow: 1;
-                max-width: 8rem;
-                margin-left: 0.5rem;
-                margin-right: 0.5rem;
-            }
-
-            &:hover {
-                border-color: config('colors.grey');
-            }
-        }
-    }
-</style>
