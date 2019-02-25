@@ -157,3 +157,11 @@ $mm-button-disabled-opacity: 0.5 !default;
     //     }
     // }
 }
+
+.mm-button-group {
+    .mm-button {
+        &:not(:last-child) {
+            margin-right: 0.75rem;
+        }
+    }
+}

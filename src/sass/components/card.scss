@@ -1,0 +1,49 @@
+.mm-card {
+    cursor: pointer;
+    position: relative;
+    border: solid 1px $mm-grey-light;
+}
+
+.mm-card-image {
+    display: block;
+    padding-top: 75%;
+    position: relative;
+
+    img {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+        max-width: 100%;
+        position: absolute;
+    }
+}
+
+.mm-card-other {
+    display: block;
+    padding-top: 75%;
+    position: relative;
+    background-color: $mm-grey-light;
+
+    .mm-icon {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 4rem;
+        height: 4rem;
+        margin: auto;
+        position: absolute;
+    }
+}
+
+.mm-card-body {
+    overflow: hidden;
+    white-space: nowrap;
+    padding: 0.5rem 1rem;
+    text-overflow: ellipsis;
+    background-color: $mm-grey-lighter;
+}

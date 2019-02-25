@@ -70,11 +70,21 @@
 
     .mm-icon {
         flex-shrink: 0;
-        margin-right: 0.5rem;
+
+        &:first-child:not(:last-child) {
+            margin-right: 0.5rem;
+        }
+        
+        &:last-child:not(:first-child) {
+            margin-left: 0.5rem;
+        }
     }
 
     span:not(.mm-icon) {
         flex-grow: 1;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     &:hover {

@@ -1,16 +1,20 @@
 <template>
-    <o-modal :active="isActive" @close="close">
-        <div class="modal-content bg-white rounded max-w-md">
-            <header class="flex flex-no-shrink justify-between items-center bg-grey-lighter border-b border-grey-light rounded-t px-6 py-4">
-                <h4 class="title">{{ title }}</h4>
+    <modal :active="isActive" @close="close">
+        <div class="mm-modal-wrap mm-manage-folder"> <!-- modal-content bg-white rounded max-w-md -->
+            <header class="mm-modal-header">
+                <h4 class="mm-title">{{ title }}</h4>
 
-                <a class="icon" @click="close">
+                <a class="mm-icon" @click="close">
                     <icon icon="times" size="lg"></icon>
                 </a>
             </header>
             
-            <section class="bg-white px-6 py-8">
-                <o-errors v-if="anyErrors" class="mb-2" :errors="errors"></o-errors>
+            <section class="mm-modal-content"><!-- bg-white px-6 py-8 -->
+                <errors
+                    v-if="anyErrors"
+                    class="mm-mb-2"
+                    :errors="errors"
+                ></errors>
 
                 <o-form-field input="name" label="Folder Name" required>
                     <o-input
@@ -24,23 +28,28 @@
                 </o-form-field>
             </section>
 
-            <footer class="flex flex-no-shrink justify-end items-center bg-grey-lighter border-t border-grey-light rounded-b px-6 py-4">
-                <a
-                    class="button button-green"
-                    @click="submit"
-                    :class="{ 'loading': isProcessing }"
-                    :disabled="isProcessing"
-                >Save</a>
-                
-                <a class="button ml-3" @click="close">Cancel</a>
+            <footer class="mm-modal-footer">
+                <div class="mm-button-group">
+                    <a
+                        class="mm-button mm-button-confirm"
+                        @click="submit"
+                        :class="{ 'loading': isProcessing }"
+                        :disabled="isProcessing"
+                    >Save</a>
+                    
+                    <a class="mm-button" @click="close">Cancel</a>
+                </div>
             </footer>
         </div>
-    </o-modal>
+    </modal>
 </template>
 
 <script>
     import { mapGetters, mapMutations } from 'vuex';
     import formMixin from '../mixins/form';
+
+    import Errors from './ui/Errors';
+    import Modal from './ui/Modal';
 
     const initialValues = function () {
         return {
@@ -52,6 +61,11 @@
 
     export default {
         mixins: [ formMixin ],
+
+        components: {
+            Errors,
+            Modal
+        },
 
         data() {
             return {

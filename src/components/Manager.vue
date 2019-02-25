@@ -57,7 +57,7 @@
                 @click="clearFocused"
             >
                 <template v-if="currentFolders.length">
-                    <h2 class="mm-title">Folders</h2>
+                    <h2 class="mm-title mm-mb-4">Folders</h2>
                     
                     <div class="mm-manager-folders">
                         <div
@@ -96,43 +96,39 @@
                 </template>
 
                 <template v-if="currentMedia.length">
-                    <h2 class="mm-title">Media</h2>
+                    <h2 class="mm-title mm-mb-4">Media</h2>
                     
-                    <!-- <div class="flex flex-wrap -m-2">
+                    <div class="mm-manager-media">
                         <div
-                            :key="file.id"
-                            class="w-1/2 md:w-1/4 lg:w-1/6"
-                            v-for="file in currentMedia"
+                            :key="media.id"
+                            class="mm-manager-media-item"
+                            v-for="media in currentMedia"
+                            :class="{
+                                'focused': focusedMediaIds.includes(media.id),
+                                'selected': selectedMediaIds.includes(media.id)
+                            }"
+                            @click.stop="focusMedia(media.id)"
                         >
-                            <div class="p-2">
-                                <div
-                                    class="media-card"
-                                    :class="{
-                                        'focused': focusedMediaIds.includes(file.id),
-                                        'selected': selectedMediaIds.includes(file.id)
-                                    }"
-                                    @click.stop="focusMedia(file.id)"
-                                >
-                                    <div class="media-card-image">
-                                        <figure class="image image-4by3" v-if="isImage(file.extension)">
-                                            <img :src="file.thumbnail_url" :alt="file.name" :title="file.name">
-                                        </figure>
+                            <div class="mm-card">
+                                <figure class="mm-card-image" v-if="isImage(media.extension)">
+                                    <img :src="media.thumbnail_url" :alt="media.name" :title="media.name">
+                                </figure>
 
-                                        <div class="file" v-else>
-                                            <div class="icon">
-                                                <icon :icon="icon(file.extension)" size="4x"></icon>
-                                            </div>
-                                        </div>
+                                <div class="mm-card-other" v-else>
+                                    <div class="mm-icon">
+                                        <icon :icon="icon(media.extension)" size="4x"></icon>
                                     </div>
+                                </div>
 
-                                    <div class="media-card-body truncate">{{ file.name }}</div>
+                                <div class="mm-card-body">
+                                    {{ media.name }}
                                 </div>
                             </div>
                         </div>
-                    </div> -->
+                    </div>
                 </template>
 
-                <div class="mm-manager-notification" v-else>
+                <div class="mm-notification" v-else>
                     No media, add new media by clicking the <strong>New</strong> button below.
                 </div>
             </section>
@@ -152,12 +148,9 @@
                         <a class="mm-dropdown-item" @click="$refs.upload.focus()">Upload Media</a>
                     </dropdown>
 
-                    <!--
-                    <o-dropdown class="up ml-3" v-if="selectedMedia.length">
-                        <span class="button button-grey" slot="button">
-                            <span class="font-normal normal-case">
-                                {{ selectedMediaLabel }}
-                            </span>
+                    <dropdown class="mm-manager-selected-items up" v-if="selectedMedia.length">
+                        <span class="mm-button mm-button-selected-items" slot="button">
+                            <span>{{ selectedMediaLabel }}</span>
 
                             <span class="icon">
                                 <icon icon="angle-up"></icon>
@@ -166,13 +159,13 @@
                         
                         <a
                             :key="file.id"
-                            class="dropdown-item flex items-center"
+                            class="mm-dropdown-item"
                             v-for="file in selectedMedia"
                         >
-                            <span class="flex-grow truncate">{{ file.name }}</span>
+                            <span>{{ file.name }}</span>
 
                             <a
-                                class="icon flex-no-shrink ml-2"
+                                class="mm-icon"
                                 @click.stop="removeSelectedMedia({
                                     pickerId: pickerId,
                                     id: file.id
@@ -182,20 +175,19 @@
                             </a>
                         </a>
 
-                        <div class="dropdown-divider" v-if="selectedMedia.length"></div>
+                        <div class="mm-dropdown-divider" v-if="selectedMedia.length"></div>
 
-                        <a class="dropdown-item" @click="clearSelectedMedia">
+                        <a class="mm-dropdown-item" @click="clearSelectedMedia">
                             Clear all selected files
                         </a>
-                    </o-dropdown>
+                    </dropdown>
 
-                    <span class="button static font-normal normal-case ml-3" v-else>
+                    <span class="mm-manager-selected-info" v-else>
                         {{ selectedMediaLabel }}
                     </span>
-                    -->
                 </div>
                 
-                <div class="mm-manger-actions">
+                <div class="mm-button-group">
                     <a
                         v-if="limit !== 0"
                         class="mm-button mm-button-confirm"
@@ -212,9 +204,9 @@
             </footer>
         </div>
 
-        <!-- <move ref="move"></move>
-        <manage-media ref="manageMedia"></manage-media>
-        <manage-folder ref="manageFolder"></manage-folder> -->
+        <!-- <move ref="move"></move> -->
+        <!-- <manage-media ref="manageMedia"></manage-media> -->
+        <manage-folder ref="manageFolder"></manage-folder>
 
         <!-- <o-confirmation
             ref="confirm"
@@ -399,54 +391,3 @@
         }
     }
 </script>
-
-<style lang="scss" scoped>
-    .media-card {
-        cursor: pointer;
-        position: relative;
-        border: solid 1px config('colors.grey-light');
-
-        &.selected {
-            border-color: config('colors.primary');
-            outline: 3px solid config('colors.primary');
-
-            .media-card-body {
-                color: config('colors.white');
-                background-color: config('colors.primary');
-            }
-        }
-
-        &.focused {
-            border-color: config('colors.blue-light');
-            outline: 3px solid config('colors.blue-light');
-
-            .media-card-body {
-                color: config('colors.white');
-                background-color: config('colors.blue-light');
-            }
-        }
-    }
-
-    .media-card-body {
-        padding: 0.5rem 1rem;
-        background-color: config('colors.grey-lighter');
-    }
-
-    .file {
-        display: block;
-        padding-top: 75%;
-        position: relative;
-        background-color: config('colors.grey-light');
-
-        .icon {
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            width: 4rem;
-            height: 4rem;
-            margin: auto;
-            position: absolute;
-        }
-    }
-</style>
