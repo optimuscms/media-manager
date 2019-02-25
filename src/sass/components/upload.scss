@@ -1,0 +1,98 @@
+.mm-upload {
+    z-index: 10;
+    right: 2rem;
+    width: 100%;
+    bottom: 100%;
+    max-width: 20rem;
+    position: absolute;
+    border-top: 1px solid $mm-upload-border-color;
+    border-left: 1px solid $mm-upload-border-color;
+    border-right: 1px solid $mm-upload-border-color;
+    border-radius: $mm-upload-border-radius $mm-upload-border-radius 0 0;
+}
+
+.mm-upload-wrap {
+    display: flex;
+    flex-direction: column;
+}
+
+.mm-upload-header {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    justify-content: space-between;
+    border-bottom: 1px solid $mm-upload-border-color;
+    background-color: $mm-upload-header-background-color;
+    border-radius: $mm-upload-border-radius $mm-upload-border-radius 0 0;
+}
+
+.mm-upload-header-content {
+    display: flex;
+    align-items: center;
+
+    .mm-icon {
+        margin-right: 0.75rem;
+    }
+}
+
+.mm-upload-items {
+    overflow: auto;
+    max-height: 20rem;
+    background-color: $mm-upload-background-color;
+}
+
+.mm-upload-item {
+    display: flex;
+    position: relative;
+    align-items: center;
+    padding: 0.25rem 1rem;
+    justify-content: space-between;
+    border-bottom: 1px solid $mm-upload-border-color;
+
+    .mm-icon {
+        flex-shrink: 0;
+    }
+
+    .mm-upload-item-name {
+        flex-grow: 1;
+        overflow: hidden;
+        padding: 0 0.5rem;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    .mm-upload-progress {
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2px;
+        appearance: none;
+        position: absolute;
+        
+        &::-webkit-progress-bar {
+            background-color: $mm-upload-progress-bar-color;
+        }
+        
+        &::-webkit-progress-value {
+            background-color: $mm-upload-progress-bar-active-color;
+        }
+
+        &::-moz-progress-bar {
+            background-color: $mm-upload-progress-bar-active-color;
+        }
+
+        &::-ms-fill {
+            border: none;
+            background-color: $mm-upload-progress-bar-active-color;
+        }
+    }
+}
+
+.mm-upload-errors {
+    padding: 0.5rem 1rem;
+}
+
+.mm-upload-input {
+    display: none;
+}

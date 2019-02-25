@@ -1,35 +1,35 @@
 <template>
-    <div class="uploads-holder absolute w-full max-w-xs z-10 rounded-t" v-show="files.length">
-        <o-errors
+    <div class="mm-upload" v-show="files.length">
+        <errors
             v-if="error.active"
-            class="p-2"
+            class="mm-upload-errors"
             :errors="error.messages"
-        ></o-errors>
+        ></errors>
 
-        <div class="flex flex-col">
-            <header class="flex flex-no-shrink justify-between items-center bg-grey-lighter border-b border-grey-light rounded-t px-4 py-2">
-                <div class="flex items-center">
-                    <span class="icon mr-3" v-if="! isActive && ! isComplete">
+        <div class="mm-upload-wrap">
+            <header class="mm-upload-header">
+                <div class="mm-upload-header-content">
+                    <span class="mm-icon" v-if="! isActive && ! isComplete">
                         <icon icon="spinner" spin></icon>
                     </span>
 
-                    <h4 class="title text-sm">{{ title }}</h4>
+                    <span>{{ title }}</span>
                 </div>
 
-                <a class="icon" @click="closePreview">
+                <a class="mm-icon" @click="closePreview">
                     <icon icon="times"></icon>
                 </a>
             </header>
 
-            <div class="bg-white overflow-auto" v-if="isActive">
+            <div class="mm-upload-items" v-if="isActive">
                 <div
                     :key="file.uuid"
-                    class="flex justify-between items-center relative border-b border-grey-light px-4 py-1"
+                    class="mm-upload-item"
                     v-for="file in files"
                     @mouseover="showError(file.errors)"
                     @mouseleave="error.active = false"
                 >
-                    <span class="icon flex-no-shrink">
+                    <span class="mm-icon">
                         <icon
                             :icon="fileIcon(file).icon"
                             :spin="fileIcon(file).spin"
@@ -37,11 +37,11 @@
                         ></icon>
                     </span>
 
-                    <span class="flex-grow mx-2">{{ file.name }}</span>
+                    <span class="mm-upload-item-name">{{ file.name }}</span>
 
                     <a
                         v-if="! file.complete"
-                        class="icon flex-no-shrink"
+                        class="mm-icon"
                         @click="remove(file.uuid)"
                     >
                         <icon :icon="['far', 'times-circle']"></icon>
@@ -50,7 +50,7 @@
                     <progress
                         max="100"
                         v-if="file.uploading"
-                        class="absolute pin-x pin-b appearance-none"
+                        class="mm-upload-progress"
                         :value="file.progress"
                     >{{ file.progress }}%</progress>
                 </div>
@@ -60,7 +60,7 @@
         <input
             ref="file" 
             type="file"
-            class="hidden" 
+            class="mm-upload-input" 
             @change="upload"
             multiple
         >
@@ -71,7 +71,11 @@
     import { CancelToken } from 'axios';
     import { mapGetters, mapMutations } from 'vuex';
 
+    import Errors from './ui/Errors';
+
     export default {
+        components: { Errors },
+
         data() {
             return {
                 isActive: false,
@@ -249,38 +253,3 @@
         }
     }
 </script>
-
-<style lang="scss" scoped>
-    .uploads-holder {
-        right: 2rem;
-        bottom: 100%;
-        border-top: 1px solid config('colors.grey-light');
-        border-left: 1px solid config('colors.grey-light');
-        border-right: 1px solid config('colors.grey-light');
-    }
-
-    .overflow-auto {
-        max-height: 20rem;
-    }
-
-    progress {
-        height: 2px;
-
-        &::-webkit-progress-bar {
-            background-color: config('colors.grey-light');
-        }
-        
-        &::-webkit-progress-value {
-            background-color: config('colors.primary');
-        }
-
-        &::-moz-progress-bar {
-            background-color: config('colors.primary');
-        }
-
-        &::-ms-fill {
-            border: none;
-            background-color: config('colors.primary');
-        }
-    }
-</style>

@@ -1,0 +1,10 @@
+.mm-errors {
+    color: $mm-errors-color;
+    padding: $mm-errors-padding;
+    background-color: $mm-errors-background-color;
+
+    ul {
+        padding: 0;
+        list-style: none;
+    }
+}

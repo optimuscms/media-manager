@@ -12,43 +12,43 @@
                     </li>
                 </ul>
 
-                <!-- <o-dropdown class="right" :class="{ 'invisible pointer-events-none': ! focusedItemCount }">
-                    <a slot="button" class="icon">
+                <dropdown class="right" :class="{ 'invisible pointer-events-none': ! focusedItemCount }">
+                    <a slot="button" class="mm-icon">
                         <icon icon="ellipsis-h" size="lg"></icon>
                     </a>
 
-                    <a class="dropdown-item flex items-center" v-if="focusedItemCount === 1" @click="edit">
-                        <span class="icon flex-no-shrink mr-2">
+                    <a class="mm-dropdown-item" v-if="focusedItemCount === 1" @click="edit">
+                        <span class="mm-icon">
                             <icon icon="info-circle"></icon>
                         </span>
 
-                        <span class="flex-grow">Properties</span>
+                        <span>Properties</span>
                     </a>
 
-                    <a class="dropdown-item flex items-center" @click="$refs.move.open()">
-                        <span class="icon flex-no-shrink mr-2">
+                    <a class="mm-dropdown-item" @click="$refs.move.open()">
+                        <span class="mm-icon">
                             <icon icon="reply"></icon>
                         </span>
 
-                        <span class="flex-grow">Move</span>
+                        <span>Move</span>
                     </a>
 
-                    <div class="dropdown-divider"></div>
+                    <div class="mm-dropdown-divider"></div>
 
                     <a
-                        class="dropdown-item flex items-center text-red"
+                        class="mm-dropdown-item mm-text-danger"
                         @click="$refs.confirm.open({
                             media: focusedMediaIds.length,
                             folders: focusedFolderIds.length
                         })"
                     >
-                        <span class="icon flex-no-shrink mr-2">
+                        <span class="mm-icon">
                             <icon icon="trash"></icon>
                         </span>
 
-                        <span class="flex-grow">Delete</span>
+                        <span>Delete</span>
                     </a>
-                </o-dropdown> -->
+                </dropdown>
             </header>
 
             <section
@@ -56,46 +56,49 @@
                 :class="{ 'loading': isLoading }"
                 @click="clearFocused"
             >
-
-                <!-- <template v-if="currentFolders.length">
-                    <h2 class="title mb-4">Folders</h2>
-
-                    <div class="flex flex-wrap -m-2">
+                <template v-if="currentFolders.length">
+                    <h2 class="mm-title">Folders</h2>
+                    
+                    <div class="mm-manager-folders">
                         <div
                             :key="folder.id"
-                            class="folder select-none p-2"
+                            class="mm-manager-folder"
                             v-for="folder in currentFolders"
                             :class="{ 'focused': focusedFolderIds.includes(folder.id) }"
                         >
-                            <div class="field addons">
-                                <div class="control flex-grow">
-                                    <a title="Open folder" class="button w-full" @click="openFolder(folder)">
-                                        <span class="icon">
-                                            <icon icon="folder" size="lg"></icon>
-                                        </span>
+                            <a
+                                title="Open folder"
+                                class="mm-manager-folder-detail"
+                                @click="openFolder(folder)"
+                            >
+                                <span class="mm-icon">
+                                    <icon icon="folder" size="lg"></icon>
+                                </span>
 
-                                        <span class="font-normal normal-case truncate">{{ folder.name }}</span>
-                                    </a>
-                                </div>
+                                <span class="mm-manager-folder-detail-name">
+                                    {{ folder.name }}
+                                </span>
+                            </a>
 
-                                <div class="control">
-                                    <a class="button" title="Select folder" @click.stop="focusFolder(folder.id)">
-                                        <span class="icon">
-                                            <icon icon="crosshairs"></icon>
-                                        </span>
-                                    </a>
-                                </div>
-                            </div>
+                            <a
+                                title="Select folder"
+                                class="mm-manager-folder-select"
+                                @click.stop="focusFolder(folder.id)"
+                            >
+                                <span class="mm-icon">
+                                    <icon icon="crosshairs"></icon>
+                                </span>
+                            </a>
                         </div>
                     </div>
-
-                    <hr class="bg-grey-light my-6">
+                    
+                    <hr>
                 </template>
 
                 <template v-if="currentMedia.length">
-                    <h2 class="title mb-4">Media</h2>
+                    <h2 class="mm-title">Media</h2>
                     
-                    <div class="flex flex-wrap -m-2">
+                    <!-- <div class="flex flex-wrap -m-2">
                         <div
                             :key="file.id"
                             class="w-1/2 md:w-1/4 lg:w-1/6"
@@ -126,24 +129,30 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </template>
 
-                <o-notification
-                    class="bg-blue-light text-white rounded"
-                    v-else
-                    :active="! currentMedia.length"
-                    :closeable="false"
-                >No media, add new media by clicking the <strong>New</strong> button below.</o-notification> -->
+                <div class="mm-manager-notification" v-else>
+                    No media, add new media by clicking the <strong>New</strong> button below.
+                </div>
             </section>
             
             <footer class="mm-modal-footer">
-                <!-- <div>
-                    <o-dropdown icon="angle-up" class="up" placeholder="New">
-                        <a class="dropdown-item" @click="$refs.manageFolder.open()">New Folder</a>
-                        <a class="dropdown-item" @click="$refs.upload.focus()">Upload Media</a>
-                    </o-dropdown>
+                <div>
+                    <dropdown class="up">
+                        <a slot="button" class="mm-button">
+                            <span>New</span>
 
+                            <span class="mm-icon">
+                                <icon icon="angle-up"></icon>
+                            </span>
+                        </a>
+
+                        <a class="mm-dropdown-item" @click="$refs.manageFolder.open()">New Folder</a>
+                        <a class="mm-dropdown-item" @click="$refs.upload.focus()">Upload Media</a>
+                    </dropdown>
+
+                    <!--
                     <o-dropdown class="up ml-3" v-if="selectedMedia.length">
                         <span class="button button-grey" slot="button">
                             <span class="font-normal normal-case">
@@ -183,22 +192,23 @@
                     <span class="button static font-normal normal-case ml-3" v-else>
                         {{ selectedMediaLabel }}
                     </span>
+                    -->
                 </div>
-
-                <div>
+                
+                <div class="mm-manger-actions">
                     <a
                         v-if="limit !== 0"
-                        class="button button-green"
+                        class="mm-button mm-button-confirm"
                         @click="confirm" 
                         :disabled="insertIsDisabled"
                     >Insert</a>
-
-                    <a class="button ml-3" @click="cancel">
+               
+                    <a class="button" @click="cancel">
                         {{ limit === 0 ? 'Close' : 'Cancel' }}
                     </a>
                 </div>
 
-                <upload ref="upload"></upload> -->
+                <upload ref="upload"></upload>
             </footer>
         </div>
 
@@ -226,6 +236,7 @@
     import { mapGetters, mapMutations, mapActions } from 'vuex';
 
     // Components
+    import Dropdown from './ui/Dropdown';
     import Modal from './ui/Modal';
 
     import ManageFolder from './ManageFolder';
@@ -235,6 +246,7 @@
 
     export default {
         components: {
+            Dropdown,
             Modal,
 
             ManageFolder,
@@ -389,19 +401,6 @@
 </script>
 
 <style lang="scss" scoped>
-    .folder {
-        .button.w-full {
-            max-width: 10rem;
-        }
-
-        &.focused {
-            .button.w-full {
-                color: config('colors.white');
-                background-color: config('colors.blue-light');
-            }
-        }
-    }
-
     .media-card {
         cursor: pointer;
         position: relative;

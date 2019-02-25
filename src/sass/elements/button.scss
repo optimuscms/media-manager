@@ -12,7 +12,15 @@ $mm-button-border-width: 1px !default;
 $mm-button-border-color: $mm-grey-light !default;
 $mm-button-hover-border-color: $mm-grey !default;
 
-// $button-disabled-opacity: 0.5 !default;
+$mm-button-confirm-color: $mm-white !default;
+$mm-button-confirm-border-color: $mm-green !default;
+$mm-button-confirm-background-color: $mm-green !default;
+
+$mm-button-confirm-hover-color: $mm-white !default;
+$mm-button-confirm-hover-border-color: $mm-green-dark !default;
+$mm-button-confirm-hover-background-color: $mm-green-dark !default;
+
+$mm-button-disabled-opacity: 0.5 !default;
 // $button-disabled-border-color: config('colors.grey-light') !default;
 // $button-disabled-background-color: config('colors.white') !default;
 
@@ -59,6 +67,18 @@ $mm-button-hover-border-color: $mm-grey !default;
         color: $mm-button-hover-color;
         border-color: $mm-button-hover-border-color;
         background-color: $mm-button-hover-background-color;
+    }
+
+    &.mm-button-confirm {
+        color: $mm-button-confirm-color;
+        border-color: $mm-button-confirm-border-color;
+        background-color: $mm-button-confirm-background-color;
+
+        &:hover {
+            color: $mm-button-confirm-hover-color;
+            border-color: $mm-button-confirm-hover-border-color;
+            background-color: $mm-button-confirm-hover-background-color;
+        }
     }
 
     // @each $name, $colors in $button-colours {
@@ -111,11 +131,11 @@ $mm-button-hover-border-color: $mm-grey !default;
     //     background-color: $button-static-background-color;
     // }
 
-    // &[disabled] {
-    //     opacity: $button-disabled-opacity;
-    //     border-color: $button-disabled-border-color;
-    //     background-color: $button-disabled-background-color;
-    // }
+    &[disabled] {
+        opacity: $mm-button-disabled-opacity;
+        // border-color: $button-disabled-border-color;
+        // background-color: $button-disabled-background-color;
+    }
 
     // &.loading {
     //     color: transparent;
