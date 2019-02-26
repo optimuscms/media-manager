@@ -34,7 +34,7 @@
 <script>
     import { mapGetters, mapMutations, mapActions } from 'vuex';
     import groupBy from 'lodash/groupBy';
-    import MoveFolder from './MoveFolder';
+    import MoveFolder from './partials/MoveFolder';
 
     export default {
         components: {

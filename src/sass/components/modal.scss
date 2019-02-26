@@ -35,7 +35,7 @@
     max-width: calc(100vw - #{$mm-modal-padding} * 2);
     max-height: calc(100vh - #{$mm-modal-padding} * 2);
 
-    &.is-manager {
+    &.is-media-manager {
         height: 100%;
         display: flex;
         overflow: hidden;
@@ -43,8 +43,12 @@
         min-height: calc(100vh - #{$mm-modal-padding} * 2);
     }
 
-    &.is-folder {
+    &.is-folder-manager {
         max-width: 40rem
+    }
+
+    &.is-media-editor {
+        max-width: 50rem
     }
 }
 
@@ -64,7 +68,7 @@
     padding: $mm-modal-content-padding;
     background-color: $mm-modal-content-background-color;
 
-    &.is-manager {
+    &.is-media-manager {
         flex-grow: 1;
         overflow: scroll;
         padding: 1rem 1.5rem;

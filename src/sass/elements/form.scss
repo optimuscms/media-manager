@@ -82,7 +82,7 @@ $mm-field-margin: 1.5rem !default;
     }
 }
 
-.field {
+.mm-field {
     &:not(:last-child) {
         margin-bottom: $mm-field-margin;
     }

@@ -1,6 +1,6 @@
 <template>
     <modal :active="isOpen" @close="close">
-        <div class="mm-modal-wrap is-manager">
+        <div class="mm-modal-wrap is-media-manager">
             <header class="mm-modal-header">
                 <breadcrumb></breadcrumb>
 
@@ -43,18 +43,10 @@
                 </dropdown>
             </header>
 
-            <section
-                class="mm-modal-content is-manager"
-                :class="{ 'loading': isLoading }"
-                @click="clearFocused"
-            >
+            <section class="mm-modal-content is-media-manager" :class="{ 'loading': isLoading }" @click="clearFocused">
                 <folders></folders>
 
                 <media></media>
-
-                <div class="mm-notification" v-if="! currentMedia.length">
-                    No media, add new media by clicking the <strong>New</strong> button below.
-                </div>
             </section>
             
             <footer class="mm-modal-footer">
@@ -68,11 +60,11 @@
                             </span>
                         </a>
 
-                        <a class="mm-dropdown-item" @click="$refs.manageFolder.open()">New Folder</a>
+                        <a class="mm-dropdown-item" @click="$refs.folderManager.open()">New Folder</a>
                         <a class="mm-dropdown-item" @click="$refs.upload.focus()">Upload Media</a>
                     </dropdown>
 
-                    <!-- <dropdown class="mm-manager-selected-items up" v-if="selectedMedia.length">
+                    <dropdown class="mm-manager-selected-items up" v-if="selectedMedia.length">
                         <span class="mm-button mm-button-selected-items" slot="button">
                             <span>{{ selectedMediaLabel }}</span>
 
@@ -108,7 +100,7 @@
 
                     <span class="mm-manager-selected-info" v-else>
                         {{ selectedMediaLabel }}
-                    </span> -->
+                    </span>
                 </div>
                 
                 <div class="mm-button-group">
@@ -124,13 +116,13 @@
                     </a>
                 </div>
 
-                <upload ref="upload"></upload>
+                <media-uploader ref="upload"></media-uploader>
             </footer>
         </div>
 
         <!-- <move ref="move"></move> -->
-        <!-- <manage-media ref="manageMedia"></manage-media> -->
-        <manage-folder ref="manageFolder"></manage-folder>
+        <media-editor ref="mediaEditor"></media-editor>
+        <folder-manager ref="folderManager"></folder-manager>
 
         <!-- <o-confirmation
             ref="confirm"
@@ -156,12 +148,12 @@
     import Dropdown from './ui/Dropdown';
     import Modal from './ui/Modal';
 
-    import Folders from './Folders';
-    import Media from './Media';
-    import ManageFolder from './ManageFolder';
-    import ManageMedia from './ManageMedia';
-    import Move from './Move';
-    import Upload from './Upload';
+    import Folders from './partials/Folders';
+    import Media from './partials/Media';
+    import FolderManager from './FolderManager';
+    import MediaEditor from './MediaEditor';
+    import MediaMover from './MediaMover';
+    import MediaUploader from './MediaUploader';
 
     export default {
         components: {
@@ -171,10 +163,10 @@
 
             Folders,
             Media,
-            ManageFolder,
-            ManageMedia,
-            Move,
-            Upload
+            FolderManager,
+            MediaEditor,
+            MediaMover,
+            MediaUploader
         },
 
         computed: {
@@ -277,7 +269,7 @@
             editMedia(mediaId) {
                 let media = this.currentMedia.find(({ id }) => id === mediaId);
 
-                this.$refs.manageMedia.open({
+                this.$refs.mediaEditor.open({
                     id: media.id,
                     name: media.name,
                     url: media.thumbnail_url,
@@ -288,7 +280,7 @@
             editFolder(folderId) {
                 let folder = this.currentFolders.find(({ id }) => id === folderId);
 
-                this.$refs.manageFolder.open({
+                this.$refs.folderManager.open({
                     id: folder.id,
                     name: folder.name
                 });

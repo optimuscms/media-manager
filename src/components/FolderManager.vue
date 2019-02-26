@@ -1,6 +1,6 @@
 <template>
     <modal :active="isActive" @close="close">
-        <div class="mm-modal-wrap is-folder">
+        <div class="mm-modal-wrap is-folder-manager">
             <header class="mm-modal-header">
                 <h4 class="mm-title">{{ title }}</h4>
 
@@ -17,11 +17,11 @@
                 ></errors>
 
                 <div class="mm-field">
-                    <label for="name" class="mm-label">Folder Name *</label>
+                    <label for="mm_folder_name" class="mm-label">Folder Name *</label>
 
                     <div class="mm-control">
                         <input
-                            id="name"
+                            id="mm_folder_name"
                             ref="name"
                             type="text"
                             class="mm-input"

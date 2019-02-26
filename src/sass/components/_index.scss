@@ -6,8 +6,10 @@
 @import 'errors';
 @import 'modal';
 
-@import 'manager';
 @import 'folder';
 @import 'media';
-@import 'picker';
-@import 'upload';
+
+@import 'media-manager';
+@import 'media-editor';
+@import 'media-picker';
+@import 'media-uploader';
