@@ -1,16 +1,8 @@
 <template>
-    <modal :active="isOpen" @close="close">
-        <div class="mm-modal-wrap mm-manager">
+    <modal :active="isOpen" @close="close" class="is-manager">
+        <div class="mm-modal-wrap">
             <header class="mm-modal-header">
-                <ul class="mm-breadcrumb">
-                    <li
-                        :key="folder.id"
-                        v-for="folder in openFolders"
-                        :class="{ 'active': folder.id === activeFolderId }"
-                    >
-                        <a @click="openFolder(folder)">{{ folder.name }}</a>
-                    </li>
-                </ul>
+                <breadcrumb></breadcrumb>
 
                 <dropdown class="right" :class="{ 'invisible pointer-events-none': ! focusedItemCount }">
                     <a slot="button" class="mm-icon">
@@ -51,84 +43,12 @@
                 </dropdown>
             </header>
 
-            <section
-                class="mm-modal-content mm-manager-content"
-                :class="{ 'loading': isLoading }"
-                @click="clearFocused"
-            >
-                <template v-if="currentFolders.length">
-                    <h2 class="mm-title mm-mb-4">Folders</h2>
-                    
-                    <div class="mm-manager-folders">
-                        <div
-                            :key="folder.id"
-                            class="mm-manager-folder"
-                            v-for="folder in currentFolders"
-                            :class="{ 'focused': focusedFolderIds.includes(folder.id) }"
-                        >
-                            <a
-                                title="Open folder"
-                                class="mm-manager-folder-detail"
-                                @click="openFolder(folder)"
-                            >
-                                <span class="mm-icon">
-                                    <icon icon="folder" size="lg"></icon>
-                                </span>
+            <section class="mm-modal-content" :class="{ 'loading': isLoading }" @click="clearFocused">
+                <folders></folders>
 
-                                <span class="mm-manager-folder-detail-name">
-                                    {{ folder.name }}
-                                </span>
-                            </a>
+                <media></media>
 
-                            <a
-                                title="Select folder"
-                                class="mm-manager-folder-select"
-                                @click.stop="focusFolder(folder.id)"
-                            >
-                                <span class="mm-icon">
-                                    <icon icon="crosshairs"></icon>
-                                </span>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <hr>
-                </template>
-
-                <template v-if="currentMedia.length">
-                    <h2 class="mm-title mm-mb-4">Media</h2>
-                    
-                    <div class="mm-manager-media">
-                        <div
-                            :key="media.id"
-                            class="mm-manager-media-item"
-                            v-for="media in currentMedia"
-                            :class="{
-                                'focused': focusedMediaIds.includes(media.id),
-                                'selected': selectedMediaIds.includes(media.id)
-                            }"
-                            @click.stop="focusMedia(media.id)"
-                        >
-                            <div class="mm-card">
-                                <figure class="mm-card-image" v-if="isImage(media.extension)">
-                                    <img :src="media.thumbnail_url" :alt="media.name" :title="media.name">
-                                </figure>
-
-                                <div class="mm-card-other" v-else>
-                                    <div class="mm-icon">
-                                        <icon :icon="icon(media.extension)" size="4x"></icon>
-                                    </div>
-                                </div>
-
-                                <div class="mm-card-body">
-                                    {{ media.name }}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </template>
-
-                <div class="mm-notification" v-else>
+                <div class="mm-notification" v-if="! currentMedia.length">
                     No media, add new media by clicking the <strong>New</strong> button below.
                 </div>
             </section>
@@ -148,7 +68,7 @@
                         <a class="mm-dropdown-item" @click="$refs.upload.focus()">Upload Media</a>
                     </dropdown>
 
-                    <dropdown class="mm-manager-selected-items up" v-if="selectedMedia.length">
+                    <!-- <dropdown class="mm-manager-selected-items up" v-if="selectedMedia.length">
                         <span class="mm-button mm-button-selected-items" slot="button">
                             <span>{{ selectedMediaLabel }}</span>
 
@@ -184,13 +104,13 @@
 
                     <span class="mm-manager-selected-info" v-else>
                         {{ selectedMediaLabel }}
-                    </span>
+                    </span> -->
                 </div>
                 
                 <div class="mm-button-group">
                     <a
                         v-if="limit !== 0"
-                        class="mm-button mm-button-confirm"
+                        class="mm-button is-confirm"
                         @click="confirm" 
                         :disabled="insertIsDisabled"
                     >Insert</a>
@@ -228,9 +148,12 @@
     import { mapGetters, mapMutations, mapActions } from 'vuex';
 
     // Components
+    import Breadcrumb from './ui/Breadcrumb';
     import Dropdown from './ui/Dropdown';
     import Modal from './ui/Modal';
 
+    import Folders from './Folders';
+    import Media from './Media';
     import ManageFolder from './ManageFolder';
     import ManageMedia from './ManageMedia';
     import Move from './Move';
@@ -238,9 +161,12 @@
 
     export default {
         components: {
+            Breadcrumb,
             Dropdown,
             Modal,
 
+            Folders,
+            Media,
             ManageFolder,
             ManageMedia,
             Move,
@@ -263,11 +189,7 @@
 
                 activeFolderId: 'mediaManager/activeFolderId',
                 currentFolders: 'mediaManager/currentFolders',
-                focusedFolderIds: 'mediaManager/focusedFolderIds',
-                openFolders: 'mediaManager/openFolders',
-
-                icon: 'mediaManager/icon',
-                isImage: 'mediaManager/isImage'
+                focusedFolderIds: 'mediaManager/focusedFolderIds'
             }),
 
             focusedItemCount() {
@@ -334,13 +256,10 @@
             ...mapMutations({
                 close: 'mediaManager/close',
 
-                focusMedia: 'mediaManager/focusMedia',
                 clearFocusedMediaIds: 'mediaManager/clearFocusedMediaIds',
                 clearSelectedMedia: 'mediaManager/clearSelectedMedia',
 
-                focusFolder: 'mediaManager/focusFolder',
-                clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds',
-                openFolder: 'mediaManager/openFolder'
+                clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds'
             }),
 
             edit() {

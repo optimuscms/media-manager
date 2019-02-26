@@ -1,0 +1,84 @@
+.mm-folders {
+    display: flex;
+    flex-wrap: wrap;
+    position: relative;
+    padding-bottom: 1rem;
+    margin: -0.5rem -0.5rem 1rem -0.5rem;
+    
+    &:before {
+        bottom: 0;
+        height: 1px;
+        content: '';
+        left: 0.5rem;
+        right: 0.5rem;
+        position: absolute;
+        background-color: $mm-grey-light;
+    }
+
+    .mm-folder {
+        display: flex;
+        padding: 0.5rem;
+        user-select: none;
+        justify-content: flex-start;
+    
+        .mm-folder-detail,
+        .mm-folder-select {
+            @include mm-control;
+    
+            flex-grow: 1;
+            cursor: pointer;
+            max-width: 10rem;
+            border-width: 1px;
+            padding: 0 1.5rem;
+            margin-right: -1px;
+            text-align: center;
+            align-items: center;
+            white-space: nowrap;
+            text-decoration: none;
+            justify-content: center;
+            color: $mm-folder-color;
+            border-color: $mm-folder-border-color;
+            background-color: $mm-folder-background-color;
+    
+            &:hover {
+                color: $mm-folder-hover-color;
+                border-color: $mm-folder-hover-border-color;
+                background-color: $mm-folder-hover-background-color;
+            }
+        }
+        
+        .mm-folder-detail {
+            border-radius: $mm-folder-border-radius 0 0 $mm-folder-border-radius;
+            
+            span {
+                &.mm-icon {
+                    margin-right: 0.1875em;
+                    margin-left: calc(-0.5em - 2px);
+                }
+                
+                &:not(.mm-icon) {
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+        
+        .mm-folder-select {
+            border-radius: 0 $mm-folder-border-radius $mm-folder-border-radius 0;
+    
+            .mm-icon {
+                margin-left: calc(-0.5em - 2px);
+                margin-right: calc(-0.5em - 2px);
+            }
+        }
+    
+        &.focused {
+            .mm-folder-detail {
+                color: $mm-folder-focus-color;
+                border-color: $mm-folder-focus-border-color;
+                background-color: $mm-folder-focus-background-color;
+            }
+        }
+    }
+}

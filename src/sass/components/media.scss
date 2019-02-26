@@ -1,0 +1,42 @@
+.mm-media {
+    display: flex;
+    margin: -0.5rem;
+    flex-wrap: wrap;
+
+    .mm-media-item {
+        width: 50%;
+        padding: 0.5rem;
+    
+        &.selected {
+            .mm-card {
+                border-color: $mm-media-item-selected-border-color;
+                outline: 3px solid $mm-media-item-selected-border-color;
+    
+                .mm-card-body {
+                    color: $mm-media-item-selected-color;
+                    background-color: $mm-media-item-selected-background-color;
+                }
+            }
+        }
+    
+        &.focused {
+            .mm-card {
+                border-color: $mm-media-item-focused-border-color;
+                outline: 3px solid $mm-media-item-focused-border-color;
+    
+                .mm-card-body {
+                    color: $mm-media-item-focused-color;
+                    background-color: $mm-media-item-focused-background-color;
+                }
+            }
+        }
+    
+        @include mm-screen-md {
+            width: 25%;
+        }
+    
+        @include mm-screen-lg {
+            width: 16.6666666667%;
+        }
+    }
+}

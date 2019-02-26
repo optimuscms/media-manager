@@ -12,6 +12,8 @@ $mm-button-border-width: 1px !default;
 $mm-button-border-color: $mm-grey-light !default;
 $mm-button-hover-border-color: $mm-grey !default;
 
+$mm-button-disabled-opacity: 0.5 !default;
+
 $mm-button-confirm-color: $mm-white !default;
 $mm-button-confirm-border-color: $mm-green !default;
 $mm-button-confirm-background-color: $mm-green !default;
@@ -19,14 +21,6 @@ $mm-button-confirm-background-color: $mm-green !default;
 $mm-button-confirm-hover-color: $mm-white !default;
 $mm-button-confirm-hover-border-color: $mm-green-dark !default;
 $mm-button-confirm-hover-background-color: $mm-green-dark !default;
-
-$mm-button-disabled-opacity: 0.5 !default;
-// $button-disabled-border-color: config('colors.grey-light') !default;
-// $button-disabled-background-color: config('colors.white') !default;
-
-// $button-static-color: config('colors.grey') !default;
-// $button-static-border-color: config('colors.grey-light') !default;
-// $button-static-background-color: config('colors.grey-lightest') !default;
 
 .mm-button {
     @include mm-control;
@@ -69,7 +63,7 @@ $mm-button-disabled-opacity: 0.5 !default;
         background-color: $mm-button-hover-background-color;
     }
 
-    &.mm-button-confirm {
+    &.is-confirm {
         color: $mm-button-confirm-color;
         border-color: $mm-button-confirm-border-color;
         background-color: $mm-button-confirm-background-color;
@@ -116,25 +110,8 @@ $mm-button-disabled-opacity: 0.5 !default;
     //     }
     // }
 
-    // &.outlined {
-    //     background-color: transparent;
-
-    //     &:hover {
-    //         background-color: transparent;
-    //     }
-    // }
-
-    // &.static {
-    //     pointer-events: none;
-    //     color: $button-static-color;
-    //     border-color: $button-static-border-color;
-    //     background-color: $button-static-background-color;
-    // }
-
     &[disabled] {
         opacity: $mm-button-disabled-opacity;
-        // border-color: $button-disabled-border-color;
-        // background-color: $button-disabled-background-color;
     }
 
     // &.loading {
