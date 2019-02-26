@@ -1,6 +1,6 @@
 <template>
     <modal :active="isActive" @close="close">
-        <div class="mm-modal-wrap mm-manage-folder"> <!-- modal-content bg-white rounded max-w-md -->
+        <div class="mm-modal-wrap is-folder">
             <header class="mm-modal-header">
                 <h4 class="mm-title">{{ title }}</h4>
 
@@ -9,35 +9,41 @@
                 </a>
             </header>
             
-            <section class="mm-modal-content"><!-- bg-white px-6 py-8 -->
+            <section class="mm-modal-content">
                 <errors
                     v-if="anyErrors"
-                    class="mm-mb-2"
+                    class="mm-mb-4"
                     :errors="errors"
                 ></errors>
 
-                <o-form-field input="name" label="Folder Name" required>
-                    <o-input
-                        id="name"
-                        ref="name"
-                        v-model="form.name"
-                        required
-                        :disabled="form.processing"
-                        @keydown.enter.prevent.native="submit"
-                    ></o-input>
-                </o-form-field>
+                <div class="mm-field">
+                    <label for="name" class="mm-label">Folder Name *</label>
+
+                    <div class="mm-control">
+                        <input
+                            id="name"
+                            ref="name"
+                            type="text"
+                            class="mm-input"
+                            v-model="form.name"
+                            required
+                            :disabled="form.processing"
+                            @keydown.enter.prevent="submit"
+                        >
+                    </div>
+                </div>
             </section>
 
             <footer class="mm-modal-footer">
                 <div class="mm-button-group">
+                    <a class="mm-button" @click="close">Cancel</a>
+
                     <a
-                        class="mm-button mm-button-confirm"
+                        class="mm-button is-confirm"
                         @click="submit"
                         :class="{ 'loading': isProcessing }"
                         :disabled="isProcessing"
                     >Save</a>
-                    
-                    <a class="mm-button" @click="close">Cancel</a>
                 </div>
             </footer>
         </div>
@@ -113,7 +119,7 @@
                 };
                 
                 this.isActive = true;
-                this.$nextTick(() => this.$refs.name.$el.focus());
+                this.$nextTick(() => this.$refs.name.focus());
             },
 
             onSuccess(response) {

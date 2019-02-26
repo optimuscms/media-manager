@@ -1,6 +1,6 @@
 <template>
-    <modal :active="isOpen" @close="close" class="is-manager">
-        <div class="mm-modal-wrap">
+    <modal :active="isOpen" @close="close">
+        <div class="mm-modal-wrap is-manager">
             <header class="mm-modal-header">
                 <breadcrumb></breadcrumb>
 
@@ -43,7 +43,11 @@
                 </dropdown>
             </header>
 
-            <section class="mm-modal-content" :class="{ 'loading': isLoading }" @click="clearFocused">
+            <section
+                class="mm-modal-content is-manager"
+                :class="{ 'loading': isLoading }"
+                @click="clearFocused"
+            >
                 <folders></folders>
 
                 <media></media>

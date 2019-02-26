@@ -16,13 +16,13 @@
     }
 }
 
-.mm-modal-background {
+.mm-modal-overlay {
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     position: absolute;
-    background-color: $mm-modal-background-color;
+    background-color: $mm-modal-overlay-color;
 }
 
 .mm-modal-wrap {
@@ -31,8 +31,21 @@
     overflow: auto;
     position: relative;
     border-radius: $mm-modal-border-radius;
+    background-color: $mm-modal-background-color;
     max-width: calc(100vw - #{$mm-modal-padding} * 2);
     max-height: calc(100vh - #{$mm-modal-padding} * 2);
+
+    &.is-manager {
+        height: 100%;
+        display: flex;
+        overflow: hidden;
+        flex-direction: column;
+        min-height: calc(100vh - #{$mm-modal-padding} * 2);
+    }
+
+    &.is-folder {
+        max-width: 40rem
+    }
 }
 
 .mm-modal-header {
@@ -48,7 +61,14 @@
 
 .mm-modal-content {
     position: relative;
+    padding: $mm-modal-content-padding;
     background-color: $mm-modal-content-background-color;
+
+    &.is-manager {
+        flex-grow: 1;
+        overflow: scroll;
+        padding: 1rem 1.5rem;
+    }
 
     &.loading {
         min-height: 10rem;
@@ -71,22 +91,12 @@
             height: $mm-modal-loader-size;
             border-top: 3px solid transparent;
             border-right: 3px solid transparent;
+            animation: mm-spin 500ms infinite linear;
             margin-top: -($mm-modal-loader-size / 2);
             margin-left: -($mm-modal-loader-size / 2);
             border-left: 3px solid $mm-modal-loader-color;
             border-bottom: 3px solid $mm-modal-loader-color;
-            animation: mm-loader-spin 500ms infinite linear;
         }
-    }
-}
-
-@keyframes mm-loader-spin {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(359deg);
     }
 }
 
@@ -103,25 +113,6 @@
 
     .mm-button-group {
         margin-left: auto;
-    }
-}
-
-.mm-modal {
-    &.is-manager {
-        .mm-modal-wrap {
-            height: 100%;
-            display: flex;
-            overflow: hidden;
-            flex-direction: column;
-            background-color: $mm-manager-background-color;
-            min-height: calc(100vh - #{$mm-modal-padding} * 2);
-        }
-
-        .mm-modal-content {
-            flex-grow: 1;
-            overflow: scroll;
-            padding: 1rem 1.5rem;
-        }
     }
 }
 

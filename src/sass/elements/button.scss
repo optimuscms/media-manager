@@ -73,6 +73,13 @@ $mm-button-confirm-hover-background-color: $mm-green-dark !default;
             border-color: $mm-button-confirm-hover-border-color;
             background-color: $mm-button-confirm-hover-background-color;
         }
+
+        &.loading {
+            &:after {
+                border-left-color: $mm-button-confirm-color;
+                border-bottom-color: $mm-button-confirm-color;
+            }
+        }
     }
 
     // @each $name, $colors in $button-colours {
@@ -114,25 +121,25 @@ $mm-button-confirm-hover-background-color: $mm-green-dark !default;
         opacity: $mm-button-disabled-opacity;
     }
 
-    // &.loading {
-    //     color: transparent;
-    //     pointer-events: none;
+    &.loading {
+        color: transparent;
+        pointer-events: none;
 
-    //     &:after {
-    //         content: '';
-    //         width: 1rem;
-    //         height: 1rem;
-    //         display: block;
-    //         position: absolute;
-    //         border-radius: 100px;
-    //         top: calc(50% - (1rem / 2));
-    //         left: calc(50% - (1rem / 2));
-    //         border: 2px solid transparent;
-    //         animation: spin 500ms infinite linear;
-    //         border-left-color: $button-border-color;
-    //         border-bottom-color: $button-border-color;
-    //     }
-    // }
+        &:after {
+            content: '';
+            width: 1rem;
+            height: 1rem;
+            display: block;
+            position: absolute;
+            border-radius: 100px;
+            top: calc(50% - (1rem / 2));
+            left: calc(50% - (1rem / 2));
+            border: 2px solid transparent;
+            animation: mm-spin 500ms infinite linear;
+            border-left-color: $mm-button-border-color;
+            border-bottom-color: $mm-button-border-color;
+        }
+    }
 }
 
 .mm-button-group {
