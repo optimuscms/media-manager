@@ -1,5 +1,5 @@
 <template>
-    <modal :active="isActive" @close="close">
+    <modal :active="isOpen" @close="close">
         <div class="mm-modal-wrap is-folder-manager">
             <header class="mm-modal-header">
                 <h4 class="mm-title">{{ title }}</h4>
@@ -75,55 +75,62 @@
 
         data() {
             return {
-                isActive: false,
-
-                title: 'Create Folder',
-                method: 'post',
-                action: '/admin/media-folders',
-
                 form: initialValues()
             }
         },
 
         computed: {
             ...mapGetters({
+                isOpen: 'mediaManager/folderManagerIsOpen',
+
+                folder: 'mediaManager/folderManagerItem',
                 activeFolderId: 'mediaManager/activeFolderId'
             }),
 
-            editing() {
-                return !! this.form.id;
+            isEditing() {
+                return !! this.folder;
+            },
+            
+            title() {
+                return this.isEditing ? 'Edit Folder' : 'Create Folder';
+            },
+            
+            method() {
+                return this.isEditing ? 'patch' : 'post';
+            },
+            
+            action() {
+                return this.isEditing
+                    ? '/admin/media-folders/' + this.form.id
+                    : '/admin/media-folders';
             }
         },
 
         watch: {
-            editing(editing) {
-                if (editing) {
-                    this.title = 'Edit Folder';
-                    this.method = 'patch';
-                    this.action = '/admin/media-folders/' + this.form.id;
+            isOpen(isOpen) {
+                if (isOpen) {
+                    this.form = {
+                        id: this.folder ? this.folder.id : null,
+                        parent_id: this.activeFolderId,
+                        name: this.folder ? this.folder.name : '',
+                    };
+                
+                    this.$nextTick(() => this.$refs.name.focus());
+                } else {
+                    this.form = initialValues();
                 }
             }
         },
 
         methods: {
             ...mapMutations({
+                close: 'mediaManager/closeFolderManager',
                 addFolder: 'mediaManager/addFolder',
                 updateFolder: 'mediaManager/updateFolder',
             }),
 
-            open(folder) {
-                this.form = {
-                    id: folder ? folder.id : null,
-                    parent_id: this.activeFolderId,
-                    name: folder ? folder.name : '',
-                };
-                
-                this.isActive = true;
-                this.$nextTick(() => this.$refs.name.focus());
-            },
-
             onSuccess(response) {
-                if (this.editing) {
+                if (this.isEditing) {
                     this.updateFolder({
                         parent: this.activeFolderId,
                         id: this.form.id,
@@ -139,11 +146,6 @@
                 }
 
                 this.close();
-            },
-
-            close() {
-                this.form = initialValues();
-                this.isActive = false;
             }
         }
     }

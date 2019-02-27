@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <div class="mm-button mm-button-picker" @click="open" v-if="! limitMet">
+        <div class="mm-button is-picker" @click="open" v-if="! limitMet">
             <span class="mm-icon">
                 <icon icon="upload"></icon>
             </span>

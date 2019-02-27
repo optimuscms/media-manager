@@ -50,6 +50,10 @@
     &.is-media-editor {
         max-width: 50rem
     }
+
+    &.is-confirmation {
+        max-width: 26rem
+    }
 }
 
 .mm-modal-header {
@@ -116,7 +120,9 @@
     border-radius: 0 0 $mm-modal-border-radius $mm-modal-border-radius;
 
     .mm-button-group {
-        margin-left: auto;
+        &:last-child {
+            margin-left: auto;
+        }
     }
 }
 

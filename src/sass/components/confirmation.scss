@@ -1,0 +1,39 @@
+.mm-confirmation-content {
+    text-align: center;
+    padding: 2rem 1.5rem;
+}
+
+.mm-confirmation-buttons {
+    display: flex;
+
+    .mm-button {
+        flex-grow: 1;
+
+        &:hover {
+            z-index: 2
+        }
+
+        &:focus,
+        &:active {
+            z-index: 3;
+
+            &:hover {
+                z-index: 4
+            }
+        }
+
+        &:not(:first-child) {
+            margin-left: -1px;
+        }
+
+        &:first-child {
+            border-left: 0;
+            border-radius: 0 0 0 $mm-modal-border-radius;
+        }
+
+        &:last-child {
+            border-right: 0;
+            border-radius: 0 0 $mm-modal-border-radius;
+        }
+    }
+}

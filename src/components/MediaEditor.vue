@@ -1,5 +1,5 @@
 <template>
-    <modal :active="isActive" @close="close">
+    <modal :active="isOpen" @close="close">
         <div class="mm-modal-wrap is-media-editor max-w-lg">
             <header class="mm-modal-header">
                 <h4 class="mm-title">Media Properties</h4>
@@ -19,7 +19,7 @@
                 <template v-if="media">
                     <div class="mm-media-editor-layout" v-if="isImage(media.extension)">
                         <div class="mm-media-editor-image">
-                            <img :src="media.url" :alt="media.name">
+                            <img :src="media.thumbnail_url" :alt="media.name">
                         </div>
 
                         <div class="mm-media-editor-fields">
@@ -121,9 +121,6 @@
 
         data() {
             return {
-                isActive: false,
-                media: {},
-
                 method: 'patch',
                 form: initialValues()
             }
@@ -131,8 +128,11 @@
 
         computed: {
             ...mapGetters({
+                isOpen: 'mediaManager/mediaEditorIsOpen',
+                isImage: 'mediaManager/isImage',
+
+                media: 'mediaManager/mediaEditorItem',
                 activeFolderId: 'mediaManager/activeFolderId',
-                isImage: 'mediaManager/isImage'
             }),
 
             action() {
@@ -140,24 +140,26 @@
             }
         },
 
+        watch: {
+            isOpen(isOpen) {
+                if (isOpen) {
+                    this.form = {
+                        id: this.media.id,
+                        name: this.media.name
+                    };
+                    
+                    this.$nextTick(() => this.$refs.name.focus());
+                } else {
+                    this.form = initialValues();
+                }
+            }
+        },
+
         methods: {
             ...mapMutations({
+                close: 'mediaManager/closeMediaEditor',
                 updateMedia: 'mediaManager/updateMediaItem',
-                // todo update selected media
-                // updateActiveMedia: 'mediaManager/updateActiveMedia'
             }),
-
-            open(media) {
-                this.media = media;
-
-                this.form = {
-                    id: this.media.id,
-                    name: this.media.name
-                };
-                
-                this.isActive = true;
-                this.$nextTick(() => this.$refs.name.focus());
-            },
 
             onSuccess() {
                 let properties = {
@@ -170,17 +172,9 @@
                     properties
                 });
 
-                // this.updateActiveMedia({
-                //     id: this.form.id,
-                //     properties
-                // });
+                // todo update all selected media
 
                 this.close();
-            },
-
-            close() {
-                this.form = initialValues();
-                this.isActive = false;
             }
         }
     }

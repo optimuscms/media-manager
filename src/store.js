@@ -23,6 +23,14 @@ const state = {
         openFolders: []
     },
 
+    mediaEditorIsOpen: false,
+    mediaEditorItem: null,
+
+    folderManagerIsOpen: false,
+    folderManagerItem: false,
+
+    confirmationIsOpen: false,
+
     icons: {
         'file-image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'svg'],
         'file-pdf': ['pdf'],
@@ -133,6 +141,29 @@ const getters = {
         return state.move.openFolders;
     },
 
+
+
+
+    mediaEditorIsOpen: state => {
+        return state.mediaEditorIsOpen;
+    },
+
+    mediaEditorItem: state => {
+        return state.mediaEditorItem;
+    },
+
+    folderManagerIsOpen: state => {
+        return state.folderManagerIsOpen;
+    },
+
+    folderManagerItem: state => {
+        return state.folderManagerItem;
+    },
+
+    confirmationIsOpen: state => {
+        return state.confirmationIsOpen;
+    },
+
     icon: state => extension => {
         let icon = 'file-alt';
 
@@ -198,12 +229,10 @@ const mutations = {
     },
 
     clearSelectedMedia(state, pickerId) {
+        pickerId || state.pickerId;
+        
         state.selectedMedia[pickerId] = [];
     },
-
-    // clearSelectedMedia(state) {
-    //     // state.selectedMedia = {};
-    // },
 
     addMedia(state, { folder, media }) {
         if (state.media.hasOwnProperty(folder)) {
@@ -336,6 +365,38 @@ const mutations = {
 
     clearMoveOpenFolders(state) { // todo rename
         state.move.openFolders = [];
+    },
+
+    openMediaEditor(state) {
+        state.mediaEditorIsOpen = true;
+    },
+
+    setMediaEditorItem(state, item) {
+        state.mediaEditorItem = item;
+    },
+
+    closeMediaEditor(state) {
+        state.mediaEditorIsOpen = false;
+    },
+
+    openFolderManager(state) {
+        state.folderManagerIsOpen = true;
+    },
+
+    setFolderManagerItem(state, item) {
+        state.folderManagerItem = item;
+    },
+
+    closeFolderManager(state) {
+        state.folderManagerIsOpen = false;
+    },
+
+    openConfirmation(state) {
+        state.confirmationIsOpen = true;
+    },
+
+    closeConfirmation(state) {
+        state.confirmationIsOpen = false;
     }
 };
 
@@ -411,6 +472,16 @@ const actions = {
         }
 
         commit('clearFocusedMediaIds');
+    },
+
+    openMediaEditor({ commit }, item) {
+        commit('setMediaEditorItem', item);
+        commit('openMediaEditor');
+    },
+
+    openFolderManager({ commit }, item = null) {
+        commit('setFolderManagerItem', item);
+        commit('openFolderManager');
     },
 
     moveFocusedMediaTo({ commit, getters }, folderId) {

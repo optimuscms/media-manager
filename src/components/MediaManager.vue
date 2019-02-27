@@ -27,13 +27,7 @@
 
                     <div class="mm-dropdown-divider"></div>
 
-                    <a
-                        class="mm-dropdown-item mm-text-danger"
-                        @click="$refs.confirm.open({
-                            media: focusedMediaIds.length,
-                            folders: focusedFolderIds.length
-                        })"
-                    >
+                    <a class="mm-dropdown-item mm-text-danger" @click="openConfirmation">
                         <span class="mm-icon">
                             <icon icon="trash"></icon>
                         </span>
@@ -45,12 +39,11 @@
 
             <section class="mm-modal-content is-media-manager" :class="{ 'loading': isLoading }" @click="clearFocused">
                 <folders></folders>
-
                 <media></media>
             </section>
             
             <footer class="mm-modal-footer">
-                <div>
+                <div class="mm-button-group">
                     <dropdown class="up">
                         <a slot="button" class="mm-button">
                             <span>New</span>
@@ -60,12 +53,12 @@
                             </span>
                         </a>
 
-                        <a class="mm-dropdown-item" @click="$refs.folderManager.open()">New Folder</a>
+                        <a class="mm-dropdown-item" @click="openFolderManager()">New Folder</a>
                         <a class="mm-dropdown-item" @click="$refs.upload.focus()">Upload Media</a>
                     </dropdown>
 
-                    <dropdown class="mm-manager-selected-items up" v-if="selectedMedia.length">
-                        <span class="mm-button mm-button-selected-items" slot="button">
+                    <dropdown class="up" v-if="selectedMedia.length">
+                        <span class="mm-button is-selected-items" slot="button">
                             <span>{{ selectedMediaLabel }}</span>
 
                             <span class="icon">
@@ -93,12 +86,12 @@
 
                         <div class="mm-dropdown-divider" v-if="selectedMedia.length"></div>
 
-                        <a class="mm-dropdown-item" @click="clearSelectedMedia">
+                        <a class="mm-dropdown-item" @click="clearSelectedMedia(pickerId)">
                             Clear all selected files
                         </a>
                     </dropdown>
 
-                    <span class="mm-manager-selected-info" v-else>
+                    <span class="mm-button is-selected-info" v-else>
                         {{ selectedMediaLabel }}
                     </span>
                 </div>
@@ -121,22 +114,9 @@
         </div>
 
         <!-- <move ref="move"></move> -->
-        <media-editor ref="mediaEditor"></media-editor>
-        <folder-manager ref="folderManager"></folder-manager>
-
-        <!-- <o-confirmation
-            ref="confirm"
-            @confirm="deleteFocusedItems"
-            button-class="button-red"
-            button-text="Delete"
-        >
-            <template slot-scope="count">
-                Are you sure you want to delete
-                <strong v-if="count.folders">{{ count.folders }} folder{{ count.folders !== 1 ? 's' : null }}</strong>
-                <template v-if="count.folders && count.media"> and </template>
-                <strong v-if="count.media">{{ count.media }} media item{{ count.media !== 1 ? 's' : null }}</strong>
-            </template>
-        </o-confirmation> -->
+        <media-editor></media-editor>
+        <folder-manager></folder-manager>
+        <confirmation></confirmation>
     </modal>
 </template>
 
@@ -145,6 +125,7 @@
 
     // Components
     import Breadcrumb from './ui/Breadcrumb';
+    import Confirmation from './ui/Confirmation';
     import Dropdown from './ui/Dropdown';
     import Modal from './ui/Modal';
 
@@ -158,6 +139,7 @@
     export default {
         components: {
             Breadcrumb,
+            Confirmation,
             Dropdown,
             Modal,
 
@@ -176,7 +158,6 @@
 
                 limit: 'mediaManager/limit',
                 pickerId: 'mediaManager/pickerId',
-                // acceptedExtensions: 'mediaManager/acceptedExtensions',
 
                 currentMedia: 'mediaManager/currentMedia',
                 focusedMediaIds: 'mediaManager/focusedMediaIds',
@@ -243,47 +224,39 @@
                 close: 'mediaManager/close',
 
                 getMediaAndFolders: 'mediaManager/getMediaAndFolders',
-                deleteFocusedItems: 'mediaManager/deleteFocusedItems',
                 
                 selectMedia: 'mediaManager/selectMedia',
-                removeSelectedMedia: 'mediaManager/removeSelectedMedia'
+                removeSelectedMedia: 'mediaManager/removeSelectedMedia',
+
+                openMediaEditor: 'mediaManager/openMediaEditor',
+                openFolderManager: 'mediaManager/openFolderManager'
             }),
 
             ...mapMutations({
                 close: 'mediaManager/close',
-
-                clearFocusedMediaIds: 'mediaManager/clearFocusedMediaIds',
                 clearSelectedMedia: 'mediaManager/clearSelectedMedia',
+                clearFocusedMediaIds: 'mediaManager/clearFocusedMediaIds',
+                clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds',
 
-                clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds'
+                openConfirmation: 'mediaManager/openConfirmation'
             }),
 
             edit() {
                 if (this.focusedItemCount === 1) {
-                    this.focusedMediaIds.length
-                        ? this.editMedia(this.focusedMediaIds[0])
-                        : this.editFolder(this.focusedFolderIds[0]);
+                    if (this.focusedMediaIds.length) {
+                        let media = this.currentMedia.find(({ id }) => {
+                            return id === this.focusedMediaIds[0];
+                        });
+
+                        this.openMediaEditor(media);
+                    } else {
+                        let folder = this.currentFolders.find(({ id }) => {
+                            return id === this.focusedFolderIds[0];
+                        });
+
+                        this.openFolderManager(folder);
+                    }
                 }
-            },
-
-            editMedia(mediaId) {
-                let media = this.currentMedia.find(({ id }) => id === mediaId);
-
-                this.$refs.mediaEditor.open({
-                    id: media.id,
-                    name: media.name,
-                    url: media.thumbnail_url,
-                    extension: media.extension
-                });
-            },
-
-            editFolder(folderId) {
-                let folder = this.currentFolders.find(({ id }) => id === folderId);
-
-                this.$refs.folderManager.open({
-                    id: folder.id,
-                    name: folder.name
-                });
             },
 
             clearFocused() {

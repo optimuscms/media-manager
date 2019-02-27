@@ -10,7 +10,7 @@
     }
 }
 
-@mixin placeholder {
+@mixin mm-placeholder {
     $placeholders: ':-moz' ':-webkit-input' '-moz' '-ms-input';
 
     @each $placeholder in $placeholders {

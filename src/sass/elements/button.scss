@@ -1,27 +1,3 @@
-$mm-button-padding: 0 1.5rem !default;
-$mm-button-weight: $mm-font-weight-bold !default;
-$mm-button-border-radius: $mm-border-radius-default !default;
-
-$mm-button-color: $mm-grey-darker !default;
-$mm-button-hover-color: $mm-black !default;
-
-$mm-button-background-color: $mm-white !default;
-$mm-button-hover-background-color: $mm-grey-lightest !default;
-
-$mm-button-border-width: 1px !default;
-$mm-button-border-color: $mm-grey-light !default;
-$mm-button-hover-border-color: $mm-grey !default;
-
-$mm-button-disabled-opacity: 0.5 !default;
-
-$mm-button-confirm-color: $mm-white !default;
-$mm-button-confirm-border-color: $mm-green !default;
-$mm-button-confirm-background-color: $mm-green !default;
-
-$mm-button-confirm-hover-color: $mm-white !default;
-$mm-button-confirm-hover-border-color: $mm-green-dark !default;
-$mm-button-confirm-hover-background-color: $mm-green-dark !default;
-
 .mm-button {
     @include mm-control;
 
@@ -82,40 +58,54 @@ $mm-button-confirm-hover-background-color: $mm-green-dark !default;
         }
     }
 
-    // @each $name, $colors in $button-colours {
-    //     &.button-#{$name} {
-    //         color: config('colors.#{nth($colors, 2)}');
-    //         border-color: config('colors.#{nth($colors, 1)}');
-    //         background-color: config('colors.#{nth($colors, 1)}');
+    &.is-danger {
+        color: $mm-button-danger-color;
+        border-color: $mm-button-danger-border-color;
+        background-color: $mm-button-danger-background-color;
+
+        &:hover {
+            color: $mm-button-danger-hover-color;
+            border-color: $mm-button-danger-hover-border-color;
+            background-color: $mm-button-danger-hover-background-color;
+        }
+    }
+
+    &.is-picker {
+        text-transform: none;
+        color: $mm-button-picker-color;
+        font-weight: $mm-button-picker-font-weight;
+        border-color: $mm-button-picker-border-color;
+        background-color: $mm-button-picker-background-color;
     
-    //         &:hover {
-    //             color: config('colors.#{nth($colors, 4)}');
-    //             border-color: config('colors.#{nth($colors, 3)}');
-    //             background-color: config('colors.#{nth($colors, 3)}');
-    //         }
+        &:hover {
+            color: $mm-button-picker-hover-color;
+            border-color: $mm-button-picker-hover-border-color;
+            background-color: $mm-button-picker-hover-background-color;
+        }
+    }
 
-    //         &[disabled] {
-    //             border-color: transparent;
-    //             background-color: config('colors.#{nth($colors, 1)}');
-    //         }
+    &.is-selected-items {
+        text-transform: none;
+        font-weight: $mm-font-weight-normal;
+        color: $mm-button-selected-items-color;
+        border-color: $mm-button-selected-items-border-color;
+        background-color: $mm-button-selected-items-background-color;
+    
+        &:hover {
+            color: $mm-button-selected-items-hover-color;
+            border-color: $mm-button-selected-items-hover-border-color;
+            background-color: $mm-button-selected-items-hover-background-color;
+        }
+    }
 
-    //         &.loading {
-    //             &:after {
-    //                 border-left-color: config('colors.#{nth($colors, 2)}');
-    //                 border-bottom-color: config('colors.#{nth($colors, 2)}');
-    //             }
-    //         }
-
-    //         &.outlined {
-    //             color: config('colors.#{nth($colors, 1)}');
-        
-    //             &:hover {
-    //                 color: config('colors.#{nth($colors, 2)}');
-    //                 background-color: config('colors.#{nth($colors, 3)}');
-    //             }
-    //         }
-    //     }
-    // }
+    &.is-selected-info {
+        pointer-events: none;
+        text-transform: none;
+        font-weight: $mm-font-weight-normal;
+        color: $mm-button-selected-info-color;
+        border-color: $mm-button-selected-info-border-color;
+        background-color: $mm-button-selected-info-background-color;
+    }
 
     &[disabled] {
         opacity: $mm-button-disabled-opacity;
@@ -143,7 +133,7 @@ $mm-button-confirm-hover-background-color: $mm-green-dark !default;
 }
 
 .mm-button-group {
-    .mm-button {
+    > * {
         &:not(:last-child) {
             margin-right: 0.75rem;
         }

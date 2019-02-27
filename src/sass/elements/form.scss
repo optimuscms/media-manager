@@ -1,31 +1,4 @@
-$mm-input-padding: 0.5rem 0.75rem !default;
-$mm-input-border-radius: $mm-border-radius-default !default;
-
-$mm-input-color: $mm-grey-darker !default;
-$mm-input-hover-color: $mm-grey-darkest !default;
-$mm-input-disabled-color: $mm-grey-light !default;
-
-$mm-input-placeholder-color: $mm-grey !default;
-$mm-input-hover-placeholder-color: $mm-grey-dark !default;
-$mm-input-disabled-placeholder-color: $mm-grey !default;
-
-$mm-input-border-color: $mm-grey-light !default;
-$mm-input-hover-border-color: $mm-grey !default;
-$mm-input-active-border-color: $mm-grey-light !default;
-$mm-input-disabled-border-color: $mm-grey-light !default;
-
-$mm-input-background-color: $mm-white !default;
-$mm-input-hover-background-color: $mm-white !default;
-$mm-input-disabled-background-color: $mm-grey-lighter !default;
-
-$mm-label-size: inherit !default;
-$mm-label-margin: 0.5rem !default;
-$mm-label-color: $mm-blue-light !default;
-$mm-label-weight: $mm-font-weight-bold !default;
-
-$mm-field-margin: 1.5rem !default;
-
-@mixin input {
+@mixin mm-input {
     @include mm-control;
 
     color: $mm-input-color;
@@ -34,7 +7,7 @@ $mm-field-margin: 1.5rem !default;
     border-radius: $mm-input-border-radius;
     background-color: $mm-input-background-color;
 
-    @include placeholder {
+    @include mm-placeholder {
         color: $mm-input-placeholder-color;
     }
 
@@ -43,7 +16,7 @@ $mm-field-margin: 1.5rem !default;
         border-color: $mm-input-hover-border-color;
         background-color: $mm-input-hover-background-color;
 
-        @include placeholder {
+        @include mm-placeholder {
             color: $mm-input-hover-placeholder-color;
         }
     }
@@ -58,15 +31,14 @@ $mm-field-margin: 1.5rem !default;
         border-color: $mm-input-disabled-border-color;
         background-color: $mm-input-disabled-background-color;
 
-        @include placeholder {
+        @include mm-placeholder {
             color: $mm-input-disabled-placeholder-color;
         }
     }
 }
 
 .mm-input {
-    @include input;
-
+    @include mm-input;
     width: 100%;
     max-width: 100%;
 }
