@@ -1,6 +1,6 @@
 <template>
     <modal :active="isOpen" @close="close">
-        <div class="mm-modal-wrap is-media-editor max-w-lg">
+        <div class="mm-modal-wrap is-media-editor">
             <header class="mm-modal-header">
                 <h4 class="mm-title">Media Properties</h4>
 
@@ -10,11 +10,7 @@
             </header>
 
             <section class="mm-modal-content">
-                <errors
-                    v-if="anyErrors"
-                    class="mm-mb-4"
-                    :errors="errors"
-                ></errors>
+                <errors v-if="anyErrors" class="mm-mb-4" :errors="errors"></errors>
                 
                 <template v-if="media">
                     <div class="mm-media-editor-layout" v-if="isImage(media.extension)">
@@ -159,6 +155,7 @@
             ...mapMutations({
                 close: 'mediaManager/closeMediaEditor',
                 updateMedia: 'mediaManager/updateMediaItem',
+                updateSelectedMedia: 'mediaManager/updateSelectedMedia',
             }),
 
             onSuccess() {
@@ -173,6 +170,10 @@
                 });
 
                 // todo update all selected media
+                this.updateSelectedMedia({
+                    id: this.form.id,
+                    properties
+                });
 
                 this.close();
             }

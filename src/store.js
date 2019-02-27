@@ -29,6 +29,7 @@ const state = {
     folderManagerIsOpen: false,
     folderManagerItem: false,
 
+    mediaMoverIsOpen: false,
     confirmationIsOpen: false,
 
     icons: {
@@ -160,6 +161,10 @@ const getters = {
         return state.folderManagerItem;
     },
 
+    mediaMoverIsOpen: state => {
+        return state.mediaMoverIsOpen;
+    },
+
     confirmationIsOpen: state => {
         return state.confirmationIsOpen;
     },
@@ -230,8 +235,10 @@ const mutations = {
 
     clearSelectedMedia(state, pickerId) {
         pickerId || state.pickerId;
-        
-        state.selectedMedia[pickerId] = [];
+
+        if (state.selectedMedia.hasOwnProperty(pickerId)) {
+            delete state.selectedMedia[pickerId];
+        }
     },
 
     addMedia(state, { folder, media }) {
@@ -249,6 +256,14 @@ const mutations = {
                     });
                 }
             });
+        }
+    },
+
+    updateSelectedMedia(state, { id, properties }) {
+        let selectedMedia = Object.keys(state.selectedMedia);
+
+        if (selectedMedia.length) {
+            console.log(selectedMedia);
         }
     },
 
@@ -391,6 +406,14 @@ const mutations = {
         state.folderManagerIsOpen = false;
     },
 
+    openMediaMover(state) {
+        state.mediaMoverIsOpen = true;
+    },
+
+    closeMediaMover(state) {
+        state.mediaMoverIsOpen = false;
+    },
+
     openConfirmation(state) {
         state.confirmationIsOpen = true;
     },
@@ -401,8 +424,8 @@ const mutations = {
 };
 
 const actions = {
-    open({ commit, dispatch }, { pickerId, limit, selectedMedia, acceptedExtensions }) {
-        commit('setPickerId', pickerId || null);
+    open({ commit, dispatch }, { pickerId, limit, acceptedExtensions } = {}) {
+        commit('setPickerId', pickerId !== undefined ? pickerId : null);
         commit('setLimit', limit !== undefined ? limit : 0);
         // commit('setAcceptedExtensions', Array.isArray(acceptedExtensions) ? acceptedExtensions : []);
 

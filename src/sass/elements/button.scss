@@ -111,6 +111,10 @@
         opacity: $mm-button-disabled-opacity;
     }
 
+    &.full {
+        width: 100%;
+    }
+
     &.loading {
         color: transparent;
         pointer-events: none;

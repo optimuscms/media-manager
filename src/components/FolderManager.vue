@@ -10,11 +10,7 @@
             </header>
             
             <section class="mm-modal-content">
-                <errors
-                    v-if="anyErrors"
-                    class="mm-mb-4"
-                    :errors="errors"
-                ></errors>
+                <errors v-if="anyErrors" class="mm-mb-4" :errors="errors"></errors>
 
                 <div class="mm-field">
                     <label for="mm_folder_name" class="mm-label">Folder Name *</label>

@@ -51,6 +51,10 @@
         max-width: 50rem
     }
 
+    &.is-media-mover {
+        max-width: 20rem;
+    }
+
     &.is-confirmation {
         max-width: 26rem
     }
@@ -76,6 +80,10 @@
         flex-grow: 1;
         overflow: scroll;
         padding: 1rem 1.5rem;
+    }
+
+    &.is-media-mover {
+        padding: 0;
     }
 
     &.loading {

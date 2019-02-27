@@ -128,7 +128,7 @@
             });
         },
 
-        destroyed() {
+        beforeDestroy() {
             this.clearSelectedMedia(this.id);
         },
 
@@ -136,7 +136,7 @@
             ...mapActions({
                 openManager: 'mediaManager/open',
                 setSelectedMedia: 'mediaManager/setSelectedMedia',
-                clearSelectedMedia: 'mediaManager/setSelectedMedia',
+                clearSelectedMedia: 'mediaManager/clearSelectedMedia',
                 removeSelectedMedia: 'mediaManager/removeSelectedMedia',
             }),
 

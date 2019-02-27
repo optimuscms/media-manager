@@ -5,26 +5,26 @@
                 Are you sure you want to delete
 
                 <strong v-if="folderCount">
-                    {{ folderCount }} folder{{ folderCount !== 1 ? 's' : null }}
+                    {{ folderCount }} folder{{ folderCount > 1 ? 's' : null }}
                 </strong>
 
-                <template v-if="folderCount && mediaCount"> and </template>
+                <template v-if="folderCount && mediaCount">
+                    and
+                </template>
 
                 <strong v-if="mediaCount">
-                    {{ mediaCount }} media item{{ mediaCount !== 1 ? 's' : null }}
+                    {{ mediaCount }} media item{{ mediaCount > 1 ? 's' : null }}
                 </strong>
             </div>
 
             <div class="mm-confirmation-buttons">
-                <a
-                    class="mm-button is-danger"
-                    @click="confirm"
-                >Delete</a>
+                <a class="mm-button is-danger" @click="confirm">
+                    Delete
+                </a>
 
-                <a
-                    class="mm-button"
-                    @click="close"
-                >Cancel</a>
+                <a class="mm-button" @click="close">
+                    Cancel
+                </a>
             </div>
         </div>
     </modal>

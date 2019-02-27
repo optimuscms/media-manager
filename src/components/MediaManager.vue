@@ -17,7 +17,7 @@
                         <span>Properties</span>
                     </a>
 
-                    <a class="mm-dropdown-item" @click="$refs.move.open()">
+                    <a class="mm-dropdown-item" @click="openMediaMover">
                         <span class="mm-icon">
                             <icon icon="reply"></icon>
                         </span>
@@ -37,7 +37,11 @@
                 </dropdown>
             </header>
 
-            <section class="mm-modal-content is-media-manager" :class="{ 'loading': isLoading }" @click="clearFocused">
+            <section
+                class="mm-modal-content is-media-manager"
+                :class="{ 'loading': isLoading }"
+                @click="clearFocused"
+            >
                 <folders></folders>
                 <media></media>
             </section>
@@ -66,11 +70,7 @@
                             </span>
                         </span>
                         
-                        <a
-                            :key="file.id"
-                            class="mm-dropdown-item"
-                            v-for="file in selectedMedia"
-                        >
+                        <a :key="file.id" class="mm-dropdown-item" v-for="file in selectedMedia">
                             <span>{{ file.name }}</span>
 
                             <a
@@ -103,7 +103,7 @@
                         @click="confirm" 
                         :disabled="insertIsDisabled"
                     >Insert</a>
-               
+
                     <a class="button" @click="cancel">
                         {{ limit === 0 ? 'Close' : 'Cancel' }}
                     </a>
@@ -113,9 +113,9 @@
             </footer>
         </div>
 
-        <!-- <move ref="move"></move> -->
         <media-editor></media-editor>
         <folder-manager></folder-manager>
+        <media-mover></media-mover>
         <confirmation></confirmation>
     </modal>
 </template>
@@ -238,6 +238,7 @@
                 clearFocusedMediaIds: 'mediaManager/clearFocusedMediaIds',
                 clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds',
 
+                openMediaMover: 'mediaManager/openMediaMover',
                 openConfirmation: 'mediaManager/openConfirmation'
             }),
 
