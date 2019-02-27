@@ -75,7 +75,7 @@
 
                             <a
                                 class="mm-icon"
-                                @click.stop="removeSelectedMedia({
+                                @click.stop="removePickerMediaItem({
                                     pickerId: pickerId,
                                     id: file.id
                                 })"
@@ -86,7 +86,7 @@
 
                         <div class="mm-dropdown-divider" v-if="selectedMedia.length"></div>
 
-                        <a class="mm-dropdown-item" @click="clearSelectedMedia(pickerId)">
+                        <a class="mm-dropdown-item" @click="clearPickerMedia(pickerId)">
                             Clear all selected files
                         </a>
                     </dropdown>
@@ -121,6 +121,9 @@
 </template>
 
 <script>
+    // todo dont allowed media which isn't in the accepted extensions to be selected
+    // todo move modal
+
     import { mapGetters, mapMutations, mapActions } from 'vuex';
 
     // Components
@@ -155,18 +158,18 @@
             ...mapGetters({
                 isOpen: 'mediaManager/isOpen',
                 isLoading: 'mediaManager/isLoading',
-
                 limit: 'mediaManager/limit',
                 pickerId: 'mediaManager/pickerId',
 
                 currentMedia: 'mediaManager/currentMedia',
+                selectableMediaIds: 'mediaManager/selectableMediaIds',
                 focusedMediaIds: 'mediaManager/focusedMediaIds',
                 getSelectedMedia: 'mediaManager/selectedMedia',
                 selectedMediaIds: 'mediaManager/selectedMediaIds',
-
                 activeFolderId: 'mediaManager/activeFolderId',
                 currentFolders: 'mediaManager/currentFolders',
-                focusedFolderIds: 'mediaManager/focusedFolderIds'
+                focusedFolderIds: 'mediaManager/focusedFolderIds',
+                acceptedExtensions: 'mediaManager/acceptedExtensions'
             }),
 
             focusedItemCount() {
@@ -194,20 +197,23 @@
                     ' selected';
             },
 
+            newlySelectedMedia() {
+                return this.focusedMediaIds.filter(id => {
+                    return ! this.selectedMediaIds.includes(id)
+                        && this.selectableMediaIds.includes(id)
+                });
+            },
+
             limitIsExceeded() {
                 if (this.limit) {
-                    let newlySelectedMedia = this.focusedMediaIds.filter(id => {
-                        return ! this.selectedMediaIds.includes(id)
-                    });
-                    
-                    return (this.selectedMediaCount + newlySelectedMedia.length) > this.limit;
+                    return (this.selectedMediaCount + this.newlySelectedMedia.length) > this.limit;
                 }
 
                 return false;
             },
 
             insertIsDisabled() {
-                return this.limitIsExceeded || ! (this.focusedMediaIds.length || this.selectedMediaCount);
+                return this.limitIsExceeded || ! (this.newlySelectedMedia.length || this.selectedMediaCount);
             }
         },
 
@@ -222,22 +228,18 @@
             ...mapActions({
                 reset: 'mediaManager/reset',
                 close: 'mediaManager/close',
-
                 getMediaAndFolders: 'mediaManager/getMediaAndFolders',
-                
                 selectMedia: 'mediaManager/selectMedia',
-                removeSelectedMedia: 'mediaManager/removeSelectedMedia',
-
+                removePickerMediaItem: 'mediaManager/removePickerMediaItem',
                 openMediaEditor: 'mediaManager/openMediaEditor',
                 openFolderManager: 'mediaManager/openFolderManager'
             }),
 
             ...mapMutations({
                 close: 'mediaManager/close',
-                clearSelectedMedia: 'mediaManager/clearSelectedMedia',
+                clearPickerMedia: 'mediaManager/clearPickerMedia',
                 clearFocusedMediaIds: 'mediaManager/clearFocusedMediaIds',
                 clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds',
-
                 openMediaMover: 'mediaManager/openMediaMover',
                 openConfirmation: 'mediaManager/openConfirmation'
             }),

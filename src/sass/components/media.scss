@@ -30,6 +30,10 @@
                 }
             }
         }
+
+        &.not-selectable {
+            opacity: 0.6;
+        }
     
         @include mm-screen-md {
             width: 25%;

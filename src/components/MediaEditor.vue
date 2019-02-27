@@ -155,7 +155,7 @@
             ...mapMutations({
                 close: 'mediaManager/closeMediaEditor',
                 updateMedia: 'mediaManager/updateMediaItem',
-                updateSelectedMedia: 'mediaManager/updateSelectedMedia',
+                updateSelectedMedia: 'mediaManager/updateSelectedMediaItem',
             }),
 
             onSuccess() {
@@ -169,7 +169,6 @@
                     properties
                 });
 
-                // todo update all selected media
                 this.updateSelectedMedia({
                     id: this.form.id,
                     properties

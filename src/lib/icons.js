@@ -6,7 +6,7 @@ import {
 } from '@fortawesome/free-regular-svg-icons';
 
 import {
-    faAngleUp,
+    faAngleUp, faAngleLeft,
     faCheck,
     faCrosshairs,
     faEllipsisH,
@@ -28,7 +28,7 @@ import {
 export default { 
     register() {
         library.add(
-            faAngleUp,
+            faAngleUp, faAngleLeft,
             faCheck,
             faClock,
             faCrosshairs,

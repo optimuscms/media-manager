@@ -16,7 +16,7 @@
                     v-for="media in pickerMedia"
                 >
                     <div class="mm-icon mm-icon-md">
-                        <icon :icon="icon(media.extension)" size="2x"></icon>
+                        <icon :icon="getIcon(media.extension)" size="2x"></icon>
                     </div>
                     
                     <div class="mm-picker-item-body">
@@ -58,9 +58,9 @@
                 default: () => []
             },
 
-            // acceptedExtensions: {
-            //     type: [ Array, String ]
-            // },
+            acceptedExtensions: {
+                type: [ Array, String ]
+            },
 
             limit: {
                 type: Number,
@@ -75,9 +75,9 @@
 
         computed: {
             ...mapGetters({
-                icon: 'mediaManager/icon',
-                getPickerMedia: 'mediaManager/selectedMedia'
-            //     imageExtensions: 'mediaManager/imageExtensions'
+                getIcon: 'mediaManager/getIcon',
+                getPickerMedia: 'mediaManager/selectedMedia',
+                imageExtensions: 'mediaManager/imageExtensions'
             }),
 
             pickerMedia() {
@@ -100,7 +100,7 @@
         watch: {
             media(value, oldValue) {
                 if (! isEqual(value, oldValue)) {
-                    this.setSelectedMedia({
+                    this.setPickerMedia({
                         pickerId: this.id,
                         media: this.formatMedia(this.media)
                     });
@@ -122,27 +122,28 @@
         },
 
         created() {
-            this.setSelectedMedia({
+            this.setPickerMedia({
                 pickerId: this.id,
                 media: this.formatMedia(this.media)
             });
         },
 
         beforeDestroy() {
-            this.clearSelectedMedia(this.id);
+            this.clearPickerMedia(this.id);
         },
 
         methods: {
             ...mapActions({
                 openManager: 'mediaManager/open',
-                setSelectedMedia: 'mediaManager/setSelectedMedia',
-                clearSelectedMedia: 'mediaManager/clearSelectedMedia',
-                removeSelectedMedia: 'mediaManager/removeSelectedMedia',
+                setPickerMedia: 'mediaManager/setPickerMedia',
+                clearPickerMedia: 'mediaManager/clearPickerMedia',
+                removePickerMediaItem: 'mediaManager/removePickerMediaItem',
             }),
 
             removeMedia(id) {
-                this.removeSelectedMedia({
-                    pickerId: this.id, id
+                this.removePickerMediaItem({
+                    pickerId: this.id,
+                    id
                 });
             },
 
@@ -162,21 +163,21 @@
                 this.openManager({
                     pickerId: this.id,
                     limit: this.limit,
-                    // acceptedExtensions: this.acceptedExtensions
-                    //     ? this.setAcceptedExtensions(this.acceptedExtensions)
-                    //     : null
+                    acceptedExtensions: this.acceptedExtensions
+                        ? this.setAcceptedExtensions(this.acceptedExtensions)
+                        : null
                 });
-            }
+            },
 
-            // setAcceptedExtensions(acceptedExtensions) {
-            //     if (acceptedExtensions === 'image') {
-            //         return this.imageExtensions;
-            //     }
+            setAcceptedExtensions(acceptedExtensions) {
+                if (acceptedExtensions === 'image') {
+                    return this.imageExtensions;
+                }
 
-            //     return Array.isArray(acceptedExtensions)
-            //         ? acceptedExtensions
-            //         : [acceptedExtensions];
-            // },
+                return Array.isArray(acceptedExtensions)
+                    ? acceptedExtensions
+                    : [acceptedExtensions];
+            },
         }
     }
 </script>

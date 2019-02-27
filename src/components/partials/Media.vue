@@ -10,7 +10,8 @@
                     v-for="media in currentMedia"
                     :class="{
                         'focused': focusedMediaIds.includes(media.id),
-                        'selected': selectedMediaIds.includes(media.id)
+                        'selected': selectedMediaIds.includes(media.id),
+                        'not-selectable': ! isSelectable(media.extension)
                     }"
                     @click.stop="focusMedia(media.id)"
                 >
@@ -21,7 +22,7 @@
 
                         <div class="mm-card-other" v-else>
                             <div class="mm-icon">
-                                <icon :icon="icon(media.extension)" size="4x"></icon>
+                                <icon :icon="getIcon(media.extension)" size="4x"></icon>
                             </div>
                         </div>
 
@@ -45,19 +46,28 @@
     export default {
         computed: {
             ...mapGetters({
-                icon: 'mediaManager/icon',
+                getIcon: 'mediaManager/getIcon',
                 isImage: 'mediaManager/isImage',
 
                 currentMedia: 'mediaManager/currentMedia',
                 focusedMediaIds: 'mediaManager/focusedMediaIds',
-                selectedMediaIds: 'mediaManager/selectedMediaIds'
+                selectedMediaIds: 'mediaManager/selectedMediaIds',
+                acceptedExtensions: 'mediaManager/acceptedExtensions'
             })
         },
 
         methods: {
             ...mapMutations({
                 focusMedia: 'mediaManager/focusMedia'
-            })
+            }),
+
+            isSelectable(extension) {
+                if (! this.acceptedExtensions.length) {
+                    return true;
+                }
+
+                return this.acceptedExtensions.includes(extension);
+            }
         }
     }
 </script>

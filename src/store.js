@@ -8,7 +8,7 @@ const state = {
 
     limit: 0,
     pickerId: null,
-    // acceptedExtensions: [],
+    acceptedExtensions: [],
 
     media: {},
     selectedMedia: {},
@@ -65,9 +65,9 @@ const getters = {
         return state.pickerId;
     },
 
-    // acceptedExtensions: state => {
-    //     return state.acceptedExtensions;
-    // },
+    acceptedExtensions: state => {
+        return state.acceptedExtensions;
+    },
 
     allMedia: state => {
         return state.media;
@@ -78,13 +78,17 @@ const getters = {
             ? state.media[getters.activeFolderId]
             : [];
 
-        // if (state.acceptedExtensions.length) {
-        //     currentMedia = currentMedia.filter(({ extension }) => {
-        //         return state.acceptedExtensions.includes(extension)
-        //     });
-        // }
-
         return currentMedia;
+    },
+
+    selectableMediaIds(state, getters) {
+        if (state.acceptedExtensions.length) {
+            return getters.currentMedia.filter(({ extension }) => {
+                return state.acceptedExtensions.includes(extension);
+            }).map(({ id }) => id);
+        }
+
+        return getters.currentMedia.map(({ id }) => id);
     },
 
     focusedMediaIds: state => {
@@ -125,24 +129,18 @@ const getters = {
         return state.focusedFolderIds;
     },
 
-    // firstFocusedFolder: state => {
-    //     return state.focusedFolderIds.length ? state.focusedFolderIds[0] : null;
-    // },
-
     openFolders: state => {
         return state.openFolders;
     },
 
 
-    getMoveFolders: state => { // todo rename
-        return state.move.folders;
-    },
+    // getMoveFolders: state => { // todo rename
+    //     return state.move.folders;
+    // },
 
-    getMoveOpenFolders: state => { // todo rename
-        return state.move.openFolders;
-    },
-
-
+    // getMoveOpenFolders: state => { // todo rename
+    //     return state.move.openFolders;
+    // },
 
 
     mediaEditorIsOpen: state => {
@@ -169,7 +167,7 @@ const getters = {
         return state.confirmationIsOpen;
     },
 
-    icon: state => extension => {
+    getIcon: state => extension => {
         let icon = 'file-alt';
 
         Object.keys(state.icons).some(key => {
@@ -181,9 +179,9 @@ const getters = {
         return icon;
     },
 
-    // imageExtensions: state => {
-    //     return state.imageExtensions;
-    // },
+    imageExtensions: state => {
+        return state.imageExtensions;
+    },
 
     isImage: state => extension => {
         return state.imageExtensions.includes(extension);
@@ -211,29 +209,29 @@ const mutations = {
         state.pickerId = pickerId;
     },
 
-    // setAcceptedExtensions(state, extensions) {
-    //     state.acceptedExtensions = extensions;
-    // },
+    setAcceptedExtensions(state, extensions) {
+        state.acceptedExtensions = extensions;
+    },
 
     setMedia(state, { folder, media }) {        
         Vue.set(state.media, folder, media);
     },
 
-    setSelectedMedia(state, { pickerId, media }) {
+    setPickerMedia(state, { pickerId, media }) {
         Vue.set(state.selectedMedia, pickerId, media);
     },
 
-    addSelectedMedia(state, media) {
+    addPickerMedia(state, media) {
         state.selectedMedia[state.pickerId] = state.selectedMedia[state.pickerId].concat(media);
     },
 
-    removeSelectedMedia(state, { pickerId, id }) {
+    removePickerMediaItem(state, { pickerId, id }) {
         state.selectedMedia[pickerId] = state.selectedMedia[pickerId].filter(media => {
             return media.id !== id;
         });
     },
 
-    clearSelectedMedia(state, pickerId) {
+    clearPickerMedia(state, pickerId) {
         pickerId || state.pickerId;
 
         if (state.selectedMedia.hasOwnProperty(pickerId)) {
@@ -259,12 +257,24 @@ const mutations = {
         }
     },
 
-    updateSelectedMedia(state, { id, properties }) {
-        let selectedMedia = Object.keys(state.selectedMedia);
+    updateSelectedMediaItem(state, { id, properties }) {
+        Object.keys(state.selectedMedia).forEach(pickerId => {
+            state.selectedMedia[pickerId].map(media => {
+                if (media.id === id) {
+                    Object.entries(properties).forEach(([key, value]) => {
+                        media[key] = value;
+                    });
+                }
+            });
+        });
+    },
 
-        if (selectedMedia.length) {
-            console.log(selectedMedia);
-        }
+    removeSelectedMedia(state, mediaIds) {
+        Object.keys(state.selectedMedia).forEach(pickerId => {
+            state.selectedMedia[pickerId] = state.selectedMedia[pickerId].filter(({ id }) => {
+                return ! mediaIds.includes(id);
+            })
+        });
     },
 
     addMediaItem(state, { folder, media }) {
@@ -273,11 +283,9 @@ const mutations = {
         }
     },
 
-    removeMedia(state, { folder, media }) {
-        if (state.media.hasOwnProperty(folder)) {
-            let mediaIds = media.map(({ id }) => id);
-
-            state.media[folder] = state.media[folder].filter(({ id }) => {
+    removeMedia(state, { folderId, mediaIds }) {
+        if (state.media.hasOwnProperty(folderId)) {
+            state.media[folderId] = state.media[folderId].filter(({ id }) => {
                 return ! mediaIds.includes(id);
             });
         }
@@ -323,11 +331,10 @@ const mutations = {
         }
     },
 
-    removeFolders(state, { parent, folders }) {
-        if (state.folders.hasOwnProperty(parent)) {
-            let folderIds = folders.map(({ id }) => id);
+    removeFolders(state, { parentId, folderIds }) {
+        if (state.folders.hasOwnProperty(parentId)) {
 
-            state.folders[parent] = state.folders[parent].filter(({ id }) => {
+            state.folders[parentId] = state.folders[parentId].filter(({ id }) => {
                 return ! folderIds.includes(id);
             });
         }
@@ -357,29 +364,6 @@ const mutations = {
         } else {
             state.openFolders.push(folder);
         }
-    },
-
-
-
-
-    setMoveFolders(state, folders) { // todo rename
-        state.move.folders = folders;
-    },
-
-    addMoveOpenFolder(state, id) { // todo rename
-        if (state.move.openFolders.includes(id)) {
-            let index = state.move.openFolders.findIndex(openId => openId === id);
-
-            if (index !== -1) {
-                state.move.openFolders.splice(index);
-            }
-        } else {
-            state.move.openFolders.push(id);
-        }
-    },
-
-    clearMoveOpenFolders(state) { // todo rename
-        state.move.openFolders = [];
     },
 
     openMediaEditor(state) {
@@ -414,6 +398,26 @@ const mutations = {
         state.mediaMoverIsOpen = false;
     },
 
+    // setMoveFolders(state, folders) { // todo rename
+    //     state.move.folders = folders;
+    // },
+
+    // addMoveOpenFolder(state, id) { // todo rename
+    //     if (state.move.openFolders.includes(id)) {
+    //         let index = state.move.openFolders.findIndex(openId => openId === id);
+
+    //         if (index !== -1) {
+    //             state.move.openFolders.splice(index);
+    //         }
+    //     } else {
+    //         state.move.openFolders.push(id);
+    //     }
+    // },
+
+    // clearMoveOpenFolders(state) { // todo rename
+    //     state.move.openFolders = [];
+    // },
+
     openConfirmation(state) {
         state.confirmationIsOpen = true;
     },
@@ -427,22 +431,26 @@ const actions = {
     open({ commit, dispatch }, { pickerId, limit, acceptedExtensions } = {}) {
         commit('setPickerId', pickerId !== undefined ? pickerId : null);
         commit('setLimit', limit !== undefined ? limit : 0);
-        // commit('setAcceptedExtensions', Array.isArray(acceptedExtensions) ? acceptedExtensions : []);
+
+        commit('setAcceptedExtensions', Array.isArray(acceptedExtensions)
+            ? acceptedExtensions
+            : []
+        );
 
         commit('open');
         dispatch('getMediaAndFolders');
     },
 
-    setSelectedMedia({ commit }, { pickerId, media }) {
-        commit('setSelectedMedia', { pickerId, media });
+    setPickerMedia({ commit }, { pickerId, media }) {
+        commit('setPickerMedia', { pickerId, media });
     },
 
-    removeSelectedMedia({ commit }, { pickerId, id }) {
-        commit('removeSelectedMedia', { pickerId, id });
+    removePickerMediaItem({ commit }, { pickerId, id }) {
+        commit('removePickerMediaItem', { pickerId, id });
     },
 
-    clearSelectedMedia({ commit }, pickerId) {
-        commit('clearSelectedMedia', pickerId);
+    clearPickerMedia({ commit }, pickerId) {
+        commit('clearPickerMedia', pickerId);
     },
 
     getMediaAndFolders({ commit, getters }) {
@@ -483,7 +491,8 @@ const actions = {
 
     selectMedia({ commit, getters }) {
         let newlySelectedMedia = getters.focusedMediaIds.filter(id => {
-            return ! getters.selectedMediaIds.includes(id);
+            return ! getters.selectedMediaIds.includes(id)
+                && getters.selectableMediaIds.includes(id)
         });
 
         if (newlySelectedMedia.length) {
@@ -491,7 +500,7 @@ const actions = {
                 return newlySelectedMedia.includes(id);
             });
 
-            commit('addSelectedMedia', media);
+            commit('addPickerMedia', media);
         }
 
         commit('clearFocusedMediaIds');
@@ -507,68 +516,66 @@ const actions = {
         commit('openFolderManager');
     },
 
-    moveFocusedMediaTo({ commit, getters }, folderId) {
-        if (folderId !== getters.activeFolderId) {
-            let movedMedia = getters.currentMedia.filter(({ id }) => {
-                return getters.focusedMediaIds.includes(id);
-            });
+    // moveFocusedMediaTo({ commit, getters }, folderId) {
+    //     if (folderId !== getters.activeFolderId) {
+    //         let movedMedia = getters.currentMedia.filter(({ id }) => {
+    //             return getters.focusedMediaIds.includes(id);
+    //         });
 
-            commit('addMedia', {
-                folder: folderId,
-                media: movedMedia
-            });
+    //         commit('addMedia', {
+    //             folder: folderId,
+    //             media: movedMedia
+    //         });
 
-            commit('removeMedia', {
-                folder: getters.activeFolderId,
-                media: movedMedia
-            });
-        }
+    //         commit('removeMedia', {
+    //             folderId: getters.activeFolderId,
+    //             mediaIds: getters.focusedMediaIds
+    //         });
+    //     }
 
-        commit('clearFocusedMediaIds');
-    },
+    //     commit('clearFocusedMediaIds');
+    // },
 
     removeFocusedMedia({ commit, getters }) {
-        let removedMedia = getters.currentMedia.filter(({ id }) => {
-            return getters.focusedMediaIds.includes(id);
-        });
-
         commit('removeMedia', {
-            folder: getters.activeFolderId,
-            media: removedMedia
+            folderId: getters.activeFolderId,
+            mediaIds: getters.focusedMediaIds
         });
 
+        commit('removeSelectedMedia', getters.focusedMediaIds);
         commit('clearFocusedMediaIds');
     },
 
-    moveFocusedFoldersTo({ commit, getters }, folderId) {
-        if (folderId !== getters.activeFolderId) {
-            let movedFolders = getters.currentFolders.filter(({ id }) => {
-                return getters.focusedFolderIds.includes(id);
-            });
+    // moveFocusedFoldersTo({ commit, getters }, folderId) {
+    //     if (folderId !== getters.activeFolderId) {
+    //         let movedFolders = getters.currentFolders.filter(({ id }) => {
+    //             return getters.focusedFolderIds.includes(id);
+    //         });
 
-            commit('addFolders', {
-                parent: folderId,
-                folders: movedFolders
-            });
+    //         commit('addFolders', {
+    //             parent: folderId,
+    //             folders: movedFolders
+    //         });
 
-            commit('removeFolders', {
-                parent: getters.activeFolderId,
-                folders: movedFolders
-            });
-        }
+    //         commit('removeFolders', {
+    //             parentId: getters.activeFolderId,
+    //             folderIds: getters.focusedFolderIds
+    //         });
+    //     }
 
-        commit('clearFocusedFolderIds');
-    },
+    //     commit('clearFocusedFolderIds');
+    // },
 
     removeFocusedFolders({ commit, getters }) {
         // todo remove media in removed folders
-        let removedFolders = getters.currentFolders.filter(({ id }) => {
-            return getters.focusedFolderIds.includes(id);
-        });
+        // commit a mutation, removeMediaFromFolders
+        // delete state.media[folderId]
 
+        // remove media from selectedMedia
+        // commit a mutation, removeMediaFromSelectedMedia
         commit('removeFolders', {
-            parent: getters.activeFolderId,
-            folders: removedFolders
+            parentId: getters.activeFolderId,
+            folderIds: getters.focusedFolderIds
         });
 
         commit('clearFocusedFolderIds');
@@ -581,19 +588,13 @@ const actions = {
         dispatch('removeFocusedMedia');
         dispatch('removeFocusedFolders');
 
-        commit('removeActiveMedia', focusedMediaIds);
-
         if (focusedMediaIds.length) {
-            Vue.mediaManager.mediaDeleted(focusedMediaIds);
-
             focusedMediaIds.forEach(mediaId => {
-                commit('removeSelectedMediaItem', mediaId);
                 axios.delete('/admin/media/' + mediaId);
             });
         }
 
         if (focusedFolderIds.length) {
-            // todo remove all media in deleted folders
             focusedFolderIds.forEach(folderId => {
                 axios.delete('/admin/media-folders/' + folderId);
             });
