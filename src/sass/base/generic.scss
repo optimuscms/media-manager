@@ -1,0 +1,44 @@
+.mm-reset {
+    color: $mm-text-color;
+    box-sizing: border-box;
+    text-size-adjust: 100%;
+    font-size: $mm-text-size;
+    font-weight: $mm-font-weight;
+    font-family: $mm-font-family;
+    line-height: $mm-line-height;
+    text-rendering: optimizeLegibility;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-font-smoothing: antialiased;
+
+    * {
+        &,
+        &:after,
+        &:before {
+            box-sizing: inherit;
+        }
+    }
+    
+    button,
+    input,
+    select,
+    textarea {
+        font-size: $mm-text-size;
+        font-family: $mm-font-family;
+    }
+    
+    a {
+        cursor: pointer;
+        color: $mm-link-color;
+        text-decoration: none;
+    
+        &:hover {
+            color: $mm-link-hover-color;
+        }
+    }
+
+    ul {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+}

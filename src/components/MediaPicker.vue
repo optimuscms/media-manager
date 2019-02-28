@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="mm-reset">
         <div v-if="pickerMedia.length">
             <div class="mm-picker-preview" v-if="hasPreview">
                 <img :src="firstMedia.thumbnail_url">

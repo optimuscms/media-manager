@@ -5,8 +5,9 @@
 }
 
 .mm-card-image {
+    margin: 0;
     display: block;
-    padding-top: 75%;
+    padding: 75% 0 0 0;
     position: relative;
 
     img {

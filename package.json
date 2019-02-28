@@ -5,20 +5,24 @@
   "license": "MIT",
   "main": "src/index.js",
   "scripts": {
-    "test": "mocha-webpack --webpack-config webpack.config.js --require test/setup.js test/**/*.spec.js",
-    "watch": "mocha-webpack --webpack-config webpack.config.js --watch --require test/setup.js test/**/*.spec.js"
+    "sass": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "test": "mocha-webpack --webpack-config webpack.config.js --require test/setup.js test/**/*.spec.js"
   },
   "dependencies": {
-    "@optimuscms/ui": "1.2.*",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
     "@vue/test-utils": "^1.0.0-beta.23",
+    "cross-env": "^5.2.0",
     "expect": "^23.4.0",
     "jsdom": "^11.12.0",
     "jsdom-global": "^3.0.2",
+    "laravel-mix": "^4.0.14",
     "mocha": "^5.2.0",
     "mocha-webpack": "^2.0.0-beta.0",
+    "resolve-url-loader": "2.3.1",
+    "sass": "^1.17.2",
+    "sass-loader": "^7.1.0",
     "vue-loader": "^15.2.6",
     "webpack": "^4.16.3"
   }

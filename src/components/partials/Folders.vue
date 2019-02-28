@@ -1,6 +1,6 @@
 <template>
     <div v-if="currentFolders.length">
-        <h2 class="mm-title mm-mb-4">Folders</h2>
+        <h2 class="mm-title">Folders</h2>
         
         <div class="mm-folders">
             <div

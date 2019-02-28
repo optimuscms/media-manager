@@ -69,6 +69,10 @@
     background-color: $mm-modal-header-background-color;
     border-bottom: solid 1px $mm-modal-header-border-color;
     border-radius: $mm-modal-border-radius $mm-modal-border-radius 0 0;
+
+    .mm-title {
+        margin-bottom: 0;
+    }
 }
 
 .mm-modal-content {
@@ -84,6 +88,10 @@
 
     &.is-media-mover {
         padding: 0;
+        height: 14rem;
+        display: flex;
+        overflow: scroll;
+        flex-direction: column;
     }
 
     &.loading {

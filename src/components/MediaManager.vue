@@ -1,5 +1,5 @@
 <template>
-    <modal :active="isOpen" @close="close">
+    <modal class="mm-reset" :active="isOpen" @close="close">
         <div class="mm-modal-wrap is-media-manager">
             <header class="mm-modal-header">
                 <breadcrumb></breadcrumb>
@@ -104,7 +104,7 @@
                         :disabled="insertIsDisabled"
                     >Insert</a>
 
-                    <a class="button" @click="cancel">
+                    <a class="mm-button" @click="cancel">
                         {{ limit === 0 ? 'Close' : 'Cancel' }}
                     </a>
                 </div>
@@ -217,7 +217,7 @@
         watch: {
             activeFolderId() {
                 this.clearAllFocusedIds();
-                this.getMediaAndFolders();
+                this.fetchMedia();
             }
         },
 
@@ -225,7 +225,7 @@
             ...mapActions({
                 reset: 'mediaManager/reset',
                 close: 'mediaManager/close',
-                getMediaAndFolders: 'mediaManager/getMediaAndFolders',
+                fetchMedia: 'mediaManager/fetchMedia',
                 selectMedia: 'mediaManager/selectMedia',
                 removePickerMediaItem: 'mediaManager/removePickerMediaItem',
                 openMediaEditor: 'mediaManager/openMediaEditor',

@@ -1,6 +1,10 @@
 @mixin mm-input {
     @include mm-control;
 
+    margin: 0;
+    font-size: 100%;
+    line-height: 1.15;
+    font-family: inherit;
     color: $mm-input-color;
     padding: $mm-input-padding;
     border-color: $mm-input-border-color;
@@ -41,6 +45,7 @@
     @include mm-input;
     width: 100%;
     max-width: 100%;
+    overflow: visible;
 }
 
 .mm-label {

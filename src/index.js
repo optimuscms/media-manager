@@ -1,4 +1,4 @@
-import mediaStore from './store';
+import store from './store';
 import icons from './lib/icons';
 
 import MediaManager from './components/MediaManager';
@@ -17,7 +17,7 @@ export default function install(Vue, options = {}) {
 
     icons.register();
 
-    options.store.registerModule('mediaManager', mediaStore);
+    options.store.registerModule('mediaManager', store);
     
     // Register components
     Vue.component('media-manager', MediaManager);

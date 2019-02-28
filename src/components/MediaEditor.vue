@@ -10,7 +10,7 @@
             </header>
 
             <section class="mm-modal-content">
-                <errors v-if="anyErrors" class="mm-mb-4" :errors="errors"></errors>
+                <errors v-if="anyErrors" :errors="errors"></errors>
                 
                 <template v-if="media">
                     <div class="mm-media-editor-layout" v-if="isImage(media.extension)">

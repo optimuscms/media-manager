@@ -1,7 +1,16 @@
 .mm-media-mover-header {
+    min-width: 0;
     display: flex;
     align-items: center;
     justify-content: center;
+
+    .mm-title {
+        overflow: hidden;
+        user-select: none;
+        white-space: nowrap;
+        margin-right: 0.25rem;
+        text-overflow: ellipsis;
+    }
 
     .mm-icon {
         width: 2rem;
@@ -15,15 +24,21 @@
     }
 }
 
-.mm-media-mover-folder-list {
-    padding: 0;
-    list-style: none;
+.mm-media-mover-notification {
+    flex-grow: 1;
+    display: flex;
+    color: $mm-black;
+    align-items: center;
+    justify-content: center;
+}
 
+.mm-media-mover-folder-list {
     > li {
         > a {
             display: flex;
+            user-select: none;
             align-items: center;
-            padding: 0.75rem 1rem;
+            padding: 0.75rem 1.5rem;
             justify-content: space-between;
             
             &:hover {
@@ -43,7 +58,7 @@
                     &:not(.mm-icon) {
                         overflow: hidden;
                         white-space: nowrap;
-                        margin-left: 0.5rem;
+                        margin-left: 0.25rem;
                         text-overflow: ellipsis;
                     }
                 }
@@ -54,7 +69,7 @@
                     width: 2rem;
                     height: 2rem;
                     flex-shrink: 0;
-                    margin: -0.5rem -0.5rem -0.5rem 0.5rem;
+                    margin: -0.5rem 0rem -0.5rem 0.5rem;
 
                     &:hover {
                         color: $mm-black;
@@ -69,12 +84,6 @@
             > a {
                 color: $mm-white;
                 background-color: $mm-red;
-            }
-        }
-
-        &:not(:last-child) {
-            > a {
-                border-bottom: solid 1px $mm-grey-light;
             }
         }
     }

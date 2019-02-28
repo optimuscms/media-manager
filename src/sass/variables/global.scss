@@ -12,6 +12,7 @@ $mm-grey-lightest: #fbfbfb !default;
 $mm-red-dark: #ce2924 !default;
 $mm-red: #e3342f !default;
 
+$mm-blue-dark: #282c37 !default;
 $mm-blue: #313542 !default;
 $mm-blue-light: #596679 !default;
 
@@ -21,8 +22,9 @@ $mm-green: #38c172 !default;
 $mm-border-radius-default: 0.25rem !default;
 $mm-shadow-default: 0 2px 4px 0 rgba(0, 0, 0, 0.10) !default;
 
-$mm-font-size-base: 1rem !default;
-$mm-font-size-lg: 1.125rem !default;
+$mm-font-size-sm: 14px !default;
+$mm-font-size-base: 16px !default;
+$mm-font-size-lg: 18px !default;
 
 $mm-font-weight-normal: 400 !default;
 $mm-font-weight-semibold: 600 !default;

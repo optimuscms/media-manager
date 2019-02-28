@@ -1,7 +1,7 @@
 <template>
     <div>
         <div v-if="currentMedia.length">
-            <h2 class="mm-title mm-mb-4">Media</h2>
+            <h2 class="mm-title">Media</h2>
             
             <div class="mm-media">
                 <div
