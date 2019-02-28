@@ -18,11 +18,6 @@ const state = {
     focusedFolderIds: [],
     openFolders: defaultOpenFolders(),
 
-    move: {
-        folders: [],
-        openFolders: []
-    },
-
     mediaEditorIsOpen: false,
     mediaEditorItem: null,
 

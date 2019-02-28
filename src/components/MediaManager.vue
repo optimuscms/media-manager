@@ -4,12 +4,12 @@
             <header class="mm-modal-header">
                 <breadcrumb></breadcrumb>
 
-                <dropdown class="right" :class="{ 'invisible pointer-events-none': ! focusedItemCount }">
+                <dropdown class="right" :class="{ 'mm-manger-actions-disabled': ! focusedItemCount }">
                     <a slot="button" class="mm-icon">
                         <icon icon="ellipsis-h" size="lg"></icon>
                     </a>
 
-                    <a class="mm-dropdown-item" v-if="focusedItemCount === 1" @click="edit">
+                    <a class="mm-dropdown-item" v-if="focusedItemCount === 1" @click="editFocusedItem">
                         <span class="mm-icon">
                             <icon icon="info-circle"></icon>
                         </span>
@@ -40,7 +40,7 @@
             <section
                 class="mm-modal-content is-media-manager"
                 :class="{ 'loading': isLoading }"
-                @click="clearFocused"
+                @click="clearAllFocusedIds"
             >
                 <folders></folders>
                 <media></media>
@@ -121,9 +121,6 @@
 </template>
 
 <script>
-    // todo dont allowed media which isn't in the accepted extensions to be selected
-    // todo move modal
-
     import { mapGetters, mapMutations, mapActions } from 'vuex';
 
     // Components
@@ -219,7 +216,7 @@
 
         watch: {
             activeFolderId() {
-                this.clearFocused();
+                this.clearAllFocusedIds();
                 this.getMediaAndFolders();
             }
         },
@@ -244,7 +241,7 @@
                 openConfirmation: 'mediaManager/openConfirmation'
             }),
 
-            edit() {
+            editFocusedItem() {
                 if (this.focusedItemCount === 1) {
                     if (this.focusedMediaIds.length) {
                         let media = this.currentMedia.find(({ id }) => {
@@ -262,7 +259,7 @@
                 }
             },
 
-            clearFocused() {
+            clearAllFocusedIds() {
                 this.clearFocusedMediaIds();
                 this.clearFocusedFolderIds();
             },
@@ -276,7 +273,7 @@
             },
 
             cancel() {
-                this.clearFocused();
+                this.clearAllFocusedIds();
                 this.close();
             }
         }

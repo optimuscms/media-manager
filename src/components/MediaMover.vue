@@ -4,7 +4,7 @@
             <header class="mm-modal-header">
                 <div class="mm-media-mover-header">
                     <a class="mm-icon">
-                        <icon icon="angle-left" size="lg"></icon>
+                        <icon icon="arrow-left" size="lg"></icon>
                     </a>
 
                     <h4 class="mm-title">Move</h4>
@@ -17,13 +17,55 @@
 
             <section class="mm-modal-content is-media-mover">
                 <!-- :class="{ 'loading': isLoading }" -->
-                <!-- <ul class="mm-media-mover-folder-list" v-if="folders.hasOwnProperty(null)">
-                    <move-folder
-                        :key="folder.id"
-                        v-for="folder in folders[null]"
-                        :folder="folder"
-                    ></move-folder>
-                </ul> -->
+                <ul class="mm-media-mover-folder-list">
+                    <li class="selected">
+                        <a>
+                            <span class="mm-media-mover-folder-details">
+                                <span class="mm-icon">
+                                    <icon icon="folder"></icon>
+                                </span>
+
+                                <span>Folder Name</span>
+                            </span>
+
+                            <span class="mm-icon">
+                                <icon icon="angle-right"></icon>
+                            </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a>
+                            <span class="mm-media-mover-folder-details">
+                                <span class="mm-icon">
+                                    <icon icon="folder"></icon>
+                                </span>
+
+                                <span>Folder Name</span>
+                            </span>
+
+                            <span class="mm-icon">
+                                <icon icon="angle-right"></icon>
+                            </span>
+                        </a>
+                    </li>
+
+                    <li>
+                        <a>
+                            <span class="mm-media-mover-folder-details">
+                                <span class="mm-icon">
+                                    <icon icon="folder"></icon>
+                                </span>
+
+                                <span>Folder Name Folder Name Folder Name Folder Name Folder Name</span>
+                            </span>
+
+                            <span class="mm-icon">
+                                <icon icon="angle-right"></icon>
+                            </span>
+                        </a>
+                    </li>
+                </ul>
             </section>
 
             <footer class="mm-modal-footer">

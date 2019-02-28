@@ -10,6 +10,11 @@
     margin-bottom: 1rem;
 }
 
+.mm-manger-actions-disabled {
+    visibility: hidden;
+    pointer-events: none;
+}
+
 @keyframes mm-spin {
     from { transform: rotate(0deg); }
     to { transform: rotate(359deg); }
