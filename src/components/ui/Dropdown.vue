@@ -37,7 +37,8 @@
         methods: {
             close(event) {
                 if (
-                    (this.$refs.dropdown !== event.target)
+                    this.isOpen
+                    && (this.$refs.dropdown !== event.target)
                     && ! this.$refs.dropdown.contains(event.target)
                 ) {
                     this.isOpen = false;
