@@ -9,6 +9,7 @@
     "test": "mocha-webpack --webpack-config webpack.config.js --require test/setup.js test/**/*.spec.js"
   },
   "dependencies": {
+    "lodash": "^4.17.11",
     "vuex": "^3.0.1"
   },
   "devDependencies": {
