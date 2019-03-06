@@ -443,7 +443,7 @@ const actions = {
         if (! getters.allMedia.hasOwnProperty(getters.activeFolderId)) {
             commit('startLoadingMedia');
 
-            axios.get('/admin/media', {
+            axios.get('/admin/api/media', {
                 params: {
                     folder: getters.activeFolderId || 'root'
                 }
@@ -462,7 +462,7 @@ const actions = {
 
     fetchFolders({ commit, getters }) {
         if (getters.isLoadingFolders) {
-            axios.get('/admin/media-folders').then(response => {
+            axios.get('/admin/api/media-folders').then(response => {
                 commit('setFolders', response.data.data);
                 commit('stopLoadingFolders');
             });
@@ -539,13 +539,13 @@ const actions = {
 
         if (focusedMediaIds.length) {
             focusedMediaIds.forEach(mediaId => {
-                axios.delete('/admin/media/' + mediaId);
+                axios.delete('/admin/api/media/' + mediaId);
             });
         }
 
         if (focusedFolderIds.length) {
             focusedFolderIds.forEach(folderId => {
-                axios.delete('/admin/media-folders/' + folderId);
+                axios.delete('/admin/api/media-folders/' + folderId);
             });
         }
     },

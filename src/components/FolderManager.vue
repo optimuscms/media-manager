@@ -97,8 +97,8 @@
             
             action() {
                 return this.isEditing
-                    ? '/admin/media-folders/' + this.form.id
-                    : '/admin/media-folders';
+                    ? '/admin/api/media-folders/' + this.form.id
+                    : '/admin/api/media-folders';
             }
         },
 

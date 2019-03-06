@@ -145,7 +145,7 @@
                 
                 if (this.focusedMediaIds.length) {
                     this.focusedMediaIds.forEach(mediaId => {
-                        requests.push(axios.patch('/admin/media/' + mediaId, {
+                        requests.push(axios.patch('/admin/api/media/' + mediaId, {
                             folder_id: parentId
                         }));
                     });
@@ -153,7 +153,7 @@
 
                 if (this.focusedFolderIds.length) {
                     this.focusedFolderIds.forEach(folderId => {
-                        requests.push(axios.patch('/admin/media-folders/' + folderId, {
+                        requests.push(axios.patch('/admin/api/media-folders/' + folderId, {
                             parent_id: parentId
                         }));
                     });

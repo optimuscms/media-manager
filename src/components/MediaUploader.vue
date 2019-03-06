@@ -137,7 +137,7 @@
 
                     data.append('file', file);
 
-                    axios.post('/admin/media', data, {
+                    axios.post('/admin/api/media', data, {
                         cancelToken: new CancelToken(cancel => {
                             this.updateFile(uuid, {
                                 cancel

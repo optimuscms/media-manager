@@ -132,7 +132,7 @@
             }),
 
             action() {
-                return '/admin/media/' + this.form.id;
+                return '/admin/api/media/' + this.form.id;
             }
         },
 
