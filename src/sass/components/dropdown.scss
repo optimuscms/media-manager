@@ -50,11 +50,11 @@
 
 .mm-dropdown-scroll {
     overflow: auto;
-    max-height: 12rem;
+    max-height: 12em;
 }
 
 .mm-dropdown-content {
-    padding: 0.5rem 0;
+    padding: 0.5em 0;
     box-shadow: $mm-dropdown-shadow;
     border-radius: $mm-dropdown-border-radius;
     border: solid 1px $mm-dropdown-border-color;
@@ -67,16 +67,17 @@
     white-space: nowrap;
     align-items: center;
     padding: $mm-dropdown-item-padding;
+    font-size: $mm-dropdown-item-font-size;
 
     .mm-icon {
         flex-shrink: 0;
 
         &:first-child:not(:last-child) {
-            margin-right: 0.5rem;
+            margin-right: 0.35em;
         }
         
         &:last-child:not(:first-child) {
-            margin-left: 0.5rem;
+            margin-left: 0.35em;
         }
     }
 
@@ -100,6 +101,6 @@
 
 .mm-dropdown-divider {
     height: 1px;
-    margin: 0.5rem 0;
+    margin: 0.5em 0;
     background-color: $mm-dropdown-border-color;
 }

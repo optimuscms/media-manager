@@ -2,12 +2,14 @@ $mm-dropdown-border-color: $mm-grey-light !default;
 $mm-dropdown-border-radius: $mm-border-radius-default !default;
 $mm-dropdown-background-color: $mm-white !default;
 
-$mm-dropdown-min-width: 12rem !default;
-$mm-dropdown-max-width: 20rem !default;
+$mm-dropdown-min-width: 12em !default;
+$mm-dropdown-max-width: 20em !default;
 $mm-dropdown-shadow: $mm-shadow-default !default;
 
-$mm-dropdown-menu-padding: 0.25rem !default;
-$mm-dropdown-item-padding: 0.3rem 1rem !default;
+$mm-dropdown-menu-padding: 4px !default;
+
+$mm-dropdown-item-padding: 0.3em 1em !default;
+$mm-dropdown-item-font-size: $mm-font-size-sm !default;
 
 $mm-dropdown-item-hover-color: $mm-black !default;
 $mm-dropdown-item-hover-background-color: $mm-grey-lighter !default;

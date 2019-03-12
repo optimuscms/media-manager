@@ -12,6 +12,7 @@
     text-transform: uppercase;
     padding: $mm-button-padding;
     font-weight: $mm-button-weight;
+    font-size: $mm-button-font-size;
     border-width: $mm-button-border-width;
     border-color: $mm-button-border-color;
     border-radius: $mm-button-border-radius;
@@ -19,12 +20,12 @@
 
     .mm-icon {
         &:first-child:not(:last-child) {
-            margin-right: 0.1875em;
+            margin-right: 0.35em;
             margin-left: calc(-0.5em - 2px);
         }
         
         &:last-child:not(:first-child) {
-            margin-left: 0.1875em;
+            margin-left: 0.35em;
             margin-right: calc(-0.5em - 2px);
         }
 
