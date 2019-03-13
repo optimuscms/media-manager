@@ -1,6 +1,6 @@
 {
   "name": "@optimuscms/media-manager",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "author": "Rich Moore",
   "license": "MIT",
   "main": "src/index.js",
