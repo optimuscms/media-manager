@@ -2,11 +2,11 @@
     @include mm-control;
 
     margin: 0;
-    font-size: 100%;
     line-height: 1.15;
     font-family: inherit;
     color: $mm-input-color;
     padding: $mm-input-padding;
+    font-size: $mm-input-font-size;
     border-color: $mm-input-border-color;
     border-radius: $mm-input-border-radius;
     background-color: $mm-input-background-color;
@@ -51,8 +51,8 @@
 .mm-label {
     display: block;
     color: $mm-label-color;
-    font-size: $mm-label-size;
     font-weight: $mm-label-weight;
+    font-size: $mm-label-font-size;
 
     &:not(:last-child) {
         margin-bottom: $mm-label-margin;

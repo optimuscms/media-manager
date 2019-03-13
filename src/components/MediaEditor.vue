@@ -36,22 +36,6 @@
                                     >
                                 </div>
                             </div>
-
-                            <!-- Alt text -->
-                            <div class="mm-field">
-                                <label for="mm_media_alt" class="mm-label">Alt text</label>
-
-                                <div class="mm-control">
-                                    <input
-                                        id="mm_media_alt"
-                                        type="text"
-                                        class="mm-input"
-                                        v-model="form.alt"
-                                        :disabled="form.processing"
-                                        @keydown.enter.prevent="submit"
-                                    >
-                                </div>
-                            </div>
                         </div>
                     </div>
                     

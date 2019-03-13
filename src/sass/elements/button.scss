@@ -123,13 +123,13 @@
 
         &:after {
             content: '';
-            width: 1rem;
-            height: 1rem;
+            width: 1em;
+            height: 1em;
             display: block;
             position: absolute;
             border-radius: 100px;
-            top: calc(50% - (1rem / 2));
-            left: calc(50% - (1rem / 2));
+            top: calc(50% - (1em / 2));
+            left: calc(50% - (1em / 2));
             border: 2px solid transparent;
             animation: mm-spin 500ms infinite linear;
             border-left-color: $mm-button-border-color;
@@ -141,7 +141,7 @@
 .mm-button-group {
     > * {
         &:not(:last-child) {
-            margin-right: 0.75rem;
+            margin-right: 0.75em;
         }
     }
 }
