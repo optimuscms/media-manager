@@ -1,11 +1,11 @@
 .mm-media {
     display: flex;
-    margin: -0.5rem;
+    margin: -0.5em;
     flex-wrap: wrap;
 
     .mm-media-item {
         width: 50%;
-        padding: 0.5rem;
+        padding: 0.5em;
     
         &.selected {
             .mm-card {

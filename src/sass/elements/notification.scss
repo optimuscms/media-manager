@@ -1,6 +1,11 @@
 .mm-notification {
-    padding: 1rem;
+    padding: 1.25em;
     color: $mm-notification-color;
+    font-size: $mm-notification-font-size;
     border-radius: $mm-notification-border-radius;
     background-color: $mm-notification-background-color;
+
+    strong {
+        color: $mm-notification-color;
+    }
 }

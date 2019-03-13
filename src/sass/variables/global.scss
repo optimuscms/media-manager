@@ -19,18 +19,22 @@ $mm-blue-light: #596679 !default;
 $mm-green-dark: #29a85e !default;
 $mm-green: #38c172 !default;
 
-$mm-border-radius-default: 0.25rem !default;
+$mm-border-radius-default: 4px !default;
 $mm-shadow-default: 0 2px 4px 0 rgba(0, 0, 0, 0.10) !default;
 
-$mm-font-size-sm: 14px !default;
-$mm-font-size-base: 16px !default;
-$mm-font-size-lg: 18px !default;
+$mm-font-size-sm: 0.875em !default;
+$mm-font-size-base: 1em !default;
+$mm-font-size-lg: 1.125em !default;
 
 $mm-font-weight-normal: 400 !default;
 $mm-font-weight-semibold: 600 !default;
 $mm-font-weight-bold: 700 !default;
 
-$mm-modal-padding: 3rem !default;
+$mm-modal-padding: 3em !default;
 
 $mm-screen-md: 768px !default;
 $mm-screen-lg: 992px !default;
+
+$mm-z-index: 50 !default;
+$mm-control-height: 3em !default;
+$mm-icon-font-size: 14px !default;

@@ -2,22 +2,22 @@
     display: flex;
     flex-wrap: wrap;
     position: relative;
-    padding-bottom: 1rem;
-    margin: -0.5rem -0.5rem 1rem -0.5rem;
+    padding-bottom: 1em;
+    margin: -0.5em -0.5em 1em -0.5em;
     
     &:before {
         bottom: 0;
         height: 1px;
         content: '';
-        left: 0.5rem;
-        right: 0.5rem;
+        left: 0.5em;
+        right: 0.5em;
         position: absolute;
         background-color: $mm-grey-light;
     }
 
     .mm-folder {
         display: flex;
-        padding: 0.5rem;
+        padding: 0.5em;
         user-select: none;
         justify-content: flex-start;
     
@@ -27,9 +27,9 @@
     
             flex-grow: 1;
             cursor: pointer;
-            max-width: 10rem;
+            max-width: 10em;
+            padding: 0 1.5em;
             border-width: 1px;
-            padding: 0 1.5rem;
             margin-right: -1px;
             text-align: center;
             align-items: center;
@@ -37,6 +37,7 @@
             text-decoration: none;
             justify-content: center;
             color: $mm-folder-color;
+            font-size: $mm-folder-font-size;
             border-color: $mm-folder-border-color;
             background-color: $mm-folder-background-color;
     
@@ -52,7 +53,7 @@
             
             span {
                 &.mm-icon {
-                    margin-right: 0.1875em;
+                    margin-right: 0.35em;
                     margin-left: calc(-0.5em - 2px);
                 }
                 

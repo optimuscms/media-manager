@@ -1,4 +1,5 @@
-$mm-input-padding: 0.5rem 0.75rem !default;
+$mm-input-padding: 0.5em 0.75em !default;
+$mm-input-font-size: $mm-font-size-sm !default;
 $mm-input-border-radius: $mm-border-radius-default !default;
 
 $mm-input-color: $mm-grey-darker !default;
@@ -18,9 +19,9 @@ $mm-input-background-color: $mm-white !default;
 $mm-input-hover-background-color: $mm-white !default;
 $mm-input-disabled-background-color: $mm-grey-lighter !default;
 
-$mm-label-size: inherit !default;
-$mm-label-margin: 0.5rem !default;
+$mm-label-margin: 0.5em !default;
 $mm-label-color: $mm-blue-light !default;
+$mm-label-font-size: $mm-font-size-sm !default;
 $mm-label-weight: $mm-font-weight-bold !default;
 
-$mm-field-margin: 1.5rem !default;
+$mm-field-margin: 1.5em !default;

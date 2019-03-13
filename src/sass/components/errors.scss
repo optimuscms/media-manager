@@ -1,7 +1,8 @@
 .mm-errors {
-    margin-bottom: 1rem;
+    margin-bottom: 1em;
     color: $mm-errors-color;
     padding: $mm-errors-padding;
+    font-size: $mm-errors-font-size;
     border-radius: $mm-errors-border-radius;
     background-color: $mm-errors-background-color;
 }

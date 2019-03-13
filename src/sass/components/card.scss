@@ -34,8 +34,8 @@
         left: 0;
         right: 0;
         bottom: 0;
-        width: 4rem;
-        height: 4rem;
+        width: 4em;
+        height: 4em;
         margin: auto;
         position: absolute;
     }
@@ -43,8 +43,9 @@
 
 .mm-card-content {
     overflow: hidden;
+    padding: 0.5em 1em;
     white-space: nowrap;
-    padding: 0.5rem 1rem;
     text-overflow: ellipsis;
+    font-size: $mm-card-font-size;
     background-color: $mm-grey-lighter;
 }

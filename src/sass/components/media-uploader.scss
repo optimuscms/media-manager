@@ -1,9 +1,9 @@
 .mm-upload {
     z-index: 10;
-    right: 2rem;
+    right: 2em;
     width: 100%;
     bottom: 100%;
-    max-width: 20rem;
+    max-width: 20em;
     position: absolute;
     border-top: 1px solid $mm-upload-border-color;
     border-left: 1px solid $mm-upload-border-color;
@@ -20,7 +20,7 @@
     display: flex;
     flex-shrink: 0;
     align-items: center;
-    padding: 0.5rem 1rem;
+    padding: 0.5em 1em;
     justify-content: space-between;
     border-bottom: 1px solid $mm-upload-border-color;
     background-color: $mm-upload-header-background-color;
@@ -32,21 +32,21 @@
     align-items: center;
 
     .mm-icon {
-        margin-right: 0.75rem;
+        margin-right: 0.75em;
     }
 }
 
 .mm-upload-items {
     overflow: auto;
-    max-height: 20rem;
+    max-height: 20em;
     background-color: $mm-upload-background-color;
 }
 
 .mm-upload-item {
     display: flex;
     position: relative;
+    padding: 0.5em 1em;
     align-items: center;
-    padding: 0.25rem 1rem;
     justify-content: space-between;
     border-bottom: 1px solid $mm-upload-border-color;
 
@@ -57,9 +57,10 @@
     .mm-upload-item-name {
         flex-grow: 1;
         overflow: hidden;
-        padding: 0 0.5rem;
+        padding: 0 0.5em;
         white-space: nowrap;
         text-overflow: ellipsis;
+        font-size: $mm-font-size-sm;
     }
 
     .mm-upload-progress {
@@ -90,7 +91,7 @@
 }
 
 .mm-upload-errors {
-    padding: 0.5rem 1rem;
+    padding: 0.5em 1em;
 }
 
 .mm-upload-input {

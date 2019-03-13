@@ -3,11 +3,11 @@
     left: 0;
     right: 0;
     bottom: 0;
-    z-index: 50;
     display: none;
     position: fixed;
     overflow: hidden;
     align-items: center;
+    z-index: $mm-z-index;
     flex-direction: column;
     justify-content: center;
 
@@ -44,27 +44,27 @@
     }
 
     &.is-folder-manager {
-        max-width: 40rem
+        max-width: 40em;
     }
 
     &.is-media-editor {
-        max-width: 50rem
+        max-width: 50em;
     }
 
     &.is-media-mover {
-        max-width: 20rem;
+        max-width: 20em;;
     }
 
     &.is-confirmation {
-        max-width: 26rem
+        max-width: 26em;
     }
 }
 
 .mm-modal-header {
     display: flex;
     flex-shrink: 0;
+    padding: 1em 1.5em;
     align-items: center;
-    padding: 1rem 1.5rem;
     justify-content: space-between;
     background-color: $mm-modal-header-background-color;
     border-bottom: solid 1px $mm-modal-header-border-color;
@@ -83,19 +83,19 @@
     &.is-media-manager {
         flex-grow: 1;
         overflow: scroll;
-        padding: 1rem 1.5rem;
+        padding: 1em 1.5em;
     }
 
     &.is-media-mover {
         padding: 0;
-        height: 14rem;
+        height: 14em;
         display: flex;
         overflow: scroll;
         flex-direction: column;
     }
 
     &.loading {
-        min-height: 10rem;
+        min-height: 10em;
         
         > * {
             opacity: 0;
@@ -104,7 +104,7 @@
         }
 
         &:before {
-            top: 5rem;
+            top: 5em;
             left: 50%;
             z-index: 10;
             content: '';
@@ -128,8 +128,8 @@
     display: flex;
     flex-shrink: 0;
     position: relative;
+    padding: 1em 1.5em;
     align-items: center;
-    padding: 1rem 1.5rem;
     justify-content: space-between;
     background-color: $mm-modal-footer-background-color;
     border-top: solid 1px $mm-modal-footer-border-color;
