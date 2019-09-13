@@ -1,8 +1,8 @@
 <template>
     <ul class="mm-breadcrumb">
         <li
-            :key="folder.id"
             v-for="folder in openFolders"
+            :key="folder.id"
             :class="{ 'active': folder.id === activeFolderId }"
         >
             <a @click="openFolder(folder)">{{ folder.name }}</a>
@@ -11,20 +11,20 @@
 </template>
 
 <script>
-    import { mapGetters, mapMutations } from 'vuex';
+import { mapGetters, mapMutations } from 'vuex';
 
-    export default {
-        computed: {
-            ...mapGetters({
-                openFolders: 'mediaManager/openFolders',
-                activeFolderId: 'mediaManager/activeFolderId'
-            })
-        },
+export default {
+    computed: {
+        ...mapGetters({
+            openFolders: 'mediaManager/openFolders',
+            activeFolderId: 'mediaManager/activeFolderId',
+        }),
+    },
 
-        methods: {
-            ...mapMutations({
-                openFolder: 'mediaManager/openFolder'
-            })
-        }
-    }
+    methods: {
+        ...mapMutations({
+            openFolder: 'mediaManager/openFolder',
+        }),
+    },
+};
 </script>

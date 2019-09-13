@@ -2,18 +2,20 @@
     <modal :active="isOpen" @close="close">
         <div class="mm-modal-wrap is-media-editor">
             <header class="mm-modal-header">
-                <h4 class="mm-title">Media Properties</h4>
+                <h4 class="mm-title">
+                    Media Properties
+                </h4>
 
                 <a class="mm-icon" @click="close">
-                    <icon icon="times" size="lg"></icon>
+                    <icon icon="times" size="lg" />
                 </a>
             </header>
 
             <section class="mm-modal-content">
-                <errors v-if="anyErrors" :errors="errors"></errors>
-                
+                <errors v-if="anyErrors" :errors="errors" />
+
                 <template v-if="media">
-                    <div class="mm-media-editor-layout" v-if="isImage(media.extension)">
+                    <div v-if="isImage(media.extension)" class="mm-media-editor-layout">
                         <div class="mm-media-editor-image">
                             <img :src="media.thumbnail_url" :alt="media.name">
                         </div>
@@ -27,9 +29,9 @@
                                     <input
                                         id="mm_media_name"
                                         ref="name"
+                                        v-model="form.name"
                                         type="text"
                                         class="mm-input"
-                                        v-model="form.name"
                                         required
                                         :disabled="form.processing"
                                         @keydown.enter.prevent="submit"
@@ -38,7 +40,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <template v-else>
                         <!-- Media name -->
                         <div class="mm-field">
@@ -48,9 +50,9 @@
                                 <input
                                     id="mm_media_name"
                                     ref="name"
+                                    v-model="form.name"
                                     type="text"
                                     class="mm-input"
-                                    v-model="form.name"
                                     required
                                     :disabled="form.processing"
                                     @keydown.enter.prevent="submit"
@@ -67,9 +69,9 @@
 
                     <a
                         class="mm-button is-confirm"
-                        @click="submit"
                         :class="{ 'loading': isProcessing }"
                         :disabled="isProcessing"
+                        @click="submit"
                     >Save</a>
                 </div>
             </footer>
@@ -78,88 +80,88 @@
 </template>
 
 <script>
-    import { mapGetters, mapMutations } from 'vuex';
-    import formMixin from '../mixins/form';
+import { mapGetters, mapMutations } from 'vuex';
+import formMixin from '../mixins/form';
 
-    import Errors from './ui/Errors';
-    import Modal from './ui/Modal';
+import Errors from './ui/Errors.vue';
+import Modal from './ui/Modal.vue';
 
-    const initialValues = function () {
-        return {
-            id: null,
-            name: ''
-        }
+const initialValues = function () {
+    return {
+        id: null,
+        name: '',
     };
+};
 
-    export default {
-        mixins: [ formMixin ],
+export default {
 
-        components: {
-            Errors,
-            Modal
+    components: {
+        Errors,
+        Modal,
+    },
+    mixins: [ formMixin ],
+
+    data() {
+        return {
+            method: 'patch',
+            form: initialValues(),
+        };
+    },
+
+    computed: {
+        ...mapGetters({
+            isOpen: 'mediaManager/mediaEditorIsOpen',
+            isImage: 'mediaManager/isImage',
+
+            media: 'mediaManager/mediaEditorItem',
+            activeFolderId: 'mediaManager/activeFolderId',
+        }),
+
+        action() {
+            return '/admin/api/media/' + this.form.id;
         },
+    },
 
-        data() {
-            return {
-                method: 'patch',
-                form: initialValues()
-            }
-        },
-
-        computed: {
-            ...mapGetters({
-                isOpen: 'mediaManager/mediaEditorIsOpen',
-                isImage: 'mediaManager/isImage',
-
-                media: 'mediaManager/mediaEditorItem',
-                activeFolderId: 'mediaManager/activeFolderId',
-            }),
-
-            action() {
-                return '/admin/api/media/' + this.form.id;
-            }
-        },
-
-        watch: {
-            isOpen(isOpen) {
-                if (isOpen) {
-                    this.form = {
-                        id: this.media.id,
-                        name: this.media.name
-                    };
-                    
-                    this.$nextTick(() => this.$refs.name.focus());
-                } else {
-                    this.form = initialValues();
-                }
-            }
-        },
-
-        methods: {
-            ...mapMutations({
-                close: 'mediaManager/closeMediaEditor',
-                updateMedia: 'mediaManager/updateMediaItem',
-                updateSelectedMedia: 'mediaManager/updateSelectedMediaItem',
-            }),
-
-            onSuccess() {
-                let properties = {
-                    name: this.form.name
+    watch: {
+        isOpen(isOpen) {
+            if (isOpen) {
+                this.form = {
+                    id: this.media.id,
+                    name: this.media.name,
                 };
 
-                this.updateMedia({
-                    folder: this.activeFolderId,
-                    id: this.form.id,
-                    properties
-                });
-
-                this.updateSelectedMedia({
-                    id: this.form.id,
-                    properties
-                });
-
-                this.close();
+                this.$nextTick(() => this.$refs.name.focus());
+            } else {
+                this.form = initialValues();
             }
-        }
-    }
+        },
+    },
+
+    methods: {
+        ...mapMutations({
+            close: 'mediaManager/closeMediaEditor',
+            updateMedia: 'mediaManager/updateMediaItem',
+            updateSelectedMedia: 'mediaManager/updateSelectedMediaItem',
+        }),
+
+        onSuccess() {
+            let properties = {
+                name: this.form.name,
+            };
+
+            this.updateMedia({
+                folder: this.activeFolderId,
+                id: this.form.id,
+                properties,
+            });
+
+            this.updateSelectedMedia({
+                id: this.form.id,
+                properties,
+            });
+
+            this.close();
+        },
+    },
+};
 </script>

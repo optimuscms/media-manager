@@ -2,14 +2,14 @@ export default {
     data() {
         return {
             errors: {},
-            isProcessing: false
-        }
+            isProcessing: false,
+        };
     },
 
     computed: {
         anyErrors() {
             return Object.keys(this.errors).length > 0;
-        }
+        },
     },
 
     methods: {
@@ -26,8 +26,8 @@ export default {
                         this.errors = error.response.data.errors;
                     } else {
                         this.errors = {
-                            error: [ 'An unexpected error occured.' ]
-                        }
+                            error: [ 'An unexpected error occured.' ],
+                        };
                     }
 
                     this.onError(error);
@@ -36,19 +36,19 @@ export default {
                     this.isProcessing = false;
 
                     this.onFinally();
-                })
+                });
         },
 
-        onSuccess(response) {
+        onSuccess() {
             //
         },
 
-        onError(error) {
+        onError() {
             //
         },
 
         onFinally() {
             //
-        }
-    }
+        },
+    },
 };

@@ -1,8 +1,8 @@
 import store from './store';
 import icons from './lib/icons';
 
-import MediaManager from './components/MediaManager';
-import MediaPicker from './components/MediaPicker';
+import MediaManager from './components/MediaManager.vue';
+import MediaPicker from './components/MediaPicker.vue';
 
 // todo docs
 // <media-manager></media-manager>
@@ -10,17 +10,15 @@ import MediaPicker from './components/MediaPicker';
 // mention plugin is dependant on @optimuscms/ui
 
 export default function install(Vue, options = {}) {
-
     if (! options.hasOwnProperty('store')) {
         throw new Error('Please provide vuex store.');
     }
 
+    options.store.registerModule('mediaManager', store);
+
     icons.register();
 
-    options.store.registerModule('mediaManager', store);
-    
     // Register components
     Vue.component('media-manager', MediaManager);
     Vue.component('media-picker', MediaPicker);
-
 }

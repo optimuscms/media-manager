@@ -40,9 +40,9 @@ const state = {
         'file-archive': ['zip'],
         'file-power-point': ['ppt', 'pptx'],
     },
-    
+
     imageExtensions: [
-        'bmp', 'gif', 'jpg', 'jpeg', 'png'
+        'bmp', 'gif', 'jpg', 'jpeg', 'png',
     ],
 };
 
@@ -107,7 +107,7 @@ const getters = {
 
     selectedMediaIds: (state, getters) => {
         let selectedMedia = getters.selectedMedia(state.pickerId);
-        
+
         return selectedMedia && selectedMedia.length
             ? selectedMedia.map(({ id }) => id)
             : [];
@@ -184,7 +184,7 @@ const getters = {
 
     isImage: state => extension => {
         return state.imageExtensions.includes(extension);
-    }
+    },
 };
 
 const mutations = {
@@ -220,7 +220,7 @@ const mutations = {
         state.acceptedExtensions = extensions;
     },
 
-    setMedia(state, { folderId, media }) {        
+    setMedia(state, { folderId, media }) {
         Vue.set(state.media, folderId, media);
     },
 
@@ -282,7 +282,7 @@ const mutations = {
         Object.keys(state.selectedMedia).forEach(pickerId => {
             state.selectedMedia[pickerId] = state.selectedMedia[pickerId].filter(({ id }) => {
                 return ! mediaIds.includes(id);
-            })
+            });
         });
     },
 
@@ -408,7 +408,7 @@ const mutations = {
 
     closeConfirmation(state) {
         state.confirmationIsOpen = false;
-    }
+    },
 };
 
 const actions = {
@@ -445,12 +445,12 @@ const actions = {
 
             axios.get('/admin/api/media', {
                 params: {
-                    folder: getters.activeFolderId || 'root'
-                }
+                    folder: getters.activeFolderId || 'root',
+                },
             }).then(response => {
                 commit('setMedia', {
                     folderId: getters.activeFolderId,
-                    media: response.data.data
+                    media: response.data.data,
                 });
 
                 commit('stopLoadingMedia');
@@ -472,7 +472,7 @@ const actions = {
     selectMedia({ commit, getters }) {
         let newlySelectedMedia = getters.focusedMediaIds.filter(id => {
             return ! getters.selectedMediaIds.includes(id)
-                && getters.selectableMediaIds.includes(id)
+                && getters.selectableMediaIds.includes(id);
         });
 
         if (newlySelectedMedia.length) {
@@ -504,12 +504,12 @@ const actions = {
 
             commit('addMedia', {
                 folderId,
-                media: movedMedia
+                media: movedMedia,
             });
 
             commit('removeMedia', {
                 folderId: getters.activeFolderId,
-                mediaIds
+                mediaIds,
             });
         }
     },
@@ -524,7 +524,7 @@ const actions = {
 
         commit('removeMedia', {
             folderId: getters.activeFolderId,
-            mediaIds: getters.focusedMediaIds
+            mediaIds: getters.focusedMediaIds,
         });
 
         focusedFolderIds.forEach(folderId => {
@@ -556,12 +556,12 @@ const actions = {
         if (folder) {
             if (getters.allMedia.hasOwnProperty(folder.id)) {
                 let mediaIds = getters.allMedia[folder.id].map(({ id }) => id);
-                
+
                 if (mediaIds.length) {
                     commit('removeSelectedMedia', mediaIds);
                 }
             }
-    
+
             if (getters.groupedFolders.hasOwnProperty(folder.id)) {
                 getters.groupedFolders[folder.id].forEach(({ id }) => {
                     dispatch('removeSelectedMediaInFolder', id);
@@ -579,7 +579,7 @@ const actions = {
 
     close({ commit }) {
         commit('close');
-    }
+    },
 };
 
 export default {
@@ -587,5 +587,5 @@ export default {
     state,
     getters,
     mutations,
-    actions
+    actions,
 };

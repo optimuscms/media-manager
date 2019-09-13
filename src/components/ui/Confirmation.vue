@@ -31,42 +31,42 @@
 </template>
 
 <script>
-    import { mapActions, mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters, mapMutations } from 'vuex';
 
-    import Modal from './Modal';
+import Modal from './Modal.vue';
 
-    export default {
-        components: { Modal },
+export default {
+    components: { Modal },
 
-        computed: {
-            ...mapGetters({
-                isOpen: 'mediaManager/confirmationIsOpen',
-                focusedMediaIds: 'mediaManager/focusedMediaIds',
-                focusedFolderIds: 'mediaManager/focusedFolderIds'
-            }),
+    computed: {
+        ...mapGetters({
+            isOpen: 'mediaManager/confirmationIsOpen',
+            focusedMediaIds: 'mediaManager/focusedMediaIds',
+            focusedFolderIds: 'mediaManager/focusedFolderIds',
+        }),
 
-            mediaCount() {
-                return this.focusedMediaIds.length;
-            },
-
-            folderCount() {
-                return this.focusedFolderIds.length;
-            }
+        mediaCount() {
+            return this.focusedMediaIds.length;
         },
 
-        methods: {
-            ...mapActions({
-                deleteFocusedItems: 'mediaManager/deleteFocusedItems'
-            }),
+        folderCount() {
+            return this.focusedFolderIds.length;
+        },
+    },
 
-            ...mapMutations({
-                close: 'mediaManager/closeConfirmation'
-            }),
+    methods: {
+        ...mapActions({
+            deleteFocusedItems: 'mediaManager/deleteFocusedItems',
+        }),
 
-            confirm() {
-                this.deleteFocusedItems();
-                this.close();
-            }
-        }
-    }
+        ...mapMutations({
+            close: 'mediaManager/closeConfirmation',
+        }),
+
+        confirm() {
+            this.deleteFocusedItems();
+            this.close();
+        },
+    },
+};
 </script>

@@ -2,7 +2,7 @@ import { library } from '@fortawesome/fontawesome-svg-core';
 
 import {
     faClock,
-    faTimesCircle
+    faTimesCircle,
 } from '@fortawesome/free-regular-svg-icons';
 
 import {
@@ -23,10 +23,10 @@ import {
     faSpinner,
     faTimes,
     faTrash,
-    faUpload
+    faUpload,
 } from '@fortawesome/free-solid-svg-icons';
 
-export default { 
+export default {
     register() {
         library.add(
             faAngleUp, faAngleRight,
@@ -50,5 +50,5 @@ export default {
             faTrash,
             faUpload
         );
-    }
-}
+    },
+};

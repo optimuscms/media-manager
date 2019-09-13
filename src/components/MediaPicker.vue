@@ -1,38 +1,38 @@
 <template>
     <div class="mm-reset">
         <div v-if="pickerMedia.length">
-            <div class="mm-picker-preview" v-if="hasPreview">
+            <div v-if="hasPreview" class="mm-picker-preview">
                 <img :src="firstMedia.thumbnail_url">
 
                 <a class="mm-icon" @click="removeMedia(firstMedia.id)">
-                    <icon icon="times"></icon>
+                    <icon icon="times" />
                 </a>
             </div>
 
-            <div class="mm-picker-items" v-else>
+            <div v-else class="mm-picker-items">
                 <div
-                    :key="media.id"
+                    v-for="selectedMedia in pickerMedia"
+                    :key="selectedMedia.id"
                     class="mm-picker-item"
-                    v-for="media in pickerMedia"
                 >
                     <div class="mm-icon mm-icon-md">
-                        <icon :icon="getIcon(media.extension)" size="2x"></icon>
-                    </div>
-                    
-                    <div class="mm-picker-item-body">
-                        {{ media.name }}
+                        <icon :icon="getIcon(selectedMedia.extension)" size="2x" />
                     </div>
 
-                    <a class="mm-icon" @click="removeMedia(media.id)">
-                        <icon icon="times"></icon>
+                    <div class="mm-picker-item-body">
+                        {{ selectedMedia.name }}
+                    </div>
+
+                    <a class="mm-icon" @click="removeMedia(selectedMedia.id)">
+                        <icon icon="times" />
                     </a>
                 </div>
             </div>
         </div>
 
-        <div class="mm-button is-picker" @click="open" v-if="! limitMet">
+        <div v-if="! limitMet" class="mm-button is-picker" @click="open">
             <span class="mm-icon">
-                <icon icon="upload"></icon>
+                <icon icon="upload" />
             </span>
 
             <span>Choose media…</span>
@@ -41,143 +41,147 @@
 </template>
 
 <script>
-    import { mapActions, mapGetters } from 'vuex';
-    import isEqual from 'lodash/isEqual';
+import { mapActions, mapGetters } from 'vuex';
+import isEqual from 'lodash/isEqual';
 
-    export default {
-        props: {
-            value: [ Array, Number ],
+export default {
+    props: {
+        value: {
+            type: [ Array, Number ],
+            default: null,
+        },
 
-            id: {
-                type: String,
-                required: true
-            },
+        id: {
+            type: String,
+            required: true,
+        },
 
-            media: {
-                type: [ Array, Object ],
-                default: () => []
-            },
+        media: {
+            type: [ Array, Object ],
+            default: () => [],
+        },
 
-            acceptedExtensions: {
-                type: [ Array, String ]
-            },
+        acceptedExtensions: {
+            type: [ Array, String ],
+            default: null,
+        },
 
-            limit: {
-                type: Number,
-                default: 1
-            },
+        limit: {
+            type: Number,
+            default: 1,
+        },
 
-            preview: {
-                type: Boolean,
-                default: false
+        preview: {
+            type: Boolean,
+            default: false,
+        },
+    },
+
+    computed: {
+        ...mapGetters({
+            getIcon: 'mediaManager/getIcon',
+            getPickerMedia: 'mediaManager/selectedMedia',
+            imageExtensions: 'mediaManager/imageExtensions',
+        }),
+
+        pickerMedia() {
+            return this.getPickerMedia(this.id);
+        },
+
+        firstMedia() {
+            return this.pickerMedia.length ? this.pickerMedia[0] : null;
+        },
+
+        limitMet() {
+            return this.limit === this.pickerMedia.length;
+        },
+
+        hasPreview() {
+            return this.limit === 1 && this.preview && this.firstMedia;
+        },
+    },
+
+    watch: {
+        media(value, oldValue) {
+            if (! isEqual(value, oldValue)) {
+                this.setPickerMedia({
+                    pickerId: this.id,
+                    media: this.formatMedia(this.media),
+                });
             }
         },
 
-        computed: {
-            ...mapGetters({
-                getIcon: 'mediaManager/getIcon',
-                getPickerMedia: 'mediaManager/selectedMedia',
-                imageExtensions: 'mediaManager/imageExtensions'
-            }),
+        pickerMedia() {
+            let selectedIds = this.pickerMedia.map(({ id }) => id);
 
-            pickerMedia() {
-                return this.getPickerMedia(this.id);
-            },
-            
-            firstMedia() {
-                return this.pickerMedia.length ? this.pickerMedia[0] : null;
-            },
-
-            limitMet() {
-                return this.limit === this.pickerMedia.length;
-            },
-
-            hasPreview() {
-                return this.limit === 1 && this.preview && this.firstMedia;
+            if (this.limit === 1) {
+                return this.$emit('input', selectedIds.length
+                    ? selectedIds[0]
+                    : null
+                );
             }
+
+            return this.$emit('input', selectedIds);
         },
+    },
 
-        watch: {
-            media(value, oldValue) {
-                if (! isEqual(value, oldValue)) {
-                    this.setPickerMedia({
-                        pickerId: this.id,
-                        media: this.formatMedia(this.media)
-                    });
-                }
-            },
+    created() {
+        this.setPickerMedia({
+            pickerId: this.id,
+            media: this.formatMedia(this.media),
+        });
+    },
 
-            pickerMedia() {
-                let selectedIds = this.pickerMedia.map(({ id }) => id);
+    beforeDestroy() {
+        this.clearPickerMedia(this.id);
+    },
 
-                if (this.limit === 1) {
-                    return this.$emit('input', selectedIds.length
-                        ? selectedIds[0]
-                        : null
-                    );
-                }
+    methods: {
+        ...mapActions({
+            openManager: 'mediaManager/open',
+            setPickerMedia: 'mediaManager/setPickerMedia',
+            clearPickerMedia: 'mediaManager/clearPickerMedia',
+            removePickerMediaItem: 'mediaManager/removePickerMediaItem',
+        }),
 
-                return this.$emit('input', selectedIds);
-            }
-        },
-
-        created() {
-            this.setPickerMedia({
+        removeMedia(id) {
+            this.removePickerMediaItem({
                 pickerId: this.id,
-                media: this.formatMedia(this.media)
+                id,
             });
         },
 
-        beforeDestroy() {
-            this.clearPickerMedia(this.id);
+        formatMedia(media) {
+            if (! media) {
+                return [];
+            }
+
+            if (Array.isArray(media)) {
+                return media;
+            }
+
+            return [media];
         },
 
-        methods: {
-            ...mapActions({
-                openManager: 'mediaManager/open',
-                setPickerMedia: 'mediaManager/setPickerMedia',
-                clearPickerMedia: 'mediaManager/clearPickerMedia',
-                removePickerMediaItem: 'mediaManager/removePickerMediaItem',
-            }),
+        open() {
+            this.openManager({
+                pickerId: this.id,
+                limit: this.limit,
+                acceptedExtensions: this.acceptedExtensions
+                    ? this.setAcceptedExtensions(this.acceptedExtensions)
+                    : null,
+            });
+        },
 
-            removeMedia(id) {
-                this.removePickerMediaItem({
-                    pickerId: this.id,
-                    id
-                });
-            },
+        setAcceptedExtensions(acceptedExtensions) {
+            if (acceptedExtensions === 'image') {
+                return this.imageExtensions;
+            }
 
-            formatMedia(media) {
-                if (! media) {
-                    return [];
-                }
-
-                if (Array.isArray(media)) {
-                    return media;
-                }
-
-                return [media];
-            },
-
-            open() {
-                this.openManager({
-                    pickerId: this.id,
-                    limit: this.limit,
-                    acceptedExtensions: this.acceptedExtensions
-                        ? this.setAcceptedExtensions(this.acceptedExtensions)
-                        : null
-                });
-            },
-
-            setAcceptedExtensions(acceptedExtensions) {
-                if (acceptedExtensions === 'image') {
-                    return this.imageExtensions;
-                }
-
-                return Array.isArray(acceptedExtensions)
-                    ? acceptedExtensions
-                    : [acceptedExtensions];
-            },
-        }
-    }
+            return Array.isArray(acceptedExtensions)
+                ? acceptedExtensions
+                : [acceptedExtensions];
+        },
+    },
+};
 </script>
