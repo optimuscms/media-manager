@@ -39,7 +39,7 @@
 
             <section
                 class="mm-modal-content is-media-manager"
-                :class="{ 'loading': isLoading }"
+                :class="{ 'loading': mmIsLoading }"
                 @click="clearAllFocusedIds"
             >
                 <folders />
@@ -154,7 +154,7 @@ export default {
     computed: {
         ...mapGetters({
             isOpen: 'mediaManager/isOpen',
-            isLoading: 'mediaManager/isLoading',
+            mmIsLoading: 'mediaManager/isLoading',
             limit: 'mediaManager/limit',
             pickerId: 'mediaManager/pickerId',
 

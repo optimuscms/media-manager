@@ -1,6 +1,6 @@
 <template>
     <div class="mm-reset">
-        <div v-if="pickerMedia.length">
+        <template v-if="pickerMedia.length">
             <div v-if="hasPreview" class="mm-picker-preview">
                 <img :src="firstMedia.thumbnail_url">
 
@@ -28,7 +28,7 @@
                     </a>
                 </div>
             </div>
-        </div>
+        </template>
 
         <div v-if="! limitMet" class="mm-button is-picker" @click="open">
             <span class="mm-icon">

@@ -83,7 +83,7 @@ export default [
         ],
     },
     {
-        input: 'src/sass/index.scss',
+        input: 'src/styles/index.scss',
         output: {
             file: 'dist/media-manager.min.css',
             format: 'es',

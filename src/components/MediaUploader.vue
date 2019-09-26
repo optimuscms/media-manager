@@ -115,7 +115,6 @@ export default {
         },
 
         upload(event) {
-            this.isLoading = true;
             this.isActive = true;
 
             Array.from(event.target.files).forEach(file => {

@@ -5833,7 +5833,6 @@ var script$a = {
     upload: function upload(event) {
       var _this = this;
 
-      this.isLoading = true;
       this.isActive = true;
       Array.from(event.target.files).forEach(function (file) {
         var data = new FormData();
@@ -6108,7 +6107,7 @@ var script$b = {
   },
   computed: _objectSpread2({}, mapGetters({
     isOpen: 'mediaManager/isOpen',
-    isLoading: 'mediaManager/isLoading',
+    mmIsLoading: 'mediaManager/isLoading',
     limit: 'mediaManager/limit',
     pickerId: 'mediaManager/pickerId',
     currentMedia: 'mediaManager/currentMedia',
@@ -6291,7 +6290,7 @@ var __vue_render__$b = function __vue_render__() {
   })], 1), _vm._v(" "), _c("span", [_vm._v("Delete")])])])], 1), _vm._v(" "), _c("section", {
     staticClass: "mm-modal-content is-media-manager",
     class: {
-      loading: _vm.isLoading
+      loading: _vm.mmIsLoading
     },
     on: {
       click: _vm.clearAllFocusedIds
@@ -6582,7 +6581,7 @@ var __vue_render__$c = function __vue_render__() {
 
   return _c("div", {
     staticClass: "mm-reset"
-  }, [_vm.pickerMedia.length ? _c("div", [_vm.hasPreview ? _c("div", {
+  }, [_vm.pickerMedia.length ? [_vm.hasPreview ? _c("div", {
     staticClass: "mm-picker-preview"
   }, [_c("img", {
     attrs: {
@@ -6626,7 +6625,7 @@ var __vue_render__$c = function __vue_render__() {
         icon: "times"
       }
     })], 1)]);
-  }), 0)]) : _vm._e(), _vm._v(" "), !_vm.limitMet ? _c("div", {
+  }), 0)] : _vm._e(), _vm._v(" "), !_vm.limitMet ? _c("div", {
     staticClass: "mm-button is-picker",
     on: {
       click: _vm.open
@@ -6637,7 +6636,7 @@ var __vue_render__$c = function __vue_render__() {
     attrs: {
       icon: "upload"
     }
-  })], 1), _vm._v(" "), _c("span", [_vm._v("Choose media…")])]) : _vm._e()]);
+  })], 1), _vm._v(" "), _c("span", [_vm._v("Choose media…")])]) : _vm._e()], 2);
 };
 
 var __vue_staticRenderFns__$c = [];

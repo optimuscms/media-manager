@@ -1,6 +1,5 @@
 .mm-picker-preview {
     position: relative;
-    margin-bottom: 1em;
     vertical-align: top;
     display: inline-flex;
     border-radius: $mm-picker-preview-border-radius;
@@ -38,17 +37,24 @@
             opacity: $mm-picker-preview-overlay-opacity;
         }
     }
+
+    + .mm-button {
+        margin-top: 1em;
+    }
 }
 
 .mm-picker-items {
     display: flex;
     flex-wrap: wrap;
     position: relative;
-    margin-bottom: 1em;
     padding: 0.75em 0.5em;
     border-radius: $mm-picker-items-border-radius;
     border: 1px solid $mm-picker-items-border-color;
     background-color: $mm-picker-items-background-color;
+
+    + .mm-button {
+        margin-top: 1em;
+    }
 }
 
 .mm-picker-item {
