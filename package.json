@@ -1,6 +1,6 @@
 {
     "name": "@optimuscms/media-manager",
-    "version": "1.2.7",
+    "version": "1.2.8",
     "main": "dist/media-manager.js",
     "module": "dist/media-manager.esm.js",
     "browser": {
