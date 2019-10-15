@@ -1,7 +1,7 @@
 <template>
     <div class="mm-reset">
         <template v-if="pickerMedia.length">
-            <div v-if="hasPreview" class="mm-picker-preview">
+            <div v-if="previewIsVisible" class="mm-picker-preview">
                 <img :src="firstMedia.thumbnail_url">
 
                 <a class="mm-icon" @click="removeMedia(firstMedia.id)">
@@ -11,26 +11,30 @@
 
             <div v-else class="mm-picker-items">
                 <div
-                    v-for="selectedMedia in pickerMedia"
-                    :key="selectedMedia.id"
+                    v-for="pickerMediaItem in pickerMedia"
+                    :key="pickerMediaItem.id"
                     class="mm-picker-item"
                 >
-                    <div class="mm-icon mm-icon-md">
-                        <icon :icon="getIcon(selectedMedia.extension)" size="2x" />
+                    <div class="mm-icon">
+                        <icon :icon="getIcon(pickerMediaItem.extension)" />
                     </div>
 
                     <div class="mm-picker-item-body">
-                        {{ selectedMedia.name }}
+                        {{ pickerMediaItem.name }}
                     </div>
 
-                    <a class="mm-icon" @click="removeMedia(selectedMedia.id)">
+                    <a class="mm-icon" @click="removeMedia(pickerMediaItem.id)">
                         <icon icon="times" />
                     </a>
                 </div>
             </div>
         </template>
 
-        <div v-if="! limitMet" class="mm-button is-picker" @click="open">
+        <div
+            v-if="! limitIsMet"
+            class="mm-button picker"
+            @click="open"
+        >
             <span class="mm-icon">
                 <icon icon="upload" />
             </span>
@@ -41,8 +45,9 @@
 </template>
 
 <script>
+import { sortBy } from 'lodash';
 import { mapActions, mapGetters } from 'vuex';
-import isEqual from 'lodash/isEqual';
+import { iconMap, imageExtensions } from '../index';
 
 export default {
     props: {
@@ -56,9 +61,9 @@ export default {
             required: true,
         },
 
-        media: {
-            type: [ Array, Object ],
-            default: () => [],
+        limit: {
+            type: Number,
+            default: 1,
         },
 
         acceptedExtensions: {
@@ -66,121 +71,126 @@ export default {
             default: null,
         },
 
-        limit: {
-            type: Number,
-            default: 1,
-        },
-
-        preview: {
+        showPreview: {
             type: Boolean,
             default: false,
+        },
+
+        media: {
+            type: [ Array, Object ],
+            default: () => [],
         },
     },
 
     computed: {
         ...mapGetters({
-            getIcon: 'mediaManager/getIcon',
-            getPickerMedia: 'mediaManager/selectedMedia',
-            imageExtensions: 'mediaManager/imageExtensions',
+            getPickerMedia: 'mediaManagerPickers/pickerMedia',
         }),
 
+        initialMedia() {
+            if (! this.media) {
+                return [];
+            }
+
+            if (Array.isArray(this.media)) {
+                return this.media;
+            }
+
+            return [ this.media ];
+        },
+
         pickerMedia() {
-            return this.getPickerMedia(this.id);
+            return sortBy(this.getPickerMedia(this.id), 'name', 'asc');
         },
 
         firstMedia() {
-            return this.pickerMedia.length ? this.pickerMedia[0] : null;
+            if (this.pickerMedia.length) {
+                return this.pickerMedia[0];
+            }
+
+            return null;
         },
 
-        limitMet() {
+        previewIsVisible() {
+            return this.limit === 1
+                && this.showPreview
+                && this.firstMedia
+                && imageExtensions.includes(this.firstMedia.extension);
+        },
+
+        limitIsMet() {
             return this.limit === this.pickerMedia.length;
-        },
-
-        hasPreview() {
-            return this.limit === 1 && this.preview && this.firstMedia;
         },
     },
 
     watch: {
-        media(value, oldValue) {
-            if (! isEqual(value, oldValue)) {
-                this.setPickerMedia({
+        initialMedia: {
+            handler(media) {
+                this.setPickerMediaIds({
                     pickerId: this.id,
-                    media: this.formatMedia(this.media),
+                    mediaIds: media.map(({ id }) => id),
                 });
-            }
+
+                if (media.length) {
+                    this.setMediaItems(media);
+                }
+            },
+            immediate: true,
         },
 
-        pickerMedia() {
-            let selectedIds = this.pickerMedia.map(({ id }) => id);
+        pickerMedia(pickerMedia) {
+            let selectedIds = pickerMedia.map(({ id }) => id);
+
+            if (! selectedIds.length) {
+                return this.$emit('input', null);
+            }
 
             if (this.limit === 1) {
-                return this.$emit('input', selectedIds.length
-                    ? selectedIds[0]
-                    : null
-                );
+                return this.$emit('input', selectedIds[0]);
             }
 
             return this.$emit('input', selectedIds);
         },
     },
 
-    created() {
-        this.setPickerMedia({
-            pickerId: this.id,
-            media: this.formatMedia(this.media),
-        });
-    },
-
     beforeDestroy() {
-        this.clearPickerMedia(this.id);
+        this.clearPickerMediaIds(this.id);
     },
 
     methods: {
         ...mapActions({
             openManager: 'mediaManager/open',
-            setPickerMedia: 'mediaManager/setPickerMedia',
-            clearPickerMedia: 'mediaManager/clearPickerMedia',
-            removePickerMediaItem: 'mediaManager/removePickerMediaItem',
+            setMediaItems: 'mediaManagerMedia/set',
+            setPickerMediaIds: 'mediaManagerPickers/setPickerMediaIds',
+            clearPickerMediaIds: 'mediaManagerPickers/clearPickerMediaIds',
+            removePickerMediaId: 'mediaManagerPickers/removePickerMediaId',
         }),
-
-        removeMedia(id) {
-            this.removePickerMediaItem({
-                pickerId: this.id,
-                id,
-            });
-        },
-
-        formatMedia(media) {
-            if (! media) {
-                return [];
-            }
-
-            if (Array.isArray(media)) {
-                return media;
-            }
-
-            return [media];
-        },
 
         open() {
             this.openManager({
                 pickerId: this.id,
                 limit: this.limit,
-                acceptedExtensions: this.acceptedExtensions
-                    ? this.setAcceptedExtensions(this.acceptedExtensions)
-                    : null,
+                acceptedExtensions: this.acceptedExtensions,
             });
         },
 
-        setAcceptedExtensions(acceptedExtensions) {
-            if (acceptedExtensions === 'image') {
-                return this.imageExtensions;
-            }
+        getIcon(extension) {
+            let icon = 'file-alt';
 
-            return Array.isArray(acceptedExtensions)
-                ? acceptedExtensions
-                : [acceptedExtensions];
+            Object.keys(iconMap).some(key => {
+                if (iconMap[key].includes(extension)) {
+                    return icon = key;
+                }
+            });
+
+            return icon;
+        },
+
+        removeMedia(id) {
+            this.removePickerMediaId({
+                pickerId: this.id,
+                mediaId: id,
+            });
         },
     },
 };

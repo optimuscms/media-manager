@@ -27,17 +27,14 @@
     
     a {
         cursor: pointer;
-        color: $mm-link-color;
         text-decoration: none;
-    
-        &:hover {
-            color: $mm-link-hover-color;
-        }
     }
 
     ul {
-        margin: 0;
-        padding: 0;
         list-style: none;
+    }
+
+    strong {
+        font-weight: $mm-font-weight-semibold;
     }
 }

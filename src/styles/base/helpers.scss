@@ -2,9 +2,16 @@
     color: $mm-text-danger-color;
 }
 
-.mm-manger-actions-disabled {
-    visibility: hidden;
-    pointer-events: none;
+.mm-fade-enter-active {
+    transition: opacity 300ms;
+}
+
+.mm-fade-enter {
+    opacity: 0;
+}
+
+.mm-fade-leave-active {
+    display: none;
 }
 
 @keyframes mm-spin {

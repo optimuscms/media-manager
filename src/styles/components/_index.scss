@@ -1,16 +1,17 @@
 @charset 'UTF-8';
 
 @import 'breadcrumb';
-@import 'card';
 @import 'confirmation';
 @import 'dropdown';
 @import 'errors';
 @import 'modal';
 
-@import 'folder';
 @import 'media';
+@import 'folders';
+@import 'actions-panel';
+@import 'folder-manager';
 
-@import 'media-editor';
+@import 'media-manager';
 @import 'media-mover';
 @import 'media-picker';
 @import 'media-uploader';

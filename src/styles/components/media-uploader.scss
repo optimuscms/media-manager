@@ -1,30 +1,24 @@
-.mm-upload {
+.mm-uploader-wrap {
     z-index: 10;
-    right: 2em;
-    width: 100%;
-    bottom: 100%;
+    right: 1em;
+    bottom: 1em;
     max-width: 20em;
     position: absolute;
-    border-top: 1px solid $mm-upload-border-color;
-    border-left: 1px solid $mm-upload-border-color;
-    border-right: 1px solid $mm-upload-border-color;
-    border-radius: $mm-upload-border-radius $mm-upload-border-radius 0 0;
+    width: calc(100% - 2em);
 }
 
-.mm-upload-wrap {
-    display: flex;
-    flex-direction: column;
+.mm-uploader {
+    padding: 1em;
+    border-radius: $mm-upload-border-radius;
+    background-color: $mm-upload-background-color;
 }
 
 .mm-upload-header {
     display: flex;
     flex-shrink: 0;
     align-items: center;
-    padding: 0.5em 1em;
     justify-content: space-between;
-    border-bottom: 1px solid $mm-upload-border-color;
-    background-color: $mm-upload-header-background-color;
-    border-radius: $mm-upload-border-radius $mm-upload-border-radius 0 0;
+    font-weight: $mm-font-weight-semibold;
 }
 
 .mm-upload-header-content {
@@ -32,61 +26,85 @@
     align-items: center;
 
     .mm-icon {
-        margin-right: 0.75em;
+        margin-right: 0.25em;
     }
 }
 
-.mm-upload-items {
+.mm-upload-wrap {
     overflow: auto;
-    max-height: 20em;
-    background-color: $mm-upload-background-color;
+    max-height: 10em;
+    margin-top: 0.75em;
+}
+
+.mm-upload-item-wrap {
+    position: relative;
 }
 
 .mm-upload-item {
+    z-index: 2;
     display: flex;
     position: relative;
-    padding: 0.5em 1em;
     align-items: center;
+    padding: 0.4em 0 0.4em 0.25em;
     justify-content: space-between;
-    border-bottom: 1px solid $mm-upload-border-color;
 
     .mm-icon {
         flex-shrink: 0;
+
+        &.mm-upload-icon-error {
+            color: $mm-red-500;
+        }
+
+        &.mm-upload-icon-in-progress {
+            color: $mm-blue-500;
+        }
+
+        &.mm-upload-icon-success {
+            color: $mm-green-500;
+        }
     }
 
     .mm-upload-item-name {
         flex-grow: 1;
-        overflow: hidden;
         padding: 0 0.5em;
+        overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
         font-size: $mm-font-size-sm;
     }
 
-    .mm-upload-progress {
-        left: 0;
-        right: 0;
-        bottom: 0;
-        height: 2px;
-        appearance: none;
-        position: absolute;
-        
-        &::-webkit-progress-bar {
-            background-color: $mm-upload-progress-bar-color;
-        }
-        
-        &::-webkit-progress-value {
-            background-color: $mm-upload-progress-bar-active-color;
-        }
+    + .mm-upload-item {
+        border-top: solid 1px $mm-grey-400;
+    }
+}
 
-        &::-moz-progress-bar {
-            background-color: $mm-upload-progress-bar-active-color;
-        }
+.mm-upload-item-progress {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    appearance: none;
+    position: absolute;
 
-        &::-ms-fill {
-            border: none;
-            background-color: $mm-upload-progress-bar-active-color;
-        }
+    &::-webkit-progress-bar {
+        background-color: $mm-upload-progress-bar-color;
+    }
+
+    &::-webkit-progress-value {
+        transition: all 250ms ease-in-out;
+        background-color: $mm-upload-progress-bar-active-color;
+    }
+
+    &::-moz-progress-bar {
+        background-color: $mm-upload-progress-bar-active-color;
+    }
+
+    &::-ms-fill {
+        border: none;
+        background-color: $mm-upload-progress-bar-active-color;
     }
 }
 
@@ -96,4 +114,11 @@
 
 .mm-upload-input {
     display: none;
+}
+
+@include mm-screen-lg {
+    .mm-uploader-wrap {
+        right: 2em;
+        bottom: 2em;
+    }
 }

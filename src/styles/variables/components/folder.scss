@@ -1,14 +1,21 @@
-$mm-folder-font-size: $mm-font-size-sm !default;
-$mm-folder-border-radius: $mm-border-radius-default !default;
+$mm-folders-background-color: $mm-blue-600 !default;
+$mm-folders-header-background: linear-gradient(
+    to top,
+    $mm-blue-800 0%,
+    $mm-blue-700 30%,
+    $mm-blue-700 100%,
+) !default;
 
-$mm-folder-color: $mm-grey-darker !default;
-$mm-folder-hover-color: $mm-black !default;
-$mm-folder-focus-color: $mm-white !default;
+$mm-folders-title-color: $mm-white !default;
+$mm-folders-title-font-size: $mm-font-size-base !default;
+$mm-folders-title-font-weight: $mm-font-weight-semibold !default;
 
-$mm-folder-border-color: $mm-grey-light !default;
-$mm-folder-hover-border-color: $mm-grey !default;
-$mm-folder-focus-border-color: $mm-blue-light !default;
+$mm-folders-folder-color: $mm-white !default;
+$mm-folders-folder-hover-color: $mm-primary-500 !default;
 
-$mm-folder-background-color: $mm-white !default;
-$mm-folder-hover-background-color: $mm-grey-lightest !default;
-$mm-folder-focus-background-color: $mm-blue-light !default;
+$mm-folders-footer-background: linear-gradient(
+    to bottom,
+    $mm-blue-800 0%,
+    $mm-blue-700 30%,
+    $mm-blue-700 100%,
+) !default;

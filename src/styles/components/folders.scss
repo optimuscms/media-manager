@@ -1,0 +1,199 @@
+.mm-folders {
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 85%;
+    z-index: 10;
+    flex-grow: 1;
+    display: flex;
+    flex-shrink: 0;
+    max-width: 19em;
+    position: absolute;
+    flex-direction: column;
+    transition: all 180ms ease-out;
+    transform: translate3d(-100%, 0, 0);
+    background-color: $mm-folders-background-color;
+
+    &.open {
+        transform: translateZ(0);
+    }
+}
+
+.mm-folders-header,
+.mm-folders-footer {
+    height: 4em;
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    justify-content: space-between;
+}
+
+.mm-folders-header {
+    background: $mm-folders-header-background;
+}
+
+.mm-folders-title {
+    color: $mm-folders-title-color;
+    font-size: $mm-folders-title-font-size;
+    font-weight: $mm-folders-title-font-weight;
+}
+
+.mm-folders-footer {
+    background: $mm-folders-footer-background;
+}
+
+.mm-folders-create {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+
+    span {
+        &.mm-icon {
+            margin-right: 0.4em;
+        }
+
+        &:not(.mm-icon) {
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            font-weight: $mm-font-weight-semibold;
+        }
+    }
+}
+
+.mm-folder-hide,
+.mm-folders-create {
+    color: $mm-folders-title-color;
+
+    &:hover {
+        color: $mm-grey-200;
+    }
+}
+
+.mm-folders-show,
+.mm-folders-back {
+    margin-right: 0.4em;
+}
+
+.mm-folders-list {
+    flex-grow: 1;
+    overflow: auto;
+    padding: 0.5em 1.5em;
+
+    &.loading {
+        position: relative;
+
+        &:before {
+            top: 5em;
+            left: 50%;
+            z-index: 10;
+            content: '';
+            display: block;
+            position: absolute;
+            border-radius: 100px;
+            width: $mm-loader-size;
+            height: $mm-loader-size;
+            border-top: 3px solid transparent;
+            border-right: 3px solid transparent;
+            animation: mm-spin 750ms infinite linear;
+            margin-top: -($mm-loader-size / 2);
+            margin-left: -($mm-loader-size / 2);
+            border-left: 3px solid $mm-loader-color;
+            border-bottom: 3px solid $mm-loader-color;
+        }
+    }
+
+    > li {
+        display: flex;
+        align-items: center;
+
+        &.mm-folder-back {
+            > a {
+                color: $mm-blue-400;
+            }
+        }
+
+        &:not(:last-child) {
+            position: relative;
+
+            &:after {
+                left: 0;
+                right: 0;
+                bottom: 0;
+                height: 1px;
+                content: '';
+                position: absolute;
+                background-size: 8px 1px;
+                background-image: linear-gradient(to right, 
+                    rgba(255, 255, 255, 0.4) 0px, 
+                    rgba(255, 255, 255, 0) 1px,
+                    rgba(255, 255, 255, 0) 100%
+                ); 
+            }
+        }
+
+        > .mm-folder {
+            flex-grow: 1;
+            min-width: 0;
+            display: flex;
+            padding: 1em 0;
+            user-select: none;
+            align-items: center;
+            justify-content: space-between;
+            color: $mm-folders-folder-color;
+
+            > span {
+                &.mm-icon {
+                    flex-shrink: 0;
+                }
+
+                &:not(.mm-icon) {
+                    flex-grow: 1;
+                    overflow: hidden;
+                    margin-left: 0.4em;
+                    margin-right: 0.4em;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+            }
+        }
+
+        > .mm-dropdown {
+            flex-shrink: 0;
+
+            .mm-dropdown-trigger {
+                .mm-icon {
+                    &:last-child {
+                        color: $mm-blue-500;
+                        font-size: $mm-font-size-sm;
+
+                        &:hover {
+                            color: $mm-white;
+                        }
+                    }
+                }
+            }
+        }
+
+        &:hover,
+        &.active {
+            > .mm-folder {
+                color: $mm-folders-folder-hover-color;
+            }
+        }
+    }
+}
+
+@include mm-screen-lg {
+    .mm-folders {
+        transform: translateZ(0);
+    }
+
+    .mm-folder-hide,
+    .mm-folders-show,
+    .mm-folders-back {
+        display: none;
+    }
+}

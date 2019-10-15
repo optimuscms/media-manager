@@ -1,74 +1,168 @@
 <template>
-    <div>
-        <div v-if="currentMedia.length">
-            <h2 class="mm-title">
-                Media
-            </h2>
+    <div class="mm-media-wrap" :class="{ 'loading': isLoading }">
+        <div class="mm-media-actions">
+            <a
+                class="mm-media-focus-multiple"
+                @click="toggleMultipleFocus"
+            >
+                <span>
+                    Select multiple
+                </span>
 
-            <div class="mm-media">
+                <span class="mm-icon">
+                    <icon
+                        :icon="isFocusingMultiple ? 'toggle-on' : 'toggle-off'"
+                    />
+                </span>
+            </a>
+        </div>
+
+        <transition name="mm-fade">
+            <div v-if="! isLoading && ! currentMedia.length" class="mm-notification">
+                This folder is empty.
+            </div>
+
+            <div v-else-if="! isLoading && currentMedia.length" class="mm-media-holder">
                 <div
                     v-for="media in currentMedia"
                     :key="media.id"
-                    class="mm-media-item"
+                    class="mm-media-item-wrap"
                     :class="{
-                        'focused': focusedMediaIds.includes(media.id),
-                        'selected': selectedMediaIds.includes(media.id),
-                        'not-selectable': ! isSelectable(media.extension)
+                        'selected': focusedIds.includes(media.id),
+                        'disabled': ! isSelectable(media.extension),
                     }"
-                    @click.stop="focusMedia(media.id)"
                 >
-                    <div class="mm-card">
-                        <figure v-if="isImage(media.extension)" class="mm-card-image">
-                            <img :src="media.thumbnail_url" :alt="media.name" :title="media.name">
-                        </figure>
+                    <div class="mm-media-item" @click="toggleId(media.id)">
+                        <div v-if="isImage(media.extension)" class="mm-media-image">
+                            <img
+                                :src="media.thumbnail_url"
+                                :alt="media.name"
+                            >
+                        </div>
 
-                        <div v-else class="mm-card-other">
-                            <div class="mm-icon">
-                                <icon :icon="getIcon(media.extension)" size="4x" />
+                        <div v-else class="mm-media-icon">
+                            <div class="mm-media-icon-detail">
+                                <div class="mm-icon">
+                                    <icon
+                                        :icon="getIcon(media.extension)"
+                                        size="3x"
+                                    />
+                                </div>
+
+                                <div class="mm-media-name">
+                                    {{ media.name }}
+                                </div>
                             </div>
                         </div>
 
-                        <div class="mm-card-content">
-                            {{ media.name }}
+                        <div
+                            v-if="focusedIds.includes(media.id)"
+                            class="mm-media-overlay"
+                        >
+                            <div class="mm-icon">
+                                <icon
+                                    :icon="['far', 'check-circle']"
+                                    size="2x"
+                                />
+                            </div>
+
+                            <div>
+                                Selected
+                            </div>
+                        </div>
+
+                        <div
+                            v-if="selectedMediaIds.includes(media.id)"
+                            class="mm-media-selected mm-icon"
+                        >
+                            <icon icon="check-square" />
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-
-        <div v-else class="mm-notification">
-            No media, add new media by clicking the <strong>New</strong> button below.
-        </div>
+        </transition>
     </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+import { iconMap, imageExtensions } from '../../index';
 
 export default {
     computed: {
         ...mapGetters({
-            getIcon: 'mediaManager/getIcon',
-            isImage: 'mediaManager/isImage',
-
-            currentMedia: 'mediaManager/currentMedia',
-            focusedMediaIds: 'mediaManager/focusedMediaIds',
-            selectedMediaIds: 'mediaManager/selectedMediaIds',
+            isLoading: 'mediaManagerMedia/isLoading',
+            focusedIds: 'mediaManagerMedia/focusedIds',
+            currentMedia: 'mediaManagerMedia/current',
+            currentFolder: 'mediaManagerFolders/currentFolder',
+            selectedMediaIds: 'mediaManagerMedia/selectedIds',
             acceptedExtensions: 'mediaManager/acceptedExtensions',
+            isFocusingMultiple: 'mediaManagerMedia/isFocusingMultiple',
         }),
+
+        currentFolderId() {
+            return this.currentFolder.id;
+        },
+    },
+
+    watch: {
+        currentFolderId(folderId) {
+            this.fetchMedia(folderId);
+        },
     },
 
     methods: {
-        ...mapMutations({
-            focusMedia: 'mediaManager/focusMedia',
+        ...mapActions({
+            fetchMedia: 'mediaManagerMedia/fetch',
+            focusId: 'mediaManagerMedia/focusId',
+            blurId: 'mediaManagerMedia/blurId',
+            clearFocusedIds: 'mediaManagerMedia/clearFocusedIds',
+            enableMultipleFocus: 'mediaManagerMedia/enableMultipleFocus',
+            disableMultipleFocus: 'mediaManagerMedia/disableMultipleFocus',
         }),
 
+        isImage(extension) {
+            return imageExtensions.includes(extension);
+        },
+
         isSelectable(extension) {
-            if (! this.acceptedExtensions.length) {
+            if (! this.acceptedExtensions) {
                 return true;
             }
 
             return this.acceptedExtensions.includes(extension);
+        },
+
+        getIcon(extension) {
+            let icon = 'file-alt';
+
+            Object.keys(iconMap).some(key => {
+                if (iconMap[key].includes(extension)) {
+                    return icon = key;
+                }
+            });
+
+            return icon;
+        },
+
+        toggleMultipleFocus() {
+            if (this.isFocusingMultiple) {
+                if (this.focusedIds.length > 1) {
+                    this.clearFocusedIds();
+                }
+
+                return this.disableMultipleFocus();
+            }
+
+            this.enableMultipleFocus();
+        },
+
+        toggleId(id) {
+            if (this.focusedIds.includes(id)) {
+                return this.blurId(id);
+            }
+
+            return this.focusId(id);
         },
     },
 };

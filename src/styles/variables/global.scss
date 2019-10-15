@@ -1,26 +1,40 @@
-$mm-black: #22292f !default;
+$mm-black: #000 !default;
 $mm-white: #fff !default;
 
-$mm-grey-darkest: #3d4852 !default;
-$mm-grey-darker: #636363 !default;
-$mm-grey-dark: #8795a1 !default;
-$mm-grey: #ccc !default;
-$mm-grey-light: #d7d8dc !default;
-$mm-grey-lighter: #f7f7f7 !default;
-$mm-grey-lightest: #fbfbfb !default;
+$mm-grey-200: #fbfbfb !default;
+$mm-grey-300: #f7f7f7 !default;
+$mm-grey-400: #d7d8dc !default;
+$mm-grey-500: #cccccc !default;
+$mm-grey-600: #afaeae !default;
+$mm-grey-700: #636363 !default;
+$mm-grey-800: #464646 !default;
 
-$mm-red-dark: #ce2924 !default;
-$mm-red: #e3342f !default;
+$mm-red-500: #f56565 !default;
+$mm-red-600: #e53e3e !default;
 
-$mm-blue-dark: #282c37 !default;
-$mm-blue: #313542 !default;
-$mm-blue-light: #596679 !default;
+$mm-coral-500: #ff4738 !default;
 
-$mm-green-dark: #29a85e !default;
-$mm-green: #38c172 !default;
+$mm-blue-200: #F4F7FA !default; 
+$mm-blue-300: #d9eeff !default;
+$mm-blue-400: #a5aeba !default;
+$mm-blue-500: #596679 !default;
+$mm-blue-600: #313542 !default;
+$mm-blue-700: #282c37 !default;
+$mm-blue-800: #23252f !default;
+$mm-blue-900: #1d2023 !default;
 
+$mm-green-500: #48bb78 !default;
+$mm-green-600: #38a169 !default;
+
+$mm-primary-500: $mm-coral-500 !default;
+
+$mm-border-radius-sm: 2px !default;
 $mm-border-radius-default: 4px !default;
-$mm-shadow-default: 0 2px 4px 0 rgba(0, 0, 0, 0.10) !default;
+
+$mm-shadow-default: 0 1px 3px 0 rgba(0, 0, 0, 0.1),
+    0 1px 2px 0 rgba(0, 0, 0, 0.06) !default;
+$mm-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05) !default;
 
 $mm-font-size-sm: 0.875em !default;
 $mm-font-size-base: 1em !default;
@@ -28,13 +42,13 @@ $mm-font-size-lg: 1.125em !default;
 
 $mm-font-weight-normal: 400 !default;
 $mm-font-weight-semibold: 600 !default;
-$mm-font-weight-bold: 700 !default;
 
 $mm-modal-padding: 3em !default;
 
-$mm-screen-md: 768px !default;
-$mm-screen-lg: 992px !default;
+$mm-screen-lg: 1024px !default;
+$mm-screen-xl: 1280px !default;
 
 $mm-z-index: 50 !default;
 $mm-control-height: 3em !default;
-$mm-icon-font-size: 14px !default;
+$mm-icon-font-size: 16px !default;
+$mm-icon-font-size-sm: 14px !default;

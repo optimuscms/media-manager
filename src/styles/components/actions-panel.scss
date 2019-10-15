@@ -1,0 +1,124 @@
+.mm-actions-panel {
+    top: 4em;
+    right: 0;
+    width: 85%;
+    bottom: 4em;
+    flex-grow: 1;
+    display: flex;
+    flex-shrink: 0;
+    max-width: 19em;
+    position: absolute;
+    flex-direction: column;
+    transition: all 180ms ease-out;
+    transform: translate3d(100%, 0, 0);
+    background-color: $mm-actions-panel-background-color;
+    border-left: solid 1px $mm-actions-panel-border-color;
+
+    &.open {
+        transform: translateZ(0);
+    }
+}
+
+.mm-actions-panel-header {
+    display: flex;
+    flex-shrink: 0;
+    padding: 1em 1.5em;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.mm-actions-panel-title {
+    font-size: $mm-actions-panel-title-font-size;
+    font-weight: $mm-actions-panel-title-font-weight;
+}
+
+.mm-actions-panel-actions {
+    display: flex;
+    align-items: center;
+
+    > .mm-icon {
+        margin-left: 0.4em;
+    }
+}
+
+.mm-actions-panel-content {
+    flex-grow: 1;
+    overflow: auto;
+}
+
+.mm-selected-media {
+    overflow: auto;
+    padding: 1em 1.5em;
+    max-height: 15.25em;
+    border-top: solid 1px $mm-actions-panel-border-color;
+}
+
+.mm-actions-section {
+    padding-left: 1.5em;
+    padding-right: 1.5em;
+    padding-bottom: 1.5em;
+
+    + .mm-actions-section {
+        padding: 1.5em;
+    }
+}
+
+.mm-actions-panel-title {
+    + .mm-actions-media-item {
+        margin-top: 0.5em;
+    }
+}
+
+.mm-actions-media-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &:not(:last-child) {
+        padding-bottom: 0.5em;
+    }
+
+    a,
+    span {
+        &:not(.mm-icon) {
+            font-size: $mm-font-size-sm;
+        }
+    }
+
+    + .mm-actions-media-item {
+        position: relative;
+        padding-top: 0.5em;
+
+        &:after {
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            content: '';
+            position: absolute;
+            background-size: 8px 1px;
+            background-image: linear-gradient(to right, 
+                $mm-grey-700 0px, 
+                $mm-grey-700 1px,
+                transparent 1px,
+                transparent 100%
+            ); 
+        }
+    }
+}
+
+.mm-actions-panel-hide,
+.mm-actions-panel-show {
+    margin-left: 0.4em;
+}
+
+@include mm-screen-xl {
+    .mm-actions-panel {
+        transform: translateZ(0);
+    }
+
+    .mm-actions-panel-hide,
+    .mm-actions-panel-show {
+        display: none;
+    }
+}

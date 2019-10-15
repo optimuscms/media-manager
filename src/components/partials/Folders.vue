@@ -1,58 +1,134 @@
 <template>
-    <div v-if="currentFolders.length">
-        <h2 class="mm-title">
-            Folders
-        </h2>
+    <div class="mm-folders" :class="{ 'open': isVisible }">
+        <div class="mm-folders-header">
+            <h4 class="mm-folders-title">
+                Folders
+            </h4>
 
-        <div class="mm-folders">
-            <div
-                v-for="folder in currentFolders"
-                :key="folder.id"
-                class="mm-folder"
-                :class="{ 'focused': focusedFolderIds.includes(folder.id) }"
+            <a
+                class="mm-folder-hide mm-icon"
+                @click="hide"
             >
-                <a
-                    title="Open folder"
-                    class="mm-folder-detail"
-                    @click="openFolder(folder)"
-                >
+                <icon icon="times" />
+            </a>
+        </div>
+
+        <ul class="mm-folders-list" :class="{ 'loading': isLoading }">
+            <li v-if="parentFolder" class="mm-folder-back">
+                <a class="mm-folder" @click="openFolder(parentFolder.id)">
                     <span class="mm-icon">
-                        <icon icon="folder" size="lg" />
+                        <icon icon="arrow-left" />
                     </span>
 
-                    <span>{{ folder.name }}</span>
-                </a>
-
-                <a
-                    title="Select folder"
-                    class="mm-folder-select"
-                    @click.stop="focusFolder(folder.id)"
-                >
-                    <span class="mm-icon">
-                        <icon icon="crosshairs" />
+                    <span>
+                        {{ parentFolder.name }}
                     </span>
                 </a>
-            </div>
+            </li>
+
+            <li v-for="folder in currentFolders" :key="folder.id">
+                <a class="mm-folder" @click="openFolder(folder.id)">
+                    <span class="mm-icon">
+                        <icon icon="folder" />
+                    </span>
+
+                    <span>
+                        {{ folder.name }}
+                    </span>
+                </a>
+
+                <dropdown class="right">
+                    <a slot="button" class="mm-icon md">
+                        <icon icon="ellipsis-v" size="sm" />
+                    </a>
+
+                    <a class="mm-dropdown-item" @click="editFolder(folder)">
+                        <span class="mm-icon">
+                            <icon icon="pencil-alt" />
+                        </span>
+
+                        <span>Rename</span>
+                    </a>
+
+                    <a
+                        class="mm-dropdown-item"
+                        @click="openMediaMover({
+                            type: 'folder',
+                            subject: folder,
+                        })"
+                    >
+                        <span class="mm-icon">
+                            <icon icon="reply" />
+                        </span>
+
+                        <span>Move</span>
+                    </a>
+
+                    <a
+                        class="mm-dropdown-item"
+                        @click="openConfirmation({
+                            type: 'folder',
+                            subject: folder,
+                        })"
+                    >
+                        <span class="mm-icon">
+                            <icon icon="trash-alt" />
+                        </span>
+
+                        <span>Delete</span>
+                    </a>
+                </dropdown>
+            </li>
+        </ul>
+
+        <div class="mm-folders-footer">
+            <a
+                class="mm-folders-create"
+                @click="showManageModal"
+            >
+                <span class="mm-icon">
+                    <icon icon="plus" />
+                </span>
+
+                <span>
+                    Create Folder
+                </span>
+            </a>
         </div>
     </div>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+import Dropdown from '../../components/ui/Dropdown.vue';
 
 export default {
+    components: { Dropdown },
+
     computed: {
         ...mapGetters({
-            currentFolders: 'mediaManager/currentFolders',
-            focusedFolderIds: 'mediaManager/focusedFolderIds',
+            isVisible: 'mediaManagerFolders/isVisible',
+            isLoading: 'mediaManagerFolders/isLoading',
+            currentFolders: 'mediaManagerFolders/currentList',
+            currentFolder: 'mediaManagerFolders/currentFolder',
+            parentFolder: 'mediaManagerFolders/parentFolder',
         }),
     },
 
     methods: {
-        ...mapMutations({
-            focusFolder: 'mediaManager/focusFolder',
-            openFolder: 'mediaManager/openFolder',
+        ...mapActions({
+            hide: 'mediaManagerFolders/hide',
+            openFolder: 'mediaManagerFolders/openFolder',
+            setManagedFolder: 'mediaManagerFolders/setManagedFolder',
+            showManageModal: 'mediaManagerFolders/showModal',
+            openMediaMover: 'mediaManager/openMediaMover',
+            openConfirmation: 'mediaManager/openConfirmation',
         }),
+
+        editFolder(folder) {
+            this.setManagedFolder(folder);
+            this.showManageModal();
+        },
     },
 };
 </script>

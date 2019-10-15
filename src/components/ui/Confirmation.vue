@@ -1,24 +1,27 @@
 <template>
-    <modal :active="isOpen" @close="close">
-        <div class="mm-modal-wrap is-confirmation">
+    <modal class="mm-confirmation" :active="isOpen" @close="close">
+        <div class="mm-modal-wrap">
             <div class="mm-confirmation-content">
-                Are you sure you want to delete
+                <template v-if="items">
+                    Are you sure you want to delete<br>
 
-                <strong v-if="folderCount">
-                    {{ folderCount }} folder{{ folderCount > 1 ? 's' : null }}
-                </strong>
-
-                <template v-if="folderCount && mediaCount">
-                    and
+                    <strong>
+                        {{ items.length }}
+                        {{ type === 'folder' ? 'Folders' : 'Media Items' }}
+                    </strong>
                 </template>
 
-                <strong v-if="mediaCount">
-                    {{ mediaCount }} media item{{ mediaCount > 1 ? 's' : null }}
-                </strong>
+                <template v-else-if="item">
+                    Are you sure you want to delete the {{ type }}<br>
+
+                    <strong>
+                        {{ item.name }}
+                    </strong>
+                </template>
             </div>
 
             <div class="mm-confirmation-buttons">
-                <a class="mm-button is-danger" @click="confirm">
+                <a class="mm-button danger" @click="confirm">
                     Delete
                 </a>
 
@@ -31,7 +34,8 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+import { actions as apiActions } from '../../index';
 
 import Modal from './Modal.vue';
 
@@ -40,31 +44,87 @@ export default {
 
     computed: {
         ...mapGetters({
-            isOpen: 'mediaManager/confirmationIsOpen',
-            focusedMediaIds: 'mediaManager/focusedMediaIds',
-            focusedFolderIds: 'mediaManager/focusedFolderIds',
+            folders: 'mediaManagerFolders/list',
+            type: 'mediaManager/confirmationType',
+            subject: 'mediaManager/confirmationSubject',
+            isOpen: 'mediaManager/confirmationIsVisible',
+            getAncestorIds: 'mediaManagerFolders/ancestorIds',
         }),
 
-        mediaCount() {
-            return this.focusedMediaIds.length;
+        subjectIsArray() {
+            return this.subject && Array.isArray(this.subject);
         },
 
-        folderCount() {
-            return this.focusedFolderIds.length;
+        subjectIsMultiple() {
+            return this.subjectIsArray && this.subject.length > 1;
+        },
+
+        items() {
+            if (this.subjectIsArray && this.subjectIsMultiple) {
+                return this.subject;
+            }
+
+            return null;
+        },
+
+        item() {
+            if (this.subjectIsArray && ! this.subjectIsMultiple) {
+                return this.subject[0];
+            }
+
+            if (this.subject && ! this.subjectIsArray) {
+                return this.subject;
+            }
+
+            return null;
+        },
+
+        itemIds() {
+            if (this.items) {
+                return this.items.map(({ id }) => id);
+            }
+
+            if (this.item) {
+                return [ this.item.id ];
+            }
+
+            return [];
         },
     },
 
     methods: {
         ...mapActions({
-            deleteFocusedItems: 'mediaManager/deleteFocusedItems',
-        }),
-
-        ...mapMutations({
             close: 'mediaManager/closeConfirmation',
+            removeFolders: 'mediaManagerFolders/removeFolders',
+            removeMediaItems: 'mediaManagerMedia/remove',
+            removeMediaInFolders: 'mediaManagerMedia/removeInFolders',
+            clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedIds',
         }),
 
         confirm() {
-            this.deleteFocusedItems();
+            if (this.type === 'folder') {
+                this.itemIds.forEach(folderId => {
+                    apiActions.deleteFolder(folderId);
+
+                    const folderIds = [
+                        folderId,
+                        ...this.getAncestorIds(folderId),
+                    ];
+
+                    this.removeFolders(folderIds);
+                    this.removeMediaInFolders(folderIds);
+                });
+            }
+
+            if (this.type === 'media') {
+                this.itemIds.forEach(mediaId => {
+                    apiActions.deleteMedia(mediaId);
+                });
+
+                this.removeMediaItems(this.itemIds);
+                this.clearFocusedMediaIds();
+            }
+
             this.close();
         },
     },

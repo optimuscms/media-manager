@@ -1,11 +1,11 @@
-@mixin mm-screen-md() {
-    @media (min-width: $mm-screen-md) {
+@mixin mm-screen-lg() {
+    @media (min-width: $mm-screen-lg) {
         @content;
     }
 }
 
-@mixin mm-screen-lg() {
-    @media (min-width: $mm-screen-lg) {
+@mixin mm-screen-xl() {
+    @media (min-width: $mm-screen-xl) {
         @content;
     }
 }

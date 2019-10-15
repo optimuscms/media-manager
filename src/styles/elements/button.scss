@@ -9,7 +9,6 @@
     text-decoration: none;
     justify-content: center;
     color: $mm-button-color;
-    text-transform: uppercase;
     padding: $mm-button-padding;
     font-weight: $mm-button-weight;
     font-size: $mm-button-font-size;
@@ -41,7 +40,7 @@
         background-color: $mm-button-hover-background-color;
     }
 
-    &.is-confirm {
+    &.confirm {
         color: $mm-button-confirm-color;
         border-color: $mm-button-confirm-border-color;
         background-color: $mm-button-confirm-background-color;
@@ -60,7 +59,7 @@
         }
     }
 
-    &.is-danger {
+    &.danger {
         color: $mm-button-danger-color;
         border-color: $mm-button-danger-border-color;
         background-color: $mm-button-danger-background-color;
@@ -72,8 +71,7 @@
         }
     }
 
-    &.is-picker {
-        text-transform: none;
+    &.picker {
         color: $mm-button-picker-color;
         font-weight: $mm-button-picker-font-weight;
         border-color: $mm-button-picker-border-color;
@@ -86,28 +84,28 @@
         }
     }
 
-    &.is-selected-items {
-        text-transform: none;
-        font-weight: $mm-font-weight-normal;
-        color: $mm-button-selected-items-color;
-        border-color: $mm-button-selected-items-border-color;
-        background-color: $mm-button-selected-items-background-color;
+    // &.selected-items {
+    //     text-transform: none;
+    //     font-weight: $mm-font-weight-normal;
+    //     color: $mm-button-selected-items-color;
+    //     border-color: $mm-button-selected-items-border-color;
+    //     background-color: $mm-button-selected-items-background-color;
     
-        &:hover {
-            color: $mm-button-selected-items-hover-color;
-            border-color: $mm-button-selected-items-hover-border-color;
-            background-color: $mm-button-selected-items-hover-background-color;
-        }
-    }
+    //     &:hover {
+    //         color: $mm-button-selected-items-hover-color;
+    //         border-color: $mm-button-selected-items-hover-border-color;
+    //         background-color: $mm-button-selected-items-hover-background-color;
+    //     }
+    // }
 
-    &.is-selected-info {
-        pointer-events: none;
-        text-transform: none;
-        font-weight: $mm-font-weight-normal;
-        color: $mm-button-selected-info-color;
-        border-color: $mm-button-selected-info-border-color;
-        background-color: $mm-button-selected-info-background-color;
-    }
+    // &.selected-info {
+    //     pointer-events: none;
+    //     text-transform: none;
+    //     font-weight: $mm-font-weight-normal;
+    //     color: $mm-button-selected-info-color;
+    //     border-color: $mm-button-selected-info-border-color;
+    //     background-color: $mm-button-selected-info-background-color;
+    // }
 
     &[disabled] {
         opacity: $mm-button-disabled-opacity;

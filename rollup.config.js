@@ -13,11 +13,13 @@ import resolve from 'rollup-plugin-node-resolve';
 const globals = {
     'vuex': 'Vuex',
     'axios': 'axios',
+    'moment': 'moment',
 };
 
 const external = [
     'vuex',
     'axios',
+    'moment',
 ];
 
 const plugins = [
@@ -36,7 +38,17 @@ const plugins = [
             '@fortawesome/free-regular-svg-icons',
         ],
     }),
-    commonjs(),
+    commonjs({
+        namedExports: {
+            'node_modules/lodash/lodash.js': [
+                'groupBy',
+                'mapValues',
+                'sortBy',
+                'union',
+                'unionBy',
+            ],
+        },
+    }),
     vue({
         compileTemplate: true,
     }),

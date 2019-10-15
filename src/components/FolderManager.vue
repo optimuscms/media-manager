@@ -1,74 +1,61 @@
 <template>
-    <modal :active="isOpen" @close="close">
-        <div class="mm-modal-wrap is-folder-manager">
-            <header class="mm-modal-header">
-                <h4 class="mm-title">
-                    {{ title }}
-                </h4>
+    <modal class="mm-folder-manager" :active="isOpen" @close="close">
+        <form class="mm-modal-wrap" @submit.prevent="submit">
+            <a class="mm-folder-manager-close mm-icon" @click="close">
+                <icon icon="times" />
+            </a>
 
-                <a class="mm-icon" @click="close">
-                    <icon icon="times" size="lg" />
-                </a>
-            </header>
+            <errors v-if="anyErrors" :errors="errors" />
 
-            <section class="mm-modal-content">
-                <errors v-if="anyErrors" :errors="errors" />
-
-                <div class="mm-field">
-                    <label for="mm_folder_name" class="mm-label">Folder Name *</label>
-
-                    <div class="mm-control">
-                        <input
-                            id="mm_folder_name"
-                            ref="name"
-                            v-model="form.name"
-                            type="text"
-                            class="mm-input"
-                            required
-                            :disabled="form.processing"
-                            @keydown.enter.prevent="submit"
-                        >
-                    </div>
+            <div class="mm-field">
+                <div class="mm-control">
+                    <input
+                        id="mm_folder_name"
+                        ref="name"
+                        v-model="form.name"
+                        type="text"
+                        class="mm-input"
+                        required
+                        placeholder="Folder Name *"
+                        :disabled="form.processing"
+                    >
                 </div>
-            </section>
+            </div>
 
-            <footer class="mm-modal-footer">
-                <div class="mm-button-group">
-                    <a class="mm-button" @click="close">Cancel</a>
-
-                    <a
-                        class="mm-button is-confirm"
-                        :class="{ 'loading': isProcessing }"
-                        :disabled="isProcessing"
-                        @click="submit"
-                    >Save</a>
-                </div>
-            </footer>
-        </div>
+            <div class="mm-field">
+                <button
+                    class="mm-button confirm"
+                    :class="{ 'loading': isProcessing }"
+                    :disabled="isProcessing"
+                >
+                    Save
+                </button>
+            </div>
+        </form>
     </modal>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+import { actions as apiActions } from '../index';
 import formMixin from '../mixins/form';
 
 import Errors from './ui/Errors.vue';
 import Modal from './ui/Modal.vue';
 
-const initialValues = function () {
+const initialValues = () => {
     return {
-        id: null,
         parent_id: null,
         name: '',
     };
 };
 
 export default {
-
     components: {
         Errors,
         Modal,
     },
+
     mixins: [ formMixin ],
 
     data() {
@@ -79,64 +66,52 @@ export default {
 
     computed: {
         ...mapGetters({
-            isOpen: 'mediaManager/folderManagerIsOpen',
-
-            folder: 'mediaManager/folderManagerItem',
-            activeFolderId: 'mediaManager/activeFolderId',
+            isOpen: 'mediaManagerFolders/modalIsVisible',
+            currentFolder: 'mediaManagerFolders/currentFolder',
         }),
-
-        isEditing() {
-            return !! this.folder;
-        },
-
-        title() {
-            return this.isEditing ? 'Edit Folder' : 'Create Folder';
-        },
-
-        method() {
-            return this.isEditing ? 'patch' : 'post';
-        },
-
-        action() {
-            return this.isEditing
-                ? '/admin/api/media-folders/' + this.form.id
-                : '/admin/api/media-folders';
-        },
     },
 
     watch: {
         isOpen(isOpen) {
             if (isOpen) {
                 this.form = {
-                    id: this.folder ? this.folder.id : null,
-                    parent_id: this.activeFolderId,
-                    name: this.folder ? this.folder.name : '',
+                    id: this.item ? this.item.id : null,
+                    parent_id: this.item ? this.item.parent_id : this.currentFolder.id,
+                    name: this.item ? this.item.name : '',
                 };
 
                 this.$nextTick(() => this.$refs.name.focus());
             } else {
                 this.form = initialValues();
+                this.clearManagedFolder();
             }
         },
     },
 
     methods: {
-        ...mapMutations({
-            close: 'mediaManager/closeFolderManager',
-            addFolder: 'mediaManager/addFolder',
-            updateFolder: 'mediaManager/updateFolder',
+        ...mapActions({
+            close: 'mediaManagerFolders/hideModal',
+            addFolder: 'mediaManagerFolders/addFolder',
+            updateFolder: 'mediaManagerFolders/updateFolder',
+            clearManagedFolder: 'mediaManagerFolders/clearManagedFolder',
         }),
 
-        onSuccess(response) {
+        save() {
+            if (this.isEditing) {
+                return apiActions.updateFolder(this.item.id, this.form);
+            }
+
+            return apiActions.createFolder(this.form);
+        },
+
+        onSuccess(folder) {
             if (this.isEditing) {
                 this.updateFolder({
-                    id: this.form.id,
-                    properties: {
-                        name: this.form.name,
-                    },
+                    id: this.item.id,
+                    folder,
                 });
             } else {
-                this.addFolder(response.data.data);
+                this.addFolder(folder);
             }
 
             this.close();

@@ -1,5 +1,5 @@
 .mm-breadcrumb {
-    display: flex;
+    display: none;
     font-size: $mm-breadcrumb-font-size;
 
     > li {
@@ -19,13 +19,21 @@
         }
 
         > a {
+            user-select: none;
             font-weight: $mm-breadcrumb-font-weight;
         }
 
         &.active {
             > a {
+                pointer-events: none;
                 color: $mm-breadcrumb-active-color;
             }
         }
+    }
+}
+
+@include mm-screen-lg {
+    .mm-breadcrumb {
+        display: flex;
     }
 }

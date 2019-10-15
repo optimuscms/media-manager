@@ -3,17 +3,13 @@
     left: 0;
     right: 0;
     bottom: 0;
-    display: none;
+    display: flex;
     position: fixed;
     overflow: hidden;
     align-items: center;
     z-index: $mm-z-index;
     flex-direction: column;
     justify-content: center;
-
-    &.active {
-        display: flex;
-    }
 }
 
 .mm-modal-overlay {
@@ -34,30 +30,6 @@
     background-color: $mm-modal-background-color;
     max-width: calc(100vw - #{$mm-modal-padding} * 2);
     max-height: calc(100vh - #{$mm-modal-padding} * 2);
-
-    &.is-media-manager {
-        height: 100%;
-        display: flex;
-        overflow: hidden;
-        flex-direction: column;
-        min-height: calc(100vh - #{$mm-modal-padding} * 2);
-    }
-
-    &.is-folder-manager {
-        max-width: 40em;
-    }
-
-    &.is-media-editor {
-        max-width: 50em;
-    }
-
-    &.is-media-mover {
-        max-width: 20em;;
-    }
-
-    &.is-confirmation {
-        max-width: 26em;
-    }
 }
 
 .mm-modal-header {
@@ -69,59 +41,12 @@
     background-color: $mm-modal-header-background-color;
     border-bottom: solid 1px $mm-modal-header-border-color;
     border-radius: $mm-modal-border-radius $mm-modal-border-radius 0 0;
-
-    .mm-title {
-        margin-bottom: 0;
-    }
 }
 
 .mm-modal-content {
     position: relative;
     padding: $mm-modal-content-padding;
     background-color: $mm-modal-content-background-color;
-
-    &.is-media-manager {
-        flex-grow: 1;
-        overflow: scroll;
-        padding: 1em 1.5em;
-    }
-
-    &.is-media-mover {
-        padding: 0;
-        height: 14em;
-        display: flex;
-        overflow: scroll;
-        flex-direction: column;
-    }
-
-    &.loading {
-        min-height: 10em;
-        
-        > * {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        &:before {
-            top: 5em;
-            left: 50%;
-            z-index: 10;
-            content: '';
-            display: block;
-            position: absolute;
-            border-radius: 100px;
-            width: $mm-modal-loader-size;
-            height: $mm-modal-loader-size;
-            border-top: 3px solid transparent;
-            border-right: 3px solid transparent;
-            animation: mm-spin 500ms infinite linear;
-            margin-top: -($mm-modal-loader-size / 2);
-            margin-left: -($mm-modal-loader-size / 2);
-            border-left: 3px solid $mm-modal-loader-color;
-            border-bottom: 3px solid $mm-modal-loader-color;
-        }
-    }
 }
 
 .mm-modal-footer {

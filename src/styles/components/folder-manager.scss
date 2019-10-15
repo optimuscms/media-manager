@@ -1,0 +1,29 @@
+.mm-folder-manager {
+    position: absolute;
+
+    .mm-modal-wrap {
+        left: 1em;
+        z-index: 2;
+        width: 100%;
+        bottom: 1em;
+        padding: 1em;
+        max-width: 20em;
+        overflow: visible;
+        position: absolute;
+        box-shadow: $mm-shadow-lg;
+        background-color: $mm-white;
+        border-radius: $mm-border-radius-default;
+    }
+}
+
+.mm-folder-manager-close {
+    right: 0;
+    top: -0.25em;
+    color: $mm-white;
+    position: absolute;
+    transform: translateY(-100%);
+
+    &:hover {
+        color: $mm-grey-400;
+    }
+}

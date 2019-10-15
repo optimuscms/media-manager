@@ -2,47 +2,47 @@ $mm-button-padding: 0 1.725em !default;
 $mm-button-font-size: $mm-font-size-sm !default;
 
 $mm-button-border-width: 1px !default;
-$mm-button-weight: $mm-font-weight-bold !default;
+$mm-button-weight: $mm-font-weight-semibold !default;
 $mm-button-border-radius: $mm-border-radius-default !default;
 
-$mm-button-color: $mm-grey-darker !default;
+$mm-button-color: $mm-grey-700 !default;
 $mm-button-hover-color: $mm-black !default;
-$mm-button-border-color: $mm-grey-light !default;
-$mm-button-hover-border-color: $mm-grey !default;
+$mm-button-border-color: $mm-grey-400 !default;
+$mm-button-hover-border-color: $mm-grey-500 !default;
 $mm-button-background-color: $mm-white !default;
-$mm-button-hover-background-color: $mm-grey-lightest !default;
+$mm-button-hover-background-color: $mm-grey-300 !default;
 
 $mm-button-disabled-opacity: 0.5 !default;
 
 $mm-button-confirm-color: $mm-white !default;
 $mm-button-confirm-hover-color: $mm-white !default;
-$mm-button-confirm-border-color: $mm-green !default;
-$mm-button-confirm-hover-border-color: $mm-green-dark !default;
-$mm-button-confirm-background-color: $mm-green !default;
-$mm-button-confirm-hover-background-color: $mm-green-dark !default;
+$mm-button-confirm-border-color: $mm-green-500 !default;
+$mm-button-confirm-hover-border-color: $mm-green-600 !default;
+$mm-button-confirm-background-color: $mm-green-500 !default;
+$mm-button-confirm-hover-background-color: $mm-green-600 !default;
 
 $mm-button-danger-color: $mm-white !default;
 $mm-button-danger-hover-color: $mm-white !default;
-$mm-button-danger-border-color: $mm-red !default;
-$mm-button-danger-hover-border-color: $mm-red-dark !default;
-$mm-button-danger-background-color: $mm-red !default;
-$mm-button-danger-hover-background-color: $mm-red-dark !default;
+$mm-button-danger-border-color: $mm-red-500 !default;
+$mm-button-danger-hover-border-color: $mm-red-600 !default;
+$mm-button-danger-background-color: $mm-red-500 !default;
+$mm-button-danger-hover-background-color: $mm-red-600 !default;
 
 $mm-button-picker-color: $mm-black !default;
 $mm-button-picker-hover-color: $mm-black !default;
 $mm-button-picker-font-weight: $mm-font-weight-normal !default;
-$mm-button-picker-border-color: $mm-grey-light !default;
-$mm-button-picker-hover-border-color: $mm-grey !default;
-$mm-button-picker-background-color: $mm-grey-light !default;
-$mm-button-picker-hover-background-color: $mm-grey !default;
+$mm-button-picker-border-color: $mm-grey-400 !default;
+$mm-button-picker-hover-border-color: $mm-grey-500 !default;
+$mm-button-picker-background-color: $mm-grey-400 !default;
+$mm-button-picker-hover-background-color: $mm-grey-500 !default;
 
-$mm-button-selected-items-color: $mm-black !default;
-$mm-button-selected-items-hover-color: $mm-black !default;
-$mm-button-selected-items-border-color: $mm-grey-light !default;
-$mm-button-selected-items-hover-border-color: $mm-grey !default;
-$mm-button-selected-items-background-color: $mm-grey-light !default;
-$mm-button-selected-items-hover-background-color: $mm-grey !default;
+// $mm-button-selected-items-color: $mm-black !default;
+// $mm-button-selected-items-hover-color: $mm-black !default;
+// $mm-button-selected-items-border-color: $mm-grey-light !default;
+// $mm-button-selected-items-hover-border-color: $mm-grey !default;
+// $mm-button-selected-items-background-color: $mm-grey-light !default;
+// $mm-button-selected-items-hover-background-color: $mm-grey !default;
 
-$mm-button-selected-info-color: $mm-grey-dark !default;
-$mm-button-selected-info-border-color: $mm-grey-light !default;
-$mm-button-selected-info-background-color: $mm-grey-lightest !default;
+// $mm-button-selected-info-color: $mm-grey-dark !default;
+// $mm-button-selected-info-border-color: $mm-grey-light !default;
+// $mm-button-selected-info-background-color: $mm-grey-lightest !default;

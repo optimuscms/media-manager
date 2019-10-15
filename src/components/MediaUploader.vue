@@ -1,77 +1,89 @@
 <template>
-    <div v-show="files.length" class="mm-upload">
+    <div v-show="files.length" class="mm-uploader-wrap">
         <errors
-            v-if="error.active"
+            v-if="showErrors"
             class="mm-upload-errors"
-            :errors="error.messages"
+            :errors="errors"
         />
 
-        <div class="mm-upload-wrap">
+        <div v-show="files.length" class="mm-uploader">
             <header class="mm-upload-header">
                 <div class="mm-upload-header-content">
-                    <span v-if="! isActive && ! isComplete" class="mm-icon">
+                    <span v-if="isCollapsed && isProcessing" class="mm-icon">
                         <icon icon="spinner" spin />
                     </span>
 
-                    <span>{{ title }}</span>
+                    <span>
+                        {{ title }}
+                    </span>
                 </div>
 
-                <a class="mm-icon" @click="closePreview">
-                    <icon icon="times" />
-                </a>
-            </header>
-
-            <div v-if="isActive" class="mm-upload-items">
-                <div
-                    v-for="file in files"
-                    :key="file.uuid"
-                    class="mm-upload-item"
-                    @mouseover="showError(file.errors)"
-                    @mouseleave="error.active = false"
-                >
-                    <span class="mm-icon">
-                        <icon
-                            :icon="fileIcon(file).icon"
-                            :spin="fileIcon(file).spin"
-                            :class="fileIcon(file).class"
-                        />
-                    </span>
-
-                    <span class="mm-upload-item-name">{{ file.name }}</span>
-
-                    <a
-                        v-if="! file.complete"
-                        class="mm-icon"
-                        @click="remove(file.uuid)"
-                    >
-                        <icon :icon="['far', 'times-circle']" />
+                <div>
+                    <a class="mm-icon" @click="isCollapsed = ! isCollapsed">
+                        <icon :icon="isCollapsed ? 'angle-up' : 'angle-down'" />
                     </a>
 
-                    <progress
-                        v-if="file.uploading"
-                        max="100"
-                        class="mm-upload-progress"
-                        :value="file.progress"
-                    >
-                        {{ file.progress }}%
-                    </progress>
+                    <a class="mm-icon" @click="cancelUploads">
+                        <icon icon="times" />
+                    </a>
                 </div>
-            </div>
-        </div>
+            </header>
 
-        <input
-            ref="file"
-            type="file"
-            class="mm-upload-input"
-            multiple
-            @change="upload"
-        >
+            <template v-if="! isCollapsed">
+                <div class="mm-upload-wrap">
+                    <div
+                        v-for="file in files"
+                        :key="file.uuid"
+                        class="mm-upload-item-wrap"
+                        @mouseover="displayErrors(file.errors)"
+                        @mouseleave="showErrors = false"
+                    >
+                        <div class="mm-upload-item">
+                            <span class="mm-icon" :class="fileIcon(file).class">
+                                <icon
+                                    :icon="fileIcon(file).icon"
+                                    :spin="fileIcon(file).spin"
+                                />
+                            </span>
+
+                            <span class="mm-upload-item-name">
+                                {{ file.name }}
+                            </span>
+
+                            <a
+                                v-if="! file.complete"
+                                class="mm-icon"
+                                @click="remove(file.uuid)"
+                            >
+                                <icon :icon="['far', 'times-circle']" />
+                            </a>
+                        </div>
+
+                        <progress
+                            v-if="file.uploading"
+                            max="100"
+                            class="mm-upload-item-progress"
+                            :value="file.progress"
+                        />
+                    </div>
+                </div>
+            </template>
+
+            <input
+                ref="file"
+                type="file"
+                class="mm-upload-input"
+                multiple
+                @change="upload"
+            >
+        </div>
     </div>
 </template>
 
 <script>
 import { CancelToken } from 'axios';
-import { mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
+import { actions as apiActions } from '../index';
 
 import Errors from './ui/Errors.vue';
 
@@ -80,49 +92,52 @@ export default {
 
     data() {
         return {
-            isActive: false,
-
-            error: {
-                active: false,
-                messages: null,
-            },
-
+            isCollapsed: false,
             files: [],
+
+            showErrors: false,
+            errors: null,
         };
     },
 
     computed: {
         ...mapGetters({
-            activeFolderId: 'mediaManager/activeFolderId',
+            currentFolder: 'mediaManagerFolders/currentFolder',
         }),
 
-        isComplete() {
-            return ! this.files.filter(file => ! file.complete && ! file.error).length;
+        isProcessing() {
+            return !! this.files.filter(file => {
+                return file.uploading && ! file.complete;
+            }).length;
         },
 
         title() {
-            return this.isComplete ? 'Uploading Complete' : 'Uploading Media…';
+            return this.isProcessing ? 'Uploading' : 'Uploading Complete';
         },
     },
 
     methods: {
-        ...mapMutations({
-            addMedia: 'mediaManager/addMediaItem',
+        ...mapActions({
+            addMedia: 'mediaManagerMedia/add',
         }),
+
+        findIndex(uuid) {
+            return this.files.findIndex(file => file.uuid === uuid);
+        },
 
         focus() {
             this.$refs.file.click();
         },
 
         upload(event) {
-            this.isActive = true;
+            this.isCollapsed = false;
 
             Array.from(event.target.files).forEach(file => {
                 let data = new FormData();
-                let uuid = this.generateUuid();
+                const uuid = this.generateUuid();
 
-                if (this.activeFolderId) {
-                    data.append('folder_id', this.activeFolderId);
+                if (this.currentFolder && this.currentFolder.id) {
+                    data.append('folder_id', this.currentFolder.id);
                 }
 
                 this.files.push({
@@ -138,7 +153,7 @@ export default {
 
                 data.append('file', file);
 
-                axios.post('/admin/api/media', data, {
+                apiActions.createMedia(data, {
                     cancelToken: new CancelToken(cancel => {
                         this.updateFile(uuid, {
                             cancel,
@@ -152,21 +167,18 @@ export default {
                             ),
                         });
                     },
-                }).then(response => {
+                }).then(media => {
                     this.updateFile(uuid, {
-                        id: response.data.data.id,
+                        id: media.id,
                         uploading: false,
                         complete: true,
                     });
 
-                    this.addMedia({
-                        folder: response.data.data.folder_id,
-                        media: response.data.data,
-                    });
-                }).catch(error => {
+                    this.addMedia(media);
+                }).catch(errors => {
                     this.updateFile(uuid, {
                         uploading: false,
-                        errors: error.response.data.errors,
+                        errors: errors,
                     });
                 });
             });
@@ -175,33 +187,19 @@ export default {
         },
 
         generateUuid() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
                 let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
                 return v.toString(16);
             });
         },
 
-        closePreview() {
-            if (this.isComplete || confirm('Are you sure you want to cancel all uploads?')) {
-                this.files.forEach(file => {
-                    if (file.uploading) {
-                        file.cancel();
-                    }
-                });
-
-                this.files = [];
-                this.isActive = false;
-            }
-        },
-
         updateFile(uuid, properties) {
-            if (this.isActive) {
-                this.files.map(file => {
-                    if (file.uuid === uuid) {
-                        Object.entries(properties).forEach(([key, value]) => {
-                            file[key] = value;
-                        });
-                    }
+            const index = this.findIndex(uuid);
+
+            if (index !== -1) {
+                this.files.splice(index, 1, {
+                    ...this.files[index],
+                    ...properties,
                 });
             }
         },
@@ -210,46 +208,68 @@ export default {
             if (file.errors) {
                 return {
                     icon: 'exclamation-triangle',
-                    class: 'text-red',
+                    class: 'mm-upload-icon-error',
                     spin: false,
                 };
-            } else if (! file.uploading && ! file.complete) {
+            }
+
+            if (! file.uploading && ! file.complete) {
                 return {
                     icon: ['far', 'clock'],
                     class: null,
                     spin: false,
                 };
-            } else if (file.uploading && ! file.errors) {
+            }
+
+            if (file.uploading && ! file.errors) {
                 return {
                     icon: 'spinner',
-                    class: 'text-blue',
+                    class: 'mm-upload-icon-in-progress',
                     spin: true,
                 };
-            } else if (file.complete) {
-                return {
-                    icon: 'check',
-                    class: 'text-green',
-                    spin: false,
-                };
             }
+
+            return {
+                icon: 'check',
+                class: 'mm-upload-icon-success',
+                spin: false,
+            };
         },
 
-        showError(messages) {
-            if (messages) {
-                this.error.messages = messages;
-                this.error.active = true;
+        displayErrors(errors) {
+            if (errors) {
+                this.errors = errors;
+                this.showErrors = true;
             }
         },
 
         remove(uuid) {
-            let index = this.files.findIndex(file => file.uuid === uuid);
+            let index = this.findIndex(uuid);
 
-            this.error.active = false;
-            this.files[index].cancel();
+            if (index !== -1) {
+                this.showErrors = false;
+                this.files[index].cancel();
 
-            this.files = this.files.filter(file => {
-                return file.uuid !== uuid;
-            });
+                this.files = this.files.filter(file => {
+                    return file.uuid !== uuid;
+                });
+            }
+        },
+
+        cancelUploads() {
+            if (! this.isProcessing) {
+                return this.files = [];
+            }
+
+            if (confirm('Are you sure you want to cancel all uploads?')) {
+                this.files.forEach(file => {
+                    if (file.uploading) {
+                        file.cancel();
+                    }
+                });
+
+                this.files = [];
+            }
         },
     },
 };

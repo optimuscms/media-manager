@@ -1,54 +1,56 @@
 import { library } from '@fortawesome/fontawesome-svg-core';
 
 import {
+    faCheckCircle,
     faClock,
     faTimesCircle,
 } from '@fortawesome/free-regular-svg-icons';
 
 import {
-    faAngleUp, faAngleRight,
+    faAngleDown, faAngleUp,
     faArrowLeft,
-    faCheck,
-    faCrosshairs,
-    faEllipsisH,
+    faCheck, faCheckSquare,
     faExclamationTriangle,
     faFileAlt, faFileArchive, faFileAudio, faFileExcel, faFileImage,
     faFilePdf, faFilePowerpoint, faFileVideo, faFileWord,
+    faEllipsisV,
     faFolder,
     faInfoCircle,
-    faMinus,
+    faListAlt,
     faPencilAlt,
     faPlus,
     faReply,
     faSpinner,
     faTimes,
-    faTrash,
+    faToggleOff, faToggleOn,
+    faTrashAlt,
     faUpload,
 } from '@fortawesome/free-solid-svg-icons';
 
 export default {
     register() {
         library.add(
-            faAngleUp, faAngleRight,
+            faAngleDown, faAngleUp,
             faArrowLeft,
-            faCheck,
+            faCheckCircle,
+            faCheck, faCheckSquare,
             faClock,
-            faCrosshairs,
-            faEllipsisH,
             faExclamationTriangle,
             faFileAlt, faFileArchive, faFileAudio, faFileExcel, faFileImage,
             faFilePdf, faFilePowerpoint, faFileVideo, faFileWord,
+            faEllipsisV,
             faFolder,
             faInfoCircle,
-            faMinus,
+            faListAlt,
             faPencilAlt,
             faPlus,
             faReply,
             faSpinner,
             faTimes,
+            faToggleOff, faToggleOn,
             faTimesCircle,
-            faTrash,
-            faUpload
+            faTrashAlt,
+            faUpload,
         );
     },
 };

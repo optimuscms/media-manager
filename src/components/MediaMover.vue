@@ -1,23 +1,27 @@
 <template>
-    <modal :active="isOpen" @close="close">
-        <div class="mm-modal-wrap is-media-mover">
+    <modal class="mm-media-mover" :active="isOpen" @close="close">
+        <div class="mm-modal-wrap">
             <header class="mm-modal-header">
                 <div class="mm-media-mover-header">
-                    <a v-if="activeFolder.id" class="mm-icon" @click="setActiveFolder(activeFolder.parent_id)">
-                        <icon icon="arrow-left" size="lg" />
+                    <a
+                        v-if="currentFolder.id"
+                        class="mm-icon"
+                        @click="setCurrentFolder(currentFolder.parent_id)"
+                    >
+                        <icon icon="arrow-left" />
                     </a>
 
-                    <h4 class="mm-title">
-                        {{ activeFolder.name }}
+                    <h4 class="mm-move-title">
+                        {{ currentFolder.name }}
                     </h4>
                 </div>
 
                 <a class="mm-icon" @click="close">
-                    <icon icon="times" size="lg" />
+                    <icon icon="times" />
                 </a>
             </header>
 
-            <section class="mm-modal-content is-media-mover">
+            <section class="mm-modal-content">
                 <ul v-if="currentFolders.length" class="mm-media-mover-folder-list">
                     <li
                         v-for="folder in currentFolders"
@@ -33,7 +37,7 @@
                                 <span>{{ folder.name }}</span>
                             </span>
 
-                            <span class="mm-icon" @click="setActiveFolder(folder.id)">
+                            <span class="mm-icon" @click="setCurrentFolder(folder.id)">
                                 <icon icon="angle-right" />
                             </span>
                         </a>
@@ -56,78 +60,96 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations, mapActions } from 'vuex';
-import groupBy from 'lodash/groupBy';
+import { groupBy, mapValues, sortBy } from 'lodash';
+import { mapGetters, mapActions } from 'vuex';
+import { rootFolder } from '../config/folders';
+import { actions as apiActions } from '../index';
 
 import Modal from './ui/Modal.vue';
 
-const rootFolder = function () {
-    return {
-        id: null,
-        parent_id: null,
-        name: 'Home',
-    };
-};
-
 export default {
-    components: {
-        Modal,
-    },
+    components: { Modal },
 
     data() {
         return {
             isProcessing: false,
 
-            activeFolder: rootFolder(),
+            currentFolder: rootFolder(),
             selectedFolderId: null,
         };
     },
 
     computed: {
         ...mapGetters({
-            isOpen: 'mediaManager/mediaMoverIsOpen',
-            allFolders: 'mediaManager/allFolders',
-            focusedMediaIds: 'mediaManager/focusedMediaIds',
-            focusedFolderIds: 'mediaManager/focusedFolderIds',
+            folders: 'mediaManagerFolders/list',
+            type: 'mediaManager/mediaMoverType',
+            subject: 'mediaManager/mediaMoverSubject',
+            isOpen: 'mediaManager/mediaMoverIsVisible',
+            getFolder: 'mediaManagerFolders/folder',
+            getMediaItem: 'mediaManagerMedia/item',
         }),
 
         groupedFolders() {
-            let folders = this.allFolders.filter(({ id }) => {
-                return ! this.focusedFolderIds.includes(id);
-            });
+            let folders = this.folders;
 
-            return groupBy(
-                folders,
-                folder => folder.parent_id
+            if (this.type === 'folder') {
+                folders = folders.filter(({ id }) => {
+                    return ! this.itemIds.includes(id);
+                });
+            }
+
+            return mapValues(
+                groupBy(folders, ({ parent_id }) => parent_id),
+                group => sortBy(group, 'name', 'asc')
             );
         },
 
         currentFolders() {
-            return this.groupedFolders.hasOwnProperty(this.activeFolder.id)
-                ? this.groupedFolders[this.activeFolder.id]
-                : [];
+            if (this.groupedFolders.hasOwnProperty(this.currentFolder.id)) {
+                return this.groupedFolders[this.currentFolder.id];
+            }
+
+            return [];
+        },
+
+        subjectIsArray() {
+            return this.subject && Array.isArray(this.subject);
+        },
+
+        subjectIsMultiple() {
+            return this.subjectIsArray && this.subject.length > 1;
+        },
+
+        itemIds() {
+            if (this.subjectIsArray && this.subjectIsMultiple) {
+                return this.subject.map(({ id }) => id);
+            }
+
+            if (this.subjectIsArray && ! this.subjectIsMultiple) {
+                return [ this.subject[0].id ];
+            }
+
+            if (this.subject && ! this.subjectIsArray) {
+                return [ this.subject.id ];
+            }
+
+            return [];
         },
     },
 
     methods: {
         ...mapActions({
-            moveMediaTo: 'mediaManager/moveMediaTo',
-            moveFoldersTo: 'mediaManager/moveFoldersTo',
-        }),
-
-        ...mapMutations({
             close: 'mediaManager/closeMediaMover',
-            clearFocusedMediaIds: 'mediaManager/clearFocusedMediaIds',
-            clearFocusedFolderIds: 'mediaManager/clearFocusedFolderIds',
+            moveFoldersTo: 'mediaManagerFolders/moveFoldersTo',
+            moveMediaTo: 'mediaManagerMedia/moveMediaItemsTo',
+            clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedIds',
         }),
 
-        setActiveFolder(folderId) {
+        setCurrentFolder(folderId) {
             if (folderId) {
-                this.activeFolder = this.allFolders.find(({ id }) => {
-                    return id === folderId;
-                });
+                this.currentFolder = this.folders.find(({ id }) => id === folderId);
             } else {
-                this.activeFolder = rootFolder();
+                this.currentFolder = rootFolder();
             }
 
             this.selectedFolderId = null;
@@ -135,57 +157,72 @@ export default {
 
         toggleSelectFolder(folderId) {
             this.selectedFolderId = this.selectedFolderId === folderId
-                ? this.activeFolder.id
+                ? this.currentFolder.id
                 : folderId;
         },
 
         move() {
-            let requests = [];
-            let parentId = this.selectedFolderId || this.activeFolder.id;
+            const folderId = this.selectedFolderId || this.currentFolder.id;
 
+            if (this.type === 'media') {
+                this.moveMedia(folderId, this.itemIds);
+            } else if (this.type === 'folder') {
+                this.moveFolders(folderId, this.itemIds);
+            } else {
+                throw new Error(`Cannot move type: ${this.type}`);
+            }
+        },
+
+        moveMedia(folderId, mediaIds) {
+            const firstMediaItem = this.getMediaItem(mediaIds[0]);
+
+            if (firstMediaItem.folder_id === folderId) {
+                return this.reset();
+            }
+
+            let requests = [];
             this.isProcessing = true;
 
-            if (this.focusedMediaIds.length) {
-                this.focusedMediaIds.forEach(mediaId => {
-                    requests.push(axios.patch('/admin/api/media/' + mediaId, {
-                        folder_id: parentId,
-                    }));
-                });
-            }
-
-            if (this.focusedFolderIds.length) {
-                this.focusedFolderIds.forEach(folderId => {
-                    requests.push(axios.patch('/admin/api/media-folders/' + folderId, {
-                        parent_id: parentId,
-                    }));
-                });
-            }
-
-            axios.all(requests).then(() => {
-                if (this.focusedMediaIds.length) {
-                    this.moveMediaTo({
-                        folderId: parentId,
-                        mediaIds: this.focusedMediaIds,
-                    });
-
-                    this.clearFocusedMediaIds();
-                }
-
-                if (this.focusedFolderIds.length) {
-                    this.moveFoldersTo({
-                        parentId,
-                        folderIds: this.focusedFolderIds,
-                    });
-
-                    this.clearFocusedFolderIds();
-                }
+            mediaIds.forEach(mediaId => {
+                requests.push(apiActions.updateMedia(mediaId, {
+                    folder_id: folderId,
+                }));
             });
 
-            this.close();
+            axios.all(requests).then(() => {
+                this.moveMediaTo({ folderId, mediaIds });
+                this.clearFocusedMediaIds();
+                this.reset();
+            });
+        },
 
-            this.selectedFolderId = null;
-            this.activeFolder = rootFolder();
+        moveFolders(parentId, folderIds) {
+            const firstFolder = this.getFolder(folderIds[0]);
+
+            if (firstFolder.parent_id === parentId) {
+                return this.reset();
+            }
+
+            let requests = [];
+            this.isProcessing = true;
+
+            folderIds.forEach(folderId => {
+                requests.push(apiActions.updateFolder(folderId, {
+                    parent_id: parentId,
+                }));
+            });
+
+            axios.all(requests).then(() => {
+                this.moveFoldersTo({ parentId, folderIds });
+                this.reset();
+            });
+        },
+
+        reset() {
+            this.close();
             this.isProcessing = false;
+            this.currentFolder = rootFolder();
+            this.selectedFolderId = null;
         },
     },
 };

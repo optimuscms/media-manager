@@ -60,7 +60,7 @@
 }
 
 .mm-field {
-    &:not(:last-child) {
-        margin-bottom: $mm-field-margin;
+    + .mm-field {
+        margin-top: $mm-field-margin;
     }
 }

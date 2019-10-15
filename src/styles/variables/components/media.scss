@@ -1,7 +1,14 @@
-$mm-media-item-selected-color: $mm-white !default;
-$mm-media-item-selected-border-color: $mm-red !default;
-$mm-media-item-selected-background-color: $mm-red !default;
+$mm-media-item-overlay-color: $mm-white !default;
+$mm-media-item-overlay-font-size: $mm-font-size-sm !default;
+$mm-media-item-selected-border-radius: $mm-border-radius-sm !default;
+$mm-media-item-overlay-font-weight: $mm-font-weight-semibold !default;
+$mm-media-item-overlay-background-color: rgba(0, 0, 0, 0.4) !default;
 
-$mm-media-item-focused-color: $mm-white !default;
-$mm-media-item-focused-border-color: $mm-blue-light !default;
-$mm-media-item-focused-background-color: $mm-blue-light !default;
+$mm-media-item-selected-icon-color: $mm-primary-500 !default;
+$mm-media-item-selected-icon-background-color: $mm-white !default;
+$mm-media-item-selected-icon-border-radius: $mm-border-radius-sm !default;
+
+$mm-media-icon-color: $mm-grey-800 !default;
+$mm-media-icon-text-color: $mm-grey-800 !default;
+$mm-media-icon-font-size: $mm-font-size-sm !default;
+$mm-media-icon-background-color: $mm-grey-400 !default;

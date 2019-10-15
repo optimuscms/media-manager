@@ -1,15 +1,12 @@
-$mm-modal-loader-size: 2em !default;
-$mm-modal-loader-color: $mm-grey-dark !default;
-
 $mm-modal-overlay-color: rgba(0, 0, 0, 0.85) !default;
 $mm-modal-background-color: $mm-white !default;
 $mm-modal-border-radius: $mm-border-radius-default !default;
 
-$mm-modal-header-border-color: $mm-grey-light !default;
-$mm-modal-header-background-color: $mm-grey-lighter !default;
+$mm-modal-header-border-color: $mm-grey-400 !default;
+$mm-modal-header-background-color: $mm-grey-300 !default;
 
 $mm-modal-content-padding: 1.5em 1.5em !default;
 $mm-modal-content-background-color: $mm-white !default;
 
-$mm-modal-footer-border-color: $mm-grey-light !default;
-$mm-modal-footer-background-color: $mm-grey-lighter !default;
+$mm-modal-footer-border-color: $mm-grey-400 !default;
+$mm-modal-footer-background-color: $mm-grey-300 !default;

@@ -3,28 +3,36 @@
         <li
             v-for="folder in openFolders"
             :key="folder.id"
-            :class="{ 'active': folder.id === activeFolderId }"
+            :class="{ 'active': folder.id === currentFolder.id }"
         >
-            <a @click="openFolder(folder)">{{ folder.name }}</a>
+            <a @click="open(folder)">
+                {{ folder.name }}
+            </a>
         </li>
     </ul>
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex';
+import { mapActions, mapGetters } from 'vuex';
 
 export default {
     computed: {
         ...mapGetters({
-            openFolders: 'mediaManager/openFolders',
-            activeFolderId: 'mediaManager/activeFolderId',
+            openFolders: 'mediaManagerFolders/open',
+            currentFolder: 'mediaManagerFolders/currentFolder',
         }),
     },
 
     methods: {
-        ...mapMutations({
-            openFolder: 'mediaManager/openFolder',
+        ...mapActions({
+            openFolder: 'mediaManagerFolders/openFolder',
         }),
+
+        open(folder) {
+            if (this.currentFolder.id !== folder.id) {
+                this.openFolder(folder.id);
+            }
+        },
     },
 };
 </script>

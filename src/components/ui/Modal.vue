@@ -1,6 +1,6 @@
 <template>
     <transition name="mm-modal-fade">
-        <div v-if="active" class="mm-modal active">
+        <div v-if="active" class="mm-modal">
             <div class="mm-modal-overlay" @click="$emit('close')" />
 
             <slot />

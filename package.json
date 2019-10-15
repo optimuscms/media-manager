@@ -19,7 +19,8 @@
         "@fortawesome/free-regular-svg-icons": "^5.10.2",
         "@fortawesome/free-solid-svg-icons": "^5.10.2",
         "@fortawesome/vue-fontawesome": "^0.1.7",
-        "lodash": "^4.17.11",
+        "lodash": "^4.17.15",
+        "moment": "^2.24.0",
         "vue": "^2.6.10",
         "vuex": "^3.0.1"
     },

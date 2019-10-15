@@ -61,7 +61,7 @@
     display: flex;
     padding: 0.5em;
     align-items: center;
-    margin: 0.25em 0.5em;
+    margin: 0.3em 0.4em;
     justify-content: space-between;
     border-radius: $mm-picker-item-border-radius;
     border: 1px solid $mm-picker-item-border-color;
@@ -75,10 +75,11 @@
         flex-grow: 1;
         max-width: 8em;
         overflow: hidden;
-        margin-left: 0.5em;
-        margin-right: 0.5em;
+        margin-left: 0.4em;
+        margin-right: 0.4em;
         white-space: nowrap;
         text-overflow: ellipsis;
+        font-size: $mm-picker-item-font-size;
     }
 
     &:hover {
