@@ -22,7 +22,7 @@
             </div>
         </div>
 
-        <template v-if="imageExtensions.includes(item.extension)">
+        <template v-if="isImage">
             <div class="mm-field">
                 <label for="mm_media_alt_text" class="mm-label">
                     Alt text
@@ -100,8 +100,8 @@ export default {
     },
 
     computed: {
-        imageExtensions() {
-            return imageExtensions;
+        isImage() {
+            return imageExtensions.includes(this.item.extension);
         },
     },
 
@@ -122,7 +122,7 @@ export default {
 
     methods: {
         ...mapActions({
-            updateMedia: 'mediaManagerMedia/update',
+            updateMediaItem: 'mediaManagerMedia/updateMediaItem',
         }),
 
         save() {
@@ -130,7 +130,7 @@ export default {
         },
 
         onSuccess(media) {
-            this.updateMedia({
+            this.updateMediaItem({
                 id: this.item.id,
                 media,
             });

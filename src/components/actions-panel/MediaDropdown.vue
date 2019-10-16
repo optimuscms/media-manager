@@ -91,7 +91,7 @@ export default {
 
     computed: {
         ...mapGetters({
-            focusedMediaIds: 'mediaManagerMedia/focusedIds',
+            focusedMediaIds: 'mediaManagerMedia/focusedMediaIds',
         }),
 
         mediaCount() {

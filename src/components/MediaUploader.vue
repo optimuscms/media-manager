@@ -33,7 +33,7 @@
                 <div class="mm-upload-wrap">
                     <div
                         v-for="file in files"
-                        :key="file.uuid"
+                        :key="file.id"
                         class="mm-upload-item-wrap"
                         @mouseover="displayErrors(file.errors)"
                         @mouseleave="showErrors = false"
@@ -53,7 +53,7 @@
                             <a
                                 v-if="! file.complete"
                                 class="mm-icon"
-                                @click="remove(file.uuid)"
+                                @click="remove(file.id)"
                             >
                                 <icon :icon="['far', 'times-circle']" />
                             </a>
@@ -93,7 +93,9 @@ export default {
     data() {
         return {
             isCollapsed: false,
+
             files: [],
+            autoIncrement: 0,
 
             showErrors: false,
             errors: null,
@@ -118,11 +120,13 @@ export default {
 
     methods: {
         ...mapActions({
-            addMedia: 'mediaManagerMedia/add',
+            addMediaItem: 'mediaManagerMedia/addMediaItem',
         }),
 
-        findIndex(uuid) {
-            return this.files.findIndex(file => file.uuid === uuid);
+        findFileIndex(fileId) {
+            return this.files.findIndex(({ id }) => {
+                return id === fileId;
+            });
         },
 
         focus() {
@@ -133,16 +137,17 @@ export default {
             this.isCollapsed = false;
 
             Array.from(event.target.files).forEach(file => {
+                this.autoIncrement++;
+
                 let data = new FormData();
-                const uuid = this.generateUuid();
+                const id = this.autoIncrement;
 
                 if (this.currentFolder && this.currentFolder.id) {
                     data.append('folder_id', this.currentFolder.id);
                 }
 
                 this.files.push({
-                    uuid,
-                    id: null,
+                    id,
                     name: file.name,
                     progress: 0,
                     uploading: false,
@@ -155,12 +160,12 @@ export default {
 
                 apiActions.createMedia(data, {
                     cancelToken: new CancelToken(cancel => {
-                        this.updateFile(uuid, {
+                        this.updateFile(id, {
                             cancel,
                         });
                     }),
                     onUploadProgress: progressEvent => {
-                        this.updateFile(uuid, {
+                        this.updateFile(id, {
                             uploading: true,
                             progress: Math.round(
                                 (progressEvent.loaded * 100) / progressEvent.total
@@ -168,15 +173,14 @@ export default {
                         });
                     },
                 }).then(media => {
-                    this.updateFile(uuid, {
-                        id: media.id,
+                    this.updateFile(id, {
                         uploading: false,
                         complete: true,
                     });
 
-                    this.addMedia(media);
+                    this.addMediaItem(media);
                 }).catch(errors => {
-                    this.updateFile(uuid, {
+                    this.updateFile(id, {
                         uploading: false,
                         errors: errors,
                     });
@@ -186,15 +190,8 @@ export default {
             this.$refs.file.value = '';
         },
 
-        generateUuid() {
-            return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
-                let r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
-                return v.toString(16);
-            });
-        },
-
-        updateFile(uuid, properties) {
-            const index = this.findIndex(uuid);
+        updateFile(id, properties) {
+            const index = this.findFileIndex(id);
 
             if (index !== -1) {
                 this.files.splice(index, 1, {
@@ -243,15 +240,15 @@ export default {
             }
         },
 
-        remove(uuid) {
-            let index = this.findIndex(uuid);
+        remove(fileId) {
+            let index = this.findFileIndex(fileId);
 
             if (index !== -1) {
                 this.showErrors = false;
                 this.files[index].cancel();
 
-                this.files = this.files.filter(file => {
-                    return file.uuid !== uuid;
+                this.files = this.files.filter(({ id }) => {
+                    return id !== fileId;
                 });
             }
         },

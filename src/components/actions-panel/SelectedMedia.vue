@@ -1,5 +1,5 @@
 <template>
-    <div v-if="limit !== 0" class="mm-selected-media">
+    <div v-if="mediaSelectionLimit !== 0" class="mm-selected-media">
         <h4 class="mm-actions-panel-title">
             {{ title }}
         </h4>
@@ -15,7 +15,7 @@
 
             <a
                 class="mm-icon"
-                @click="unselectMediaId(mediaItem.id)"
+                @click="deselectMediaId(mediaItem.id)"
             >
                 <icon icon="times" size="sm" />
             </a>
@@ -30,10 +30,10 @@ import { mapActions, mapGetters } from 'vuex';
 export default {
     computed: {
         ...mapGetters({
-            limit: 'mediaManager/limit',
-            media: 'mediaManagerMedia/list',
-            selectedMediaIds: 'mediaManagerMedia/selectedIds',
+            media: 'mediaManagerMedia/listMedia',
             currentFolder: 'mediaManagerFolders/currentFolder',
+            selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
+            mediaSelectionLimit: 'mediaManager/mediaSelectionLimit',
         }),
 
         selectedMedia() {
@@ -45,8 +45,8 @@ export default {
         title() {
             let title = 'Selected Media';
 
-            if (this.limit) {
-                title += ` (${this.selectedMedia.length}/${this.limit})`;
+            if (this.mediaSelectionLimit) {
+                title += ` (${this.selectedMedia.length}/${this.mediaSelectionLimit})`;
             }
 
             return title;
@@ -55,9 +55,10 @@ export default {
 
     methods: {
         ...mapActions({
-            focusId: 'mediaManagerMedia/focusId',
             openFolder: 'mediaManagerFolders/openFolder',
-            clearFocusedIds: 'mediaManagerMedia/clearFocusedIds',
+            focusMediaId: 'mediaManagerMedia/focusMediaId',
+            deselectMediaId: 'mediaManagerMedia/deselectMediaId',
+            clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds',
         }),
 
         edit(media) {
@@ -70,8 +71,8 @@ export default {
                 this.openFolder(media.folder_id);
             }
 
-            this.clearFocusedIds();
-            this.focusId(media.id);
+            this.clearFocusedMediaIds();
+            this.focusMediaId(media.id);
         },
     },
 };

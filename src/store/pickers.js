@@ -5,13 +5,13 @@ const state = {
 };
 
 const getters = {
-    activeId: state => state.activeId,
+    activePickerId: state => state.activeId,
 
-    pickerMedia: (state, getters, rootState, rootGetters) => pickerId => {
+    getPickerMedia: (state, getters, rootState, rootGetters) => pickerId => {
         if (pickerId) {
             const pickerMediaIds = state.pickersMediaIds[pickerId];
 
-            return rootGetters['mediaManagerMedia/list'].filter(({ id }) => {
+            return rootGetters['mediaManagerMedia/listMedia'].filter(({ id }) => {
                 return pickerMediaIds.includes(id);
             });
         }
@@ -21,7 +21,7 @@ const getters = {
 };
 
 const mutations = {
-    setActiveId(state, id) {
+    setActivePickerId(state, id) {
         state.activeId = id;
     },
 
@@ -44,12 +44,12 @@ const mutations = {
 };
 
 const actions = {
-    setActiveId({ commit }, id) {
-        commit('setActiveId', id || null);
+    setActivePickerId({ commit }, id) {
+        commit('setActivePickerId', id || null);
     },
 
-    clearActiveId({ commit }) {
-        commit('setActiveId', null);
+    clearActivePickerId({ commit }) {
+        commit('setActivePickerId', null);
     },
 
     setPickerMediaIds({ commit }, { pickerId, mediaIds }) {

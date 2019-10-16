@@ -4,40 +4,42 @@ import { rootFolder } from '../config/folders';
 
 const state = {
     isLoading: true,
-    isVisible: false,
+    showPanel: false,
 
     list: [],
     open: [ rootFolder() ],
 
     managedFolder: null,
-    modalIsVisible: false,
+    showManageModal: false,
+
+    cachedFolderIds: [],
 };
 
 const getters = {
-    isVisible: state => state.isVisible,
+    showFoldersPanel: state => state.showPanel,
 
-    isLoading: state => state.isLoading,
+    isLoadingFolders: state => state.isLoading,
 
-    findIndex: state => folderId => {
+    findFolderIndex: state => folderId => {
         return state.list.findIndex(({ id }) => {
             return folderId === id;
         });
     },
 
-    list: state => state.list,
+    listFolders: state => state.list,
 
-    grouped: state => {
+    groupedFolders: state => {
         return mapValues(
             groupBy(state.list, ({ parent_id }) => parent_id),
             group => sortBy(group, 'name', 'asc')
         );
     },
 
-    folder: state => folderId => {
+    getFolder: state => folderId => {
         return state.list.find(({ id }) => id === folderId);
     },
 
-    open: state => state.open,
+    openFolders: state => state.open,
 
     currentFolder: state => {
         return state.open[state.open.length - 1];
@@ -51,17 +53,19 @@ const getters = {
         return null;
     },
 
-    currentList: (state, getters) => {
-        return getters.grouped.hasOwnProperty(getters.currentFolder.id)
-            ? getters.grouped[getters.currentFolder.id]
-            : [];
+    childFolders: (state, getters) => {
+        if (getters.groupedFolders.hasOwnProperty(getters.currentFolder.id)) {
+            return getters.groupedFolders[getters.currentFolder.id];
+        }
+
+        return [];
     },
 
-    managedFolder: state => state.managedFolder,
+    folderBeingManaged: state => state.managedFolder,
 
-    modalIsVisible: state => state.modalIsVisible,
+    showManageFolderModal: state => state.showManageModal,
 
-    ancestorIds: (state, getters) => folderId => {
+    getAncestorIds: (state, getters) => folderId => {
         let ancestorIds = [];
         const children = state.list.filter(({ parent_id }) => {
             return parent_id === folderId;
@@ -72,29 +76,31 @@ const getters = {
                 ancestorIds = [
                     child.id,
                     ...ancestorIds,
-                    ...getters.ancestorIds(child.id),
+                    ...getters.getAncestorIds(child.id),
                 ];
             });
         }
 
         return ancestorIds;
     },
+
+    cachedFolderIds: state => state.cachedFolderIds,
 };
 
 const mutations = {
-    set(state, list) {
+    setFolders(state, list) {
         state.list = list;
     },
 
-    show(state) {
-        state.isVisible = true;
+    showFoldersPanel(state) {
+        state.showPanel = true;
     },
 
-    hide(state) {
-        state.isVisible = false;
+    hideFoldersPanel(state) {
+        state.showPanel = false;
     },
 
-    stopLoading(state) {
+    stopLoadingFolders(state) {
         state.isLoading = false;
     },
 
@@ -125,34 +131,38 @@ const mutations = {
         });
     },
 
-    setManagedFolder(state, folder) {
+    setFolderBeingManaged(state, folder) {
         state.managedFolder = folder;
     },
 
-    showModal(state) {
-        state.modalIsVisible = true;
+    showManageFolderModal(state) {
+        state.showManageModal = true;
     },
 
-    hideModal(state) {
-        state.modalIsVisible = false;
+    hideManageFolderModal(state) {
+        state.showManageModal = false;
+    },
+
+    addCachedFolderId(state, folderId) {
+        state.cachedFolderIds.push(folderId);
     },
 };
 
 const actions = {
-    show({ commit }) {
-        commit('show');
+    showFoldersPanel({ commit }) {
+        commit('showFoldersPanel');
     },
 
-    hide({ commit }) {
-        commit('hide');
+    hideFoldersPanel({ commit }) {
+        commit('hideFoldersPanel');
     },
 
-    fetch({ commit, getters }) {
-        if (getters.isLoading) {
+    fetchFolders({ commit, getters }) {
+        if (getters.isLoadingFolders) {
             apiActions.getFolders().then(folders => {
-                commit('set', folders);
+                commit('setFolders', folders);
 
-                commit('stopLoading');
+                commit('stopLoadingFolders');
             });
         }
     },
@@ -162,7 +172,7 @@ const actions = {
     },
 
     updateFolder({ commit, getters }, { id, folder }) {
-        let index = getters.findIndex(id);
+        let index = getters.findFolderIndex(id);
 
         if (index !== -1) {
             commit('updateFolder', { index, folder });
@@ -170,14 +180,16 @@ const actions = {
     },
 
     openFolder({ commit, getters }, folderId) {
-        const folder = getters.list.find(({ id }) => id === folderId);
+        const folder = getters.listFolders.find(({ id }) => {
+            return id === folderId;
+        });
 
         commit('openFolder', folder || rootFolder());
     },
 
     moveFoldersTo({ commit, getters }, { parentId, folderIds }) {
         folderIds.forEach(folderId => {
-            let index = getters.findIndex(folderId);
+            let index = getters.findFolderIndex(folderId);
 
             if (index !== -1) {
                 commit('updateFolder', {
@@ -192,20 +204,24 @@ const actions = {
         commit('removeFolders', folderIds);
     },
 
-    setManagedFolder({ commit }, folder) {
-        commit('setManagedFolder', folder);
+    setFolderBeingManaged({ commit }, folder) {
+        commit('setFolderBeingManaged', folder);
     },
 
-    clearManagedFolder({ commit }) {
-        commit('setManagedFolder', null);
+    clearFolderBeingManaged({ commit }) {
+        commit('setFolderBeingManaged', null);
     },
 
-    showModal({ commit }) {
-        commit('showModal');
+    showManageFolderModal({ commit }) {
+        commit('showManageFolderModal');
     },
 
-    hideModal({ commit }) {
-        commit('hideModal');
+    hideManageFolderModal({ commit }) {
+        commit('hideManageFolderModal');
+    },
+
+    addCachedFolderId({ commit }, folderId) {
+        commit('addCachedFolderId', folderId);
     },
 };
 

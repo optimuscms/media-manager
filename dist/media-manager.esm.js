@@ -89,19 +89,19 @@ var state = {
   isOpen: false,
   limit: 0,
   acceptedExtensions: [],
-  actionsPanelIsVisible: false,
+  showActionsPanel: false,
+  showMediaMover: false,
   mediaMoverType: '',
   mediaMoverSubject: null,
-  mediaMoverIsVisible: false,
+  showConfirmation: false,
   confirmationType: '',
-  confirmationSubject: null,
-  confirmationIsVisible: false
+  confirmationSubject: null
 };
 var getters = {
-  isOpen: function isOpen(state) {
+  mediaManagerIsOpen: function mediaManagerIsOpen(state) {
     return state.isOpen;
   },
-  limit: function limit(state) {
+  mediaSelectionLimit: function mediaSelectionLimit(state) {
     return state.limit;
   },
   pickerId: function pickerId(state) {
@@ -110,8 +110,8 @@ var getters = {
   acceptedExtensions: function acceptedExtensions(state) {
     return state.acceptedExtensions;
   },
-  actionsPanelIsVisible: function actionsPanelIsVisible(state) {
-    return state.actionsPanelIsVisible;
+  showActionsPanel: function showActionsPanel(state) {
+    return state.showActionsPanel;
   },
   mediaMoverType: function mediaMoverType(state) {
     return state.mediaMoverType;
@@ -119,8 +119,8 @@ var getters = {
   mediaMoverSubject: function mediaMoverSubject(state) {
     return state.mediaMoverSubject;
   },
-  mediaMoverIsVisible: function mediaMoverIsVisible(state) {
-    return state.mediaMoverIsVisible;
+  showMediaMover: function showMediaMover(state) {
+    return state.showMediaMover;
   },
   confirmationType: function confirmationType(state) {
     return state.confirmationType;
@@ -128,28 +128,28 @@ var getters = {
   confirmationSubject: function confirmationSubject(state) {
     return state.confirmationSubject;
   },
-  confirmationIsVisible: function confirmationIsVisible(state) {
-    return state.confirmationIsVisible;
+  showConfirmation: function showConfirmation(state) {
+    return state.showConfirmation;
   }
 };
 var mutations = {
-  open: function open(state) {
+  openMediaManager: function openMediaManager(state) {
     state.isOpen = true;
   },
-  close: function close(state) {
+  closeMediaManager: function closeMediaManager(state) {
     state.isOpen = false;
   },
-  setLimit: function setLimit(state, limit) {
+  setMediaSelectionLimit: function setMediaSelectionLimit(state, limit) {
     state.limit = limit;
   },
   setAcceptedExtensions: function setAcceptedExtensions(state, extensions) {
     state.acceptedExtensions = extensions;
   },
   showActionsPanel: function showActionsPanel(state) {
-    state.actionsPanelIsVisible = true;
+    state.showActionsPanel = true;
   },
   hideActionsPanel: function hideActionsPanel(state) {
-    state.actionsPanelIsVisible = false;
+    state.showActionsPanel = false;
   },
   setMediaMoverType: function setMediaMoverType(state, type) {
     state.mediaMoverType = type;
@@ -158,10 +158,10 @@ var mutations = {
     state.mediaMoverSubject = subject;
   },
   showMediaMover: function showMediaMover(state) {
-    state.mediaMoverIsVisible = true;
+    state.showMediaMover = true;
   },
   hideMediaMover: function hideMediaMover(state) {
-    state.mediaMoverIsVisible = false;
+    state.showMediaMover = false;
   },
   setConfirmationType: function setConfirmationType(state, type) {
     state.confirmationType = type;
@@ -170,14 +170,14 @@ var mutations = {
     state.confirmationSubject = subject;
   },
   showConfirmation: function showConfirmation(state) {
-    state.confirmationIsVisible = true;
+    state.showConfirmation = true;
   },
   hideConfirmation: function hideConfirmation(state) {
-    state.confirmationIsVisible = false;
+    state.showConfirmation = false;
   }
 };
 var actions = {
-  open: function open(_ref) {
+  openMediaManager: function openMediaManager(_ref) {
     var commit = _ref.commit,
         dispatch = _ref.dispatch,
         rootGetters = _ref.rootGetters;
@@ -187,24 +187,24 @@ var actions = {
         limit = _ref2.limit,
         acceptedExtensions = _ref2.acceptedExtensions;
 
-    commit('setLimit', limit !== undefined ? limit : 0);
+    commit('setMediaSelectionLimit', limit !== undefined ? limit : 0);
     commit('setAcceptedExtensions', formatAcceptedExtensions(acceptedExtensions));
-    dispatch('mediaManagerPickers/setActiveId', pickerId, {
+    dispatch('mediaManagerPickers/setActivePickerId', pickerId, {
       root: true
     });
-    dispatch('mediaManagerMedia/setSelectedIds', rootGetters['mediaManagerPickers/pickerMedia'](pickerId).map(function (_ref3) {
+    dispatch('mediaManagerMedia/setSelectedMediaIds', rootGetters['mediaManagerPickers/getPickerMedia'](pickerId).map(function (_ref3) {
       var id = _ref3.id;
       return id;
     }), {
       root: true
     });
-    dispatch('mediaManagerMedia/fetch', null, {
+    dispatch('mediaManagerMedia/fetchMedia', null, {
       root: true
     });
-    dispatch('mediaManagerFolders/fetch', null, {
+    dispatch('mediaManagerFolders/fetchFolders', null, {
       root: true
     });
-    commit('open');
+    commit('openMediaManager');
   },
   showActionsPanel: function showActionsPanel(_ref4) {
     var commit = _ref4.commit;
@@ -242,9 +242,9 @@ var actions = {
     commit('setConfirmationSubject', null);
     commit('hideConfirmation');
   },
-  close: function close(_ref12) {
+  closeMediaManager: function closeMediaManager(_ref12) {
     var commit = _ref12.commit;
-    commit('close');
+    commit('closeMediaManager');
   }
 };
 
@@ -273,14 +273,14 @@ var state$1 = {
   pickersMediaIds: {}
 };
 var getters$1 = {
-  activeId: function activeId(state) {
+  activePickerId: function activePickerId(state) {
     return state.activeId;
   },
-  pickerMedia: function pickerMedia(state, getters, rootState, rootGetters) {
+  getPickerMedia: function getPickerMedia(state, getters, rootState, rootGetters) {
     return function (pickerId) {
       if (pickerId) {
         var pickerMediaIds = state.pickersMediaIds[pickerId];
-        return rootGetters['mediaManagerMedia/list'].filter(function (_ref) {
+        return rootGetters['mediaManagerMedia/listMedia'].filter(function (_ref) {
           var id = _ref.id;
           return pickerMediaIds.includes(id);
         });
@@ -291,7 +291,7 @@ var getters$1 = {
   }
 };
 var mutations$1 = {
-  setActiveId: function setActiveId(state, id) {
+  setActivePickerId: function setActivePickerId(state, id) {
     state.activeId = id;
   },
   setPickerMediaIds: function setPickerMediaIds(state, _ref2) {
@@ -311,13 +311,13 @@ var mutations$1 = {
   }
 };
 var actions$1 = {
-  setActiveId: function setActiveId(_ref4, id) {
+  setActivePickerId: function setActivePickerId(_ref4, id) {
     var commit = _ref4.commit;
-    commit('setActiveId', id || null);
+    commit('setActivePickerId', id || null);
   },
-  clearActiveId: function clearActiveId(_ref5) {
+  clearActivePickerId: function clearActivePickerId(_ref5) {
     var commit = _ref5.commit;
-    commit('setActiveId', null);
+    commit('setActivePickerId', null);
   },
   setPickerMediaIds: function setPickerMediaIds(_ref6, _ref7) {
     var commit = _ref6.commit;
@@ -9771,23 +9771,19 @@ root._=_;}}).call(commonjsGlobal);});var lodash_1=lodash.groupBy;var lodash_2=lo
 
 var state$2 = {
   isLoading: false,
-  cachedFolderIds: [],
   list: [],
   isFocusingMultiple: false,
   focusedIds: [],
   selectedIds: []
 };
 var getters$2 = {
-  isLoading: function isLoading(state) {
+  isLoadingMedia: function isLoadingMedia(state) {
     return state.isLoading;
   },
-  cachedFolderIds: function cachedFolderIds(state) {
-    return state.cachedFolderIds;
-  },
-  list: function list(state) {
+  listMedia: function listMedia(state) {
     return state.list;
   },
-  findIndex: function findIndex(state) {
+  findMediaIndex: function findMediaIndex(state) {
     return function (mediaId) {
       return state.list.findIndex(function (_ref) {
         var id = _ref.id;
@@ -9795,7 +9791,7 @@ var getters$2 = {
       });
     };
   },
-  grouped: function grouped(state) {
+  groupedMedia: function groupedMedia(state) {
     return lodash_2(lodash_1(state.list, function (_ref2) {
       var folder_id = _ref2.folder_id;
       return folder_id;
@@ -9803,16 +9799,16 @@ var getters$2 = {
       return lodash_3(group, 'name', 'asc');
     });
   },
-  current: function current(state, getters, rootState, rootGetters) {
+  currentMedia: function currentMedia(state, getters, rootState, rootGetters) {
     var currentFolder = rootGetters['mediaManagerFolders/currentFolder'];
 
-    if (currentFolder && getters.grouped.hasOwnProperty(currentFolder.id)) {
-      return getters.grouped[currentFolder.id];
+    if (currentFolder && getters.groupedMedia.hasOwnProperty(currentFolder.id)) {
+      return getters.groupedMedia[currentFolder.id];
     }
 
     return [];
   },
-  item: function item(state) {
+  getMediaItem: function getMediaItem(state) {
     return function (mediaId) {
       return state.list.find(function (_ref3) {
         var id = _ref3.id;
@@ -9820,133 +9816,132 @@ var getters$2 = {
       });
     };
   },
-  isFocusingMultiple: function isFocusingMultiple(state) {
+  isFocusingMultipleMedia: function isFocusingMultipleMedia(state) {
     return state.isFocusingMultiple;
   },
-  focusedIds: function focusedIds(state) {
+  focusedMediaIds: function focusedMediaIds(state) {
     return state.focusedIds;
   },
-  selectedIds: function selectedIds(state) {
+  selectedMediaIds: function selectedMediaIds(state) {
     return state.selectedIds;
   }
 };
 var mutations$2 = {
-  set: function set(state, list) {
+  setMedia: function setMedia(state, list) {
     state.list = lodash_5([].concat(_toConsumableArray(state.list), _toConsumableArray(list)), 'id');
   },
-  startLoading: function startLoading(state) {
+  startLoadingMedia: function startLoadingMedia(state) {
     state.isLoading = true;
   },
-  stopLoading: function stopLoading(state) {
+  stopLoadingMedia: function stopLoadingMedia(state) {
     state.isLoading = false;
   },
-  addCachedFolderId: function addCachedFolderId(state, folderId) {
-    state.cachedFolderIds.push(folderId);
-  },
-  add: function add(state, media) {
+  addMediaItem: function addMediaItem(state, media) {
     state.list.push(media);
   },
-  update: function update(state, _ref4) {
+  updateMediaItem: function updateMediaItem(state, _ref4) {
     var index = _ref4.index,
         media = _ref4.media;
     state.list.splice(index, 1, _objectSpread2({}, state.list[index], {}, media));
   },
-  removeInFolders: function removeInFolders(state, folderIds) {
+  removeMediaInFolders: function removeMediaInFolders(state, folderIds) {
     state.list = state.list.filter(function (_ref5) {
       var folder_id = _ref5.folder_id;
       return !folderIds.includes(folder_id);
     });
   },
-  remove: function remove(state, mediaIds) {
+  removeMedia: function removeMedia(state, mediaIds) {
     state.list = state.list.filter(function (_ref6) {
       var id = _ref6.id;
       return !mediaIds.includes(id);
     });
   },
-  enableMultipleFocus: function enableMultipleFocus(state) {
+  enableMultipleMediaFocus: function enableMultipleMediaFocus(state) {
     state.isFocusingMultiple = true;
   },
-  disableMultipleFocus: function disableMultipleFocus(state) {
+  disableMultipleMediaFocus: function disableMultipleMediaFocus(state) {
     state.isFocusingMultiple = false;
   },
-  focusId: function focusId(state, mediaId) {
+  focusMediaId: function focusMediaId(state, mediaId) {
     state.focusedIds.push(mediaId);
   },
-  blurId: function blurId(state, mediaId) {
+  blurMediaId: function blurMediaId(state, mediaId) {
     state.focusedIds = state.focusedIds.filter(function (id) {
       return id !== mediaId;
     });
   },
-  clearFocusedIds: function clearFocusedIds(state) {
+  clearFocusedMediaIds: function clearFocusedMediaIds(state) {
     state.focusedIds = [];
   },
-  setSelectedIds: function setSelectedIds(state, mediaIds) {
+  setSelectedMediaIds: function setSelectedMediaIds(state, mediaIds) {
     state.selectedIds = mediaIds;
   },
-  selectId: function selectId(state, mediaId) {
+  selectMediaId: function selectMediaId(state, mediaId) {
     state.selectedIds.push(mediaId);
   },
-  unselectId: function unselectId(state, mediaId) {
-    state.selectedIds = state.selectedIds.filter(function (id) {
-      return id !== mediaId;
-    });
-  },
-  unselectIds: function unselectIds(state, mediaIds) {
+  deselectMediaIds: function deselectMediaIds(state, mediaIds) {
     state.selectedIds = state.selectedIds.filter(function (id) {
       return !mediaIds.includes(id);
     });
   }
 };
 var actions$2 = {
-  fetch: function fetch(_ref7, folderId) {
+  fetchMedia: function fetchMedia(_ref7, folderId) {
     var commit = _ref7.commit,
-        getters = _ref7.getters;
+        getters = _ref7.getters,
+        dispatch = _ref7.dispatch,
+        rootGetters = _ref7.rootGetters;
+    var cachedFolderIds = rootGetters['mediaManagerFolders/cachedFolderIds'];
 
-    if (!getters.isLoading && !getters.cachedFolderIds.includes(folderId)) {
-      commit('startLoading');
+    if (!getters.isLoading && !cachedFolderIds.includes(folderId)) {
+      commit('startLoadingMedia');
       actions$4.getMedia({
         folder: folderId || 'root'
       }).then(function (media) {
-        commit('set', media);
-        commit('addCachedFolderId', folderId);
-        commit('stopLoading');
+        commit('setMedia', media);
+        dispatch('mediaManagerFolders/addCachedFolderId', folderId, {
+          root: true
+        });
+        commit('stopLoadingMedia');
       });
     }
   },
-  set: function set(_ref8, media) {
+  setMedia: function setMedia(_ref8, media) {
     var commit = _ref8.commit;
-    commit('set', media);
+    commit('setMedia', media);
   },
-  add: function add(_ref9, media) {
+  addMediaItem: function addMediaItem(_ref9, media) {
     var commit = _ref9.commit;
-    commit('add', media);
+    commit('addMediaItem', media);
   },
-  update: function update(_ref10, _ref11) {
+  updateMediaItem: function updateMediaItem(_ref10, _ref11) {
     var commit = _ref10.commit,
         getters = _ref10.getters;
     var id = _ref11.id,
         media = _ref11.media;
-    var index = getters.findIndex(id);
+    var index = getters.findMediaIndex(id);
 
     if (index !== -1) {
-      commit('update', {
+      commit('updateMediaItem', {
         index: index,
         media: media
       });
     }
   },
-  moveMediaItemsTo: function moveMediaItemsTo(_ref12, _ref13) {
+  moveMediaTo: function moveMediaTo(_ref12, _ref13) {
     var commit = _ref12.commit,
-        getters = _ref12.getters;
+        getters = _ref12.getters,
+        rootGetters = _ref12.rootGetters;
     var folderId = _ref13.folderId,
         mediaIds = _ref13.mediaIds;
+    var cachedFolderIds = rootGetters['mediaManagerFolders/cachedFolderIds'];
 
-    if (getters.cachedFolderIds.includes(folderId)) {
+    if (cachedFolderIds.includes(folderId)) {
       return mediaIds.forEach(function (mediaId) {
-        var index = getters.findIndex(mediaId);
+        var index = getters.findMediaIndex(mediaId);
 
         if (index !== -1) {
-          commit('update', {
+          commit('updateMediaItem', {
             index: index,
             media: {
               folder_id: folderId
@@ -9956,61 +9951,61 @@ var actions$2 = {
       });
     }
 
-    commit('remove', mediaIds);
+    commit('removeMedia', mediaIds);
   },
-  removeInFolders: function removeInFolders(_ref14, folderIds) {
+  removeMediaInFolders: function removeMediaInFolders(_ref14, folderIds) {
     var commit = _ref14.commit;
-    commit('removeInFolders', folderIds);
+    commit('removeMediaInFolders', folderIds);
   },
-  remove: function remove(_ref15, mediaIds) {
+  removeMedia: function removeMedia(_ref15, mediaIds) {
     var commit = _ref15.commit;
-    commit('remove', mediaIds);
+    commit('removeMedia', mediaIds);
   },
-  enableMultipleFocus: function enableMultipleFocus(_ref16) {
+  enableMultipleMediaFocus: function enableMultipleMediaFocus(_ref16) {
     var commit = _ref16.commit;
-    commit('enableMultipleFocus');
+    commit('enableMultipleMediaFocus');
   },
-  disableMultipleFocus: function disableMultipleFocus(_ref17) {
+  disableMultipleMediaFocus: function disableMultipleMediaFocus(_ref17) {
     var commit = _ref17.commit;
-    commit('disableMultipleFocus');
+    commit('disableMultipleMediaFocus');
   },
-  focusId: function focusId(_ref18, mediaId) {
+  focusMediaId: function focusMediaId(_ref18, mediaId) {
     var commit = _ref18.commit,
         getters = _ref18.getters;
 
-    if (!getters.isFocusingMultiple) {
-      commit('clearFocusedIds');
+    if (!getters.isFocusingMultipleMedia) {
+      commit('clearFocusedMediaIds');
     }
 
-    commit('focusId', mediaId);
+    commit('focusMediaId', mediaId);
   },
-  blurId: function blurId(_ref19, mediaId) {
+  blurMediaId: function blurMediaId(_ref19, mediaId) {
     var commit = _ref19.commit;
-    commit('blurId', mediaId);
+    commit('blurMediaId', mediaId);
   },
-  clearFocusedIds: function clearFocusedIds(_ref20) {
+  clearFocusedMediaIds: function clearFocusedMediaIds(_ref20) {
     var commit = _ref20.commit;
-    commit('clearFocusedIds');
+    commit('clearFocusedMediaIds');
   },
-  setSelectedIds: function setSelectedIds(_ref21, mediaIds) {
+  setSelectedMediaIds: function setSelectedMediaIds(_ref21, mediaIds) {
     var commit = _ref21.commit;
-    commit('setSelectedIds', mediaIds);
+    commit('setSelectedMediaIds', mediaIds);
   },
-  selectId: function selectId(_ref22, mediaId) {
+  selectMediaId: function selectMediaId(_ref22, mediaId) {
     var commit = _ref22.commit;
-    commit('selectId', mediaId);
+    commit('selectMediaId', mediaId);
   },
-  unselectId: function unselectId(_ref23, mediaId) {
+  deselectMediaId: function deselectMediaId(_ref23, mediaId) {
     var commit = _ref23.commit;
-    commit('unselectId', mediaId);
+    commit('deselectMediaIds', [mediaId]);
   },
-  unselectIds: function unselectIds(_ref24, mediaIds) {
+  deselectMediaIds: function deselectMediaIds(_ref24, mediaIds) {
     var commit = _ref24.commit;
-    commit('unselectIds', mediaIds);
+    commit('deselectMediaIds', mediaIds);
   },
-  clearSelectedIds: function clearSelectedIds(_ref25) {
+  clearSelectedMediaIds: function clearSelectedMediaIds(_ref25) {
     var commit = _ref25.commit;
-    commit('setSelectedIds', []);
+    commit('setSelectedMediaIds', []);
   }
 };
 var mediaStore = {
@@ -10031,20 +10026,21 @@ var rootFolder = function rootFolder() {
 
 var state$3 = {
   isLoading: true,
-  isVisible: false,
+  showPanel: false,
   list: [],
   open: [rootFolder()],
   managedFolder: null,
-  modalIsVisible: false
+  showManageModal: false,
+  cachedFolderIds: []
 };
 var getters$3 = {
-  isVisible: function isVisible(state) {
-    return state.isVisible;
+  showFoldersPanel: function showFoldersPanel(state) {
+    return state.showPanel;
   },
-  isLoading: function isLoading(state) {
+  isLoadingFolders: function isLoadingFolders(state) {
     return state.isLoading;
   },
-  findIndex: function findIndex(state) {
+  findFolderIndex: function findFolderIndex(state) {
     return function (folderId) {
       return state.list.findIndex(function (_ref) {
         var id = _ref.id;
@@ -10052,10 +10048,10 @@ var getters$3 = {
       });
     };
   },
-  list: function list(state) {
+  listFolders: function listFolders(state) {
     return state.list;
   },
-  grouped: function grouped(state) {
+  groupedFolders: function groupedFolders(state) {
     return lodash_2(lodash_1(state.list, function (_ref2) {
       var parent_id = _ref2.parent_id;
       return parent_id;
@@ -10063,7 +10059,7 @@ var getters$3 = {
       return lodash_3(group, 'name', 'asc');
     });
   },
-  folder: function folder(state) {
+  getFolder: function getFolder(state) {
     return function (folderId) {
       return state.list.find(function (_ref3) {
         var id = _ref3.id;
@@ -10071,7 +10067,7 @@ var getters$3 = {
       });
     };
   },
-  open: function open(state) {
+  openFolders: function openFolders(state) {
     return state.open;
   },
   currentFolder: function currentFolder(state) {
@@ -10084,16 +10080,20 @@ var getters$3 = {
 
     return null;
   },
-  currentList: function currentList(state, getters) {
-    return getters.grouped.hasOwnProperty(getters.currentFolder.id) ? getters.grouped[getters.currentFolder.id] : [];
+  childFolders: function childFolders(state, getters) {
+    if (getters.groupedFolders.hasOwnProperty(getters.currentFolder.id)) {
+      return getters.groupedFolders[getters.currentFolder.id];
+    }
+
+    return [];
   },
-  managedFolder: function managedFolder(state) {
+  folderBeingManaged: function folderBeingManaged(state) {
     return state.managedFolder;
   },
-  modalIsVisible: function modalIsVisible(state) {
-    return state.modalIsVisible;
+  showManageFolderModal: function showManageFolderModal(state) {
+    return state.showManageModal;
   },
-  ancestorIds: function ancestorIds(state, getters) {
+  getAncestorIds: function getAncestorIds(state, getters) {
     return function (folderId) {
       var ancestorIds = [];
       var children = state.list.filter(function (_ref4) {
@@ -10103,25 +10103,28 @@ var getters$3 = {
 
       if (children.length) {
         children.forEach(function (child) {
-          ancestorIds = [child.id].concat(_toConsumableArray(ancestorIds), _toConsumableArray(getters.ancestorIds(child.id)));
+          ancestorIds = [child.id].concat(_toConsumableArray(ancestorIds), _toConsumableArray(getters.getAncestorIds(child.id)));
         });
       }
 
       return ancestorIds;
     };
+  },
+  cachedFolderIds: function cachedFolderIds(state) {
+    return state.cachedFolderIds;
   }
 };
 var mutations$3 = {
-  set: function set(state, list) {
+  setFolders: function setFolders(state, list) {
     state.list = list;
   },
-  show: function show(state) {
-    state.isVisible = true;
+  showFoldersPanel: function showFoldersPanel(state) {
+    state.showPanel = true;
   },
-  hide: function hide(state) {
-    state.isVisible = false;
+  hideFoldersPanel: function hideFoldersPanel(state) {
+    state.showPanel = false;
   },
-  stopLoading: function stopLoading(state) {
+  stopLoadingFolders: function stopLoadingFolders(state) {
     state.isLoading = false;
   },
   addFolder: function addFolder(state, folder) {
@@ -10151,33 +10154,36 @@ var mutations$3 = {
       return !folderIds.includes(id);
     });
   },
-  setManagedFolder: function setManagedFolder(state, folder) {
+  setFolderBeingManaged: function setFolderBeingManaged(state, folder) {
     state.managedFolder = folder;
   },
-  showModal: function showModal(state) {
-    state.modalIsVisible = true;
+  showManageFolderModal: function showManageFolderModal(state) {
+    state.showManageModal = true;
   },
-  hideModal: function hideModal(state) {
-    state.modalIsVisible = false;
+  hideManageFolderModal: function hideManageFolderModal(state) {
+    state.showManageModal = false;
+  },
+  addCachedFolderId: function addCachedFolderId(state, folderId) {
+    state.cachedFolderIds.push(folderId);
   }
 };
 var actions$3 = {
-  show: function show(_ref7) {
+  showFoldersPanel: function showFoldersPanel(_ref7) {
     var commit = _ref7.commit;
-    commit('show');
+    commit('showFoldersPanel');
   },
-  hide: function hide(_ref8) {
+  hideFoldersPanel: function hideFoldersPanel(_ref8) {
     var commit = _ref8.commit;
-    commit('hide');
+    commit('hideFoldersPanel');
   },
-  fetch: function fetch(_ref9) {
+  fetchFolders: function fetchFolders(_ref9) {
     var commit = _ref9.commit,
         getters = _ref9.getters;
 
-    if (getters.isLoading) {
+    if (getters.isLoadingFolders) {
       actions$4.getFolders().then(function (folders) {
-        commit('set', folders);
-        commit('stopLoading');
+        commit('setFolders', folders);
+        commit('stopLoadingFolders');
       });
     }
   },
@@ -10190,7 +10196,7 @@ var actions$3 = {
         getters = _ref11.getters;
     var id = _ref12.id,
         folder = _ref12.folder;
-    var index = getters.findIndex(id);
+    var index = getters.findFolderIndex(id);
 
     if (index !== -1) {
       commit('updateFolder', {
@@ -10202,7 +10208,7 @@ var actions$3 = {
   openFolder: function openFolder(_ref13, folderId) {
     var commit = _ref13.commit,
         getters = _ref13.getters;
-    var folder = getters.list.find(function (_ref14) {
+    var folder = getters.listFolders.find(function (_ref14) {
       var id = _ref14.id;
       return id === folderId;
     });
@@ -10214,7 +10220,7 @@ var actions$3 = {
     var parentId = _ref16.parentId,
         folderIds = _ref16.folderIds;
     folderIds.forEach(function (folderId) {
-      var index = getters.findIndex(folderId);
+      var index = getters.findFolderIndex(folderId);
 
       if (index !== -1) {
         commit('updateFolder', {
@@ -10230,21 +10236,25 @@ var actions$3 = {
     var commit = _ref17.commit;
     commit('removeFolders', folderIds);
   },
-  setManagedFolder: function setManagedFolder(_ref18, folder) {
+  setFolderBeingManaged: function setFolderBeingManaged(_ref18, folder) {
     var commit = _ref18.commit;
-    commit('setManagedFolder', folder);
+    commit('setFolderBeingManaged', folder);
   },
-  clearManagedFolder: function clearManagedFolder(_ref19) {
+  clearFolderBeingManaged: function clearFolderBeingManaged(_ref19) {
     var commit = _ref19.commit;
-    commit('setManagedFolder', null);
+    commit('setFolderBeingManaged', null);
   },
-  showModal: function showModal(_ref20) {
+  showManageFolderModal: function showManageFolderModal(_ref20) {
     var commit = _ref20.commit;
-    commit('showModal');
+    commit('showManageFolderModal');
   },
-  hideModal: function hideModal(_ref21) {
+  hideManageFolderModal: function hideManageFolderModal(_ref21) {
     var commit = _ref21.commit;
-    commit('hideModal');
+    commit('hideManageFolderModal');
+  },
+  addCachedFolderId: function addCachedFolderId(_ref22, folderId) {
+    var commit = _ref22.commit;
+    commit('addCachedFolderId', folderId);
   }
 };
 var foldersStore = {
@@ -10864,7 +10874,7 @@ var imageExtensions = ['bmp', 'gif', 'jpg', 'jpeg', 'png'];
 
 var script = {
   computed: _objectSpread2({}, mapGetters({
-    openFolders: 'mediaManagerFolders/open',
+    openFolders: 'mediaManagerFolders/openFolders',
     currentFolder: 'mediaManagerFolders/currentFolder'
   })),
   methods: _objectSpread2({}, mapActions({
@@ -11089,11 +11099,11 @@ var script$2 = {
     Modal: Modal
   },
   computed: _objectSpread2({}, mapGetters({
-    folders: 'mediaManagerFolders/list',
     type: 'mediaManager/confirmationType',
+    isOpen: 'mediaManager/showConfirmation',
+    folders: 'mediaManagerFolders/listFolders',
     subject: 'mediaManager/confirmationSubject',
-    isOpen: 'mediaManager/confirmationIsVisible',
-    getAncestorIds: 'mediaManagerFolders/ancestorIds'
+    getAncestorIds: 'mediaManagerFolders/getAncestorIds'
   }), {
     subjectIsArray: function subjectIsArray() {
       return this.subject && Array.isArray(this.subject);
@@ -11136,10 +11146,10 @@ var script$2 = {
   }),
   methods: _objectSpread2({}, mapActions({
     close: 'mediaManager/closeConfirmation',
+    removeMedia: 'mediaManagerMedia/removeMedia',
     removeFolders: 'mediaManagerFolders/removeFolders',
-    removeMediaItems: 'mediaManagerMedia/remove',
-    removeMediaInFolders: 'mediaManagerMedia/removeInFolders',
-    clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedIds'
+    clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds',
+    removeMediaInFolders: 'mediaManagerMedia/removeMediaInFolders'
   }), {
     confirm: function confirm() {
       var _this = this;
@@ -11159,7 +11169,7 @@ var script$2 = {
         this.itemIds.forEach(function (mediaId) {
           actions$4.deleteMedia(mediaId);
         });
-        this.removeMediaItems(this.itemIds);
+        this.removeMedia(this.itemIds);
         this.clearFocusedMediaIds();
       }
 
@@ -11231,13 +11241,13 @@ var Confirmation = normalizeComponent_1({
 
 var script$3 = {
   computed: _objectSpread2({}, mapGetters({
-    isLoading: 'mediaManagerMedia/isLoading',
-    focusedIds: 'mediaManagerMedia/focusedIds',
-    currentMedia: 'mediaManagerMedia/current',
+    isLoading: 'mediaManagerMedia/isLoadingMedia',
+    currentMedia: 'mediaManagerMedia/currentMedia',
     currentFolder: 'mediaManagerFolders/currentFolder',
-    selectedMediaIds: 'mediaManagerMedia/selectedIds',
+    focusedMediaIds: 'mediaManagerMedia/focusedMediaIds',
     acceptedExtensions: 'mediaManager/acceptedExtensions',
-    isFocusingMultiple: 'mediaManagerMedia/isFocusingMultiple'
+    selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
+    isFocusingMultipleMedia: 'mediaManagerMedia/isFocusingMultipleMedia'
   }), {
     currentFolderId: function currentFolderId() {
       return this.currentFolder.id;
@@ -11246,25 +11256,29 @@ var script$3 = {
   watch: {
     currentFolderId: function currentFolderId(folderId) {
       this.fetchMedia(folderId);
+      this.clearFocusedMediaIds();
+      this.disableMultipleMediaFocus();
     }
   },
   methods: _objectSpread2({}, mapActions({
-    fetchMedia: 'mediaManagerMedia/fetch',
-    focusId: 'mediaManagerMedia/focusId',
-    blurId: 'mediaManagerMedia/blurId',
-    clearFocusedIds: 'mediaManagerMedia/clearFocusedIds',
-    enableMultipleFocus: 'mediaManagerMedia/enableMultipleFocus',
-    disableMultipleFocus: 'mediaManagerMedia/disableMultipleFocus'
+    fetchMedia: 'mediaManagerMedia/fetchMedia',
+    blurMediaId: 'mediaManagerMedia/blurMediaId',
+    focusMediaId: 'mediaManagerMedia/focusMediaId',
+    clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds',
+    enableMultipleMediaFocus: 'mediaManagerMedia/enableMultipleMediaFocus',
+    disableMultipleMediaFocus: 'mediaManagerMedia/disableMultipleMediaFocus'
   }), {
     isImage: function isImage(extension) {
       return imageExtensions$1.includes(extension);
     },
-    isSelectable: function isSelectable(extension) {
-      if (!this.acceptedExtensions) {
-        return true;
-      }
-
-      return this.acceptedExtensions.includes(extension);
+    isFocused: function isFocused(mediaId) {
+      return this.focusedMediaIds.includes(mediaId);
+    },
+    isSelected: function isSelected(mediaId) {
+      return this.selectedMediaIds.includes(mediaId);
+    },
+    isDisabled: function isDisabled(extension) {
+      return this.acceptedExtensions && !this.acceptedExtensions.includes(extension);
     },
     getIcon: function getIcon(extension) {
       var icon = 'file-alt';
@@ -11276,22 +11290,22 @@ var script$3 = {
       return icon;
     },
     toggleMultipleFocus: function toggleMultipleFocus() {
-      if (this.isFocusingMultiple) {
-        if (this.focusedIds.length > 1) {
-          this.clearFocusedIds();
+      if (this.isFocusingMultipleMedia) {
+        if (this.focusedMediaIds.length > 1) {
+          this.clearFocusedMediaIds();
         }
 
-        return this.disableMultipleFocus();
+        return this.disableMultipleMediaFocus();
       }
 
-      this.enableMultipleFocus();
+      this.enableMultipleMediaFocus();
     },
     toggleId: function toggleId(id) {
-      if (this.focusedIds.includes(id)) {
-        return this.blurId(id);
+      if (this.isFocused(id)) {
+        return this.blurMediaId(id);
       }
 
-      return this.focusId(id);
+      return this.focusMediaId(id);
     }
   })
 };
@@ -11323,23 +11337,23 @@ var __vue_render__$3 = function __vue_render__() {
     staticClass: "mm-icon"
   }, [_c("icon", {
     attrs: {
-      icon: _vm.isFocusingMultiple ? "toggle-on" : "toggle-off"
+      icon: _vm.isFocusingMultipleMedia ? "toggle-on" : "toggle-off"
     }
   })], 1)])]), _vm._v(" "), _c("transition", {
     attrs: {
       name: "mm-fade"
     }
-  }, [!_vm.isLoading && !_vm.currentMedia.length ? _c("div", {
+  }, [!_vm.isLoading ? [!_vm.currentMedia.length ? _c("div", {
     staticClass: "mm-notification"
-  }, [_vm._v("\n            This folder is empty.\n        ")]) : !_vm.isLoading && _vm.currentMedia.length ? _c("div", {
+  }, [_vm._v("\n                This folder is empty.\n            ")]) : _c("div", {
     staticClass: "mm-media-holder"
   }, _vm._l(_vm.currentMedia, function (media) {
     return _c("div", {
       key: media.id,
       staticClass: "mm-media-item-wrap",
       class: {
-        selected: _vm.focusedIds.includes(media.id),
-        disabled: !_vm.isSelectable(media.extension)
+        selected: _vm.isFocused(media.id),
+        disabled: _vm.isDisabled(media.extension)
       }
     }, [_c("div", {
       staticClass: "mm-media-item",
@@ -11368,7 +11382,7 @@ var __vue_render__$3 = function __vue_render__() {
       }
     })], 1), _vm._v(" "), _c("div", {
       staticClass: "mm-media-name"
-    }, [_vm._v("\n                                " + _vm._s(media.name) + "\n                            ")])])]), _vm._v(" "), _vm.focusedIds.includes(media.id) ? _c("div", {
+    }, [_vm._v("\n                                    " + _vm._s(media.name) + "\n                                ")])])]), _vm._v(" "), _vm.isFocused(media.id) ? _c("div", {
       staticClass: "mm-media-overlay"
     }, [_c("div", {
       staticClass: "mm-icon"
@@ -11377,14 +11391,14 @@ var __vue_render__$3 = function __vue_render__() {
         icon: ["far", "check-circle"],
         size: "2x"
       }
-    })], 1), _vm._v(" "), _c("div", [_vm._v("\n                            Selected\n                        ")])]) : _vm._e(), _vm._v(" "), _vm.selectedMediaIds.includes(media.id) ? _c("div", {
+    })], 1), _vm._v(" "), _c("div", [_vm._v("\n                                Selected\n                            ")])]) : _vm._e(), _vm._v(" "), _vm.isSelected(media.id) ? _c("div", {
       staticClass: "mm-media-selected mm-icon"
     }, [_c("icon", {
       attrs: {
         icon: "check-square"
       }
     })], 1) : _vm._e()])]);
-  }), 0) : _vm._e()])], 1);
+  }), 0)] : _vm._e()], 2)], 1);
 };
 
 var __vue_staticRenderFns__$3 = [];
@@ -11405,7 +11419,7 @@ var __vue_is_functional_template__$3 = false;
 
 /* style inject SSR */
 
-var Media = normalizeComponent_1({
+var MediaPanel = normalizeComponent_1({
   render: __vue_render__$3,
   staticRenderFns: __vue_staticRenderFns__$3
 }, __vue_inject_styles__$3, __vue_script__$3, __vue_scope_id__$3, __vue_is_functional_template__$3, __vue_module_identifier__$3, undefined, undefined);
@@ -11523,23 +11537,23 @@ var script$5 = {
     Dropdown: Dropdown
   },
   computed: _objectSpread2({}, mapGetters({
-    isVisible: 'mediaManagerFolders/isVisible',
-    isLoading: 'mediaManagerFolders/isLoading',
-    currentFolders: 'mediaManagerFolders/currentList',
-    currentFolder: 'mediaManagerFolders/currentFolder',
-    parentFolder: 'mediaManagerFolders/parentFolder'
+    childFolders: 'mediaManagerFolders/childFolders',
+    parentFolder: 'mediaManagerFolders/parentFolder',
+    isVisible: 'mediaManagerFolders/showFoldersPanel',
+    isLoading: 'mediaManagerFolders/isLoadingFolders',
+    currentFolder: 'mediaManagerFolders/currentFolder'
   })),
   methods: _objectSpread2({}, mapActions({
-    hide: 'mediaManagerFolders/hide',
+    hide: 'mediaManagerFolders/hideFoldersPanel',
     openFolder: 'mediaManagerFolders/openFolder',
-    setManagedFolder: 'mediaManagerFolders/setManagedFolder',
-    showManageModal: 'mediaManagerFolders/showModal',
     openMediaMover: 'mediaManager/openMediaMover',
-    openConfirmation: 'mediaManager/openConfirmation'
+    openConfirmation: 'mediaManager/openConfirmation',
+    setFolderBeingManaged: 'mediaManagerFolders/setFolderBeingManaged',
+    showManageFolderModal: 'mediaManagerFolders/showManageFolderModal'
   }), {
     editFolder: function editFolder(folder) {
-      this.setManagedFolder(folder);
-      this.showManageModal();
+      this.setFolderBeingManaged(folder);
+      this.showManageFolderModal();
     }
   })
 };
@@ -11593,7 +11607,7 @@ var __vue_render__$5 = function __vue_render__() {
     attrs: {
       icon: "arrow-left"
     }
-  })], 1), _vm._v(" "), _c("span", [_vm._v("\n                    " + _vm._s(_vm.parentFolder.name) + "\n                ")])])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.currentFolders, function (folder) {
+  })], 1), _vm._v(" "), _c("span", [_vm._v("\n                    " + _vm._s(_vm.parentFolder.name) + "\n                ")])])]) : _vm._e(), _vm._v(" "), _vm._l(_vm.childFolders, function (folder) {
     return _c("li", {
       key: folder.id
     }, [_c("a", {
@@ -11678,7 +11692,7 @@ var __vue_render__$5 = function __vue_render__() {
   }, [_c("a", {
     staticClass: "mm-folders-create",
     on: {
-      click: _vm.showManageModal
+      click: _vm.showManageFolderModal
     }
   }, [_c("span", {
     staticClass: "mm-icon"
@@ -11707,7 +11721,7 @@ var __vue_is_functional_template__$5 = false;
 
 /* style inject SSR */
 
-var Folders = normalizeComponent_1({
+var FoldersPanel = normalizeComponent_1({
   render: __vue_render__$5,
   staticRenderFns: __vue_staticRenderFns__$5
 }, __vue_inject_styles__$5, __vue_script__$5, __vue_scope_id__$5, __vue_is_functional_template__$5, __vue_module_identifier__$5, undefined, undefined);
@@ -11785,7 +11799,7 @@ var script$7 = {
     }
   },
   computed: _objectSpread2({}, mapGetters({
-    focusedMediaIds: 'mediaManagerMedia/focusedIds'
+    focusedMediaIds: 'mediaManagerMedia/focusedMediaIds'
   }), {
     mediaCount: function mediaCount() {
       return this.media.length;
@@ -11993,8 +12007,8 @@ var script$8 = {
     };
   },
   computed: {
-    imageExtensions: function imageExtensions() {
-      return imageExtensions$1;
+    isImage: function isImage() {
+      return imageExtensions$1.includes(this.item.extension);
     }
   },
   watch: {
@@ -12012,13 +12026,13 @@ var script$8 = {
     }
   },
   methods: _objectSpread2({}, mapActions({
-    updateMedia: 'mediaManagerMedia/update'
+    updateMediaItem: 'mediaManagerMedia/updateMediaItem'
   }), {
     save: function save() {
       return actions$4.updateMedia(this.item.id, this.form);
     },
     onSuccess: function onSuccess(media) {
-      this.updateMedia({
+      this.updateMediaItem({
         id: this.item.id,
         media: media
       });
@@ -12091,7 +12105,7 @@ var __vue_render__$8 = function __vue_render__() {
         _vm.$set(_vm.form, "name", $event.target.value);
       }
     }
-  })])]), _vm._v(" "), _vm.imageExtensions.includes(_vm.item.extension) ? [_c("div", {
+  })])]), _vm._v(" "), _vm.isImage ? [_c("div", {
     staticClass: "mm-field"
   }, [_c("label", {
     staticClass: "mm-label",
@@ -12204,10 +12218,10 @@ var MediaForm = normalizeComponent_1({
 
 var script$9 = {
   computed: _objectSpread2({}, mapGetters({
-    limit: 'mediaManager/limit',
-    media: 'mediaManagerMedia/list',
-    selectedMediaIds: 'mediaManagerMedia/selectedIds',
-    currentFolder: 'mediaManagerFolders/currentFolder'
+    media: 'mediaManagerMedia/listMedia',
+    currentFolder: 'mediaManagerFolders/currentFolder',
+    selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
+    mediaSelectionLimit: 'mediaManager/mediaSelectionLimit'
   }), {
     selectedMedia: function selectedMedia() {
       var _this = this;
@@ -12220,17 +12234,18 @@ var script$9 = {
     title: function title() {
       var title = 'Selected Media';
 
-      if (this.limit) {
-        title += " (".concat(this.selectedMedia.length, "/").concat(this.limit, ")");
+      if (this.mediaSelectionLimit) {
+        title += " (".concat(this.selectedMedia.length, "/").concat(this.mediaSelectionLimit, ")");
       }
 
       return title;
     }
   }),
   methods: _objectSpread2({}, mapActions({
-    focusId: 'mediaManagerMedia/focusId',
     openFolder: 'mediaManagerFolders/openFolder',
-    clearFocusedIds: 'mediaManagerMedia/clearFocusedIds'
+    focusMediaId: 'mediaManagerMedia/focusMediaId',
+    deselectMediaId: 'mediaManagerMedia/deselectMediaId',
+    clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds'
   }), {
     edit: function edit(media) {
       this.editingItem = media;
@@ -12241,8 +12256,8 @@ var script$9 = {
         this.openFolder(media.folder_id);
       }
 
-      this.clearFocusedIds();
-      this.focusId(media.id);
+      this.clearFocusedMediaIds();
+      this.focusMediaId(media.id);
     }
   })
 };
@@ -12258,7 +12273,7 @@ var __vue_render__$9 = function __vue_render__() {
 
   var _c = _vm._self._c || _h;
 
-  return _vm.limit !== 0 ? _c("div", {
+  return _vm.mediaSelectionLimit !== 0 ? _c("div", {
     staticClass: "mm-selected-media"
   }, [_c("h4", {
     staticClass: "mm-actions-panel-title"
@@ -12276,7 +12291,7 @@ var __vue_render__$9 = function __vue_render__() {
       staticClass: "mm-icon",
       on: {
         click: function click($event) {
-          return _vm.unselectMediaId(mediaItem.id);
+          return _vm.deselectMediaId(mediaItem.id);
         }
       }
     }, [_c("icon", {
@@ -12325,12 +12340,9 @@ var script$a = {
     };
   },
   computed: _objectSpread2({}, mapGetters({
-    limit: 'mediaManager/limit',
-    media: 'mediaManagerMedia/list',
-    isVisible: 'mediaManager/actionsPanelIsVisible',
-    currentMedia: 'mediaManagerMedia/current',
-    focusedMediaIds: 'mediaManagerMedia/focusedIds',
-    selectedMediaIds: 'mediaManagerMedia/selectedIds'
+    isVisible: 'mediaManager/showActionsPanel',
+    currentMedia: 'mediaManagerMedia/currentMedia',
+    focusedMediaIds: 'mediaManagerMedia/focusedMediaIds'
   }), {
     focusedMediaCount: function focusedMediaCount() {
       return this.focusedMediaIds.length;
@@ -12365,7 +12377,6 @@ var script$a = {
     }
   },
   methods: _objectSpread2({}, mapActions({
-    unselectMediaId: 'mediaManagerMedia/unselectId',
     hideActionsPanel: 'mediaManager/hideActionsPanel'
   }), {
     edit: function edit(media) {
@@ -12559,8 +12570,8 @@ var script$c = {
     };
   },
   computed: _objectSpread2({}, mapGetters({
-    isOpen: 'mediaManagerFolders/modalIsVisible',
-    currentFolder: 'mediaManagerFolders/currentFolder'
+    currentFolder: 'mediaManagerFolders/currentFolder',
+    isOpen: 'mediaManagerFolders/showManageFolderModal'
   })),
   watch: {
     isOpen: function isOpen(_isOpen) {
@@ -12577,15 +12588,15 @@ var script$c = {
         });
       } else {
         this.form = initialValues();
-        this.clearManagedFolder();
+        this.clearFolderBeingManaged();
       }
     }
   },
   methods: _objectSpread2({}, mapActions({
-    close: 'mediaManagerFolders/hideModal',
     addFolder: 'mediaManagerFolders/addFolder',
     updateFolder: 'mediaManagerFolders/updateFolder',
-    clearManagedFolder: 'mediaManagerFolders/clearManagedFolder'
+    close: 'mediaManagerFolders/hideManageFolderModal',
+    clearFolderBeingManaged: 'mediaManagerFolders/clearFolderBeingManaged'
   }), {
     save: function save() {
       if (this.isEditing) {
@@ -12729,12 +12740,12 @@ var script$d = {
     };
   },
   computed: _objectSpread2({}, mapGetters({
-    folders: 'mediaManagerFolders/list',
     type: 'mediaManager/mediaMoverType',
+    isOpen: 'mediaManager/showMediaMover',
     subject: 'mediaManager/mediaMoverSubject',
-    isOpen: 'mediaManager/mediaMoverIsVisible',
-    getFolder: 'mediaManagerFolders/folder',
-    getMediaItem: 'mediaManagerMedia/item'
+    folders: 'mediaManagerFolders/listFolders',
+    getFolder: 'mediaManagerFolders/getFolder',
+    getMediaItem: 'mediaManagerMedia/getMediaItem'
   }), {
     groupedFolders: function groupedFolders() {
       var _this = this;
@@ -12789,9 +12800,9 @@ var script$d = {
   }),
   methods: _objectSpread2({}, mapActions({
     close: 'mediaManager/closeMediaMover',
+    moveMediaTo: 'mediaManagerMedia/moveMediaTo',
     moveFoldersTo: 'mediaManagerFolders/moveFoldersTo',
-    moveMediaTo: 'mediaManagerMedia/moveMediaItemsTo',
-    clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedIds'
+    clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds'
   }), {
     setCurrentFolder: function setCurrentFolder(folderId) {
       if (folderId) {
@@ -13006,6 +13017,7 @@ var script$e = {
     return {
       isCollapsed: false,
       files: [],
+      autoIncrement: 0,
       showErrors: false,
       errors: null
     };
@@ -13023,11 +13035,12 @@ var script$e = {
     }
   }),
   methods: _objectSpread2({}, mapActions({
-    addMedia: 'mediaManagerMedia/add'
+    addMediaItem: 'mediaManagerMedia/addMediaItem'
   }), {
-    findIndex: function findIndex(uuid) {
-      return this.files.findIndex(function (file) {
-        return file.uuid === uuid;
+    findFileIndex: function findFileIndex(fileId) {
+      return this.files.findIndex(function (_ref) {
+        var id = _ref.id;
+        return id === fileId;
       });
     },
     focus: function focus() {
@@ -13038,17 +13051,16 @@ var script$e = {
 
       this.isCollapsed = false;
       Array.from(event.target.files).forEach(function (file) {
+        _this.autoIncrement++;
         var data = new FormData();
-
-        var uuid = _this.generateUuid();
+        var id = _this.autoIncrement;
 
         if (_this.currentFolder && _this.currentFolder.id) {
           data.append('folder_id', _this.currentFolder.id);
         }
 
         _this.files.push({
-          uuid: uuid,
-          id: null,
+          id: id,
           name: file.name,
           progress: 0,
           uploading: false,
@@ -13060,26 +13072,25 @@ var script$e = {
         data.append('file', file);
         actions$4.createMedia(data, {
           cancelToken: new CancelToken(function (cancel) {
-            _this.updateFile(uuid, {
+            _this.updateFile(id, {
               cancel: cancel
             });
           }),
           onUploadProgress: function onUploadProgress(progressEvent) {
-            _this.updateFile(uuid, {
+            _this.updateFile(id, {
               uploading: true,
               progress: Math.round(progressEvent.loaded * 100 / progressEvent.total)
             });
           }
         }).then(function (media) {
-          _this.updateFile(uuid, {
-            id: media.id,
+          _this.updateFile(id, {
             uploading: false,
             complete: true
           });
 
-          _this.addMedia(media);
+          _this.addMediaItem(media);
         }).catch(function (errors) {
-          _this.updateFile(uuid, {
+          _this.updateFile(id, {
             uploading: false,
             errors: errors
           });
@@ -13087,15 +13098,8 @@ var script$e = {
       });
       this.$refs.file.value = '';
     },
-    generateUuid: function generateUuid() {
-      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-        var r = Math.random() * 16 | 0,
-            v = c === 'x' ? r : r & 0x3 | 0x8;
-        return v.toString(16);
-      });
-    },
-    updateFile: function updateFile(uuid, properties) {
-      var index = this.findIndex(uuid);
+    updateFile: function updateFile(id, properties) {
+      var index = this.findFileIndex(id);
 
       if (index !== -1) {
         this.files.splice(index, 1, _objectSpread2({}, this.files[index], {}, properties));
@@ -13138,14 +13142,15 @@ var script$e = {
         this.showErrors = true;
       }
     },
-    remove: function remove(uuid) {
-      var index = this.findIndex(uuid);
+    remove: function remove(fileId) {
+      var index = this.findFileIndex(fileId);
 
       if (index !== -1) {
         this.showErrors = false;
         this.files[index].cancel();
-        this.files = this.files.filter(function (file) {
-          return file.uuid !== uuid;
+        this.files = this.files.filter(function (_ref2) {
+          var id = _ref2.id;
+          return id !== fileId;
         });
       }
     },
@@ -13233,7 +13238,7 @@ var __vue_render__$e = function __vue_render__() {
     staticClass: "mm-upload-wrap"
   }, _vm._l(_vm.files, function (file) {
     return _c("div", {
-      key: file.uuid,
+      key: file.id,
       staticClass: "mm-upload-item-wrap",
       on: {
         mouseover: function mouseover($event) {
@@ -13259,7 +13264,7 @@ var __vue_render__$e = function __vue_render__() {
       staticClass: "mm-icon",
       on: {
         click: function click($event) {
-          return _vm.remove(file.uuid);
+          return _vm.remove(file.id);
         }
       }
     }, [_c("icon", {
@@ -13316,25 +13321,26 @@ var script$f = {
     Breadcrumb: Breadcrumb,
     Confirmation: Confirmation,
     Modal: Modal,
-    Media: Media,
-    Folders: Folders,
+    MediaPanel: MediaPanel,
+    FoldersPanel: FoldersPanel,
     ActionsPanel: ActionsPanel,
     FolderManager: FolderManager,
     MediaMover: MediaMover,
     MediaUploader: MediaUploader
   },
   computed: _objectSpread2({}, mapGetters({
-    limit: 'mediaManager/limit',
-    isOpen: 'mediaManager/isOpen',
-    pickerId: 'mediaManagerPickers/activeId',
-    currentMedia: 'mediaManagerMedia/current',
-    focusedMediaIds: 'mediaManagerMedia/focusedIds',
+    limit: 'mediaManager/mediaSelectionLimit',
+    isOpen: 'mediaManager/mediaManagerIsOpen',
+    currentMedia: 'mediaManagerMedia/currentMedia',
+    pickerId: 'mediaManagerPickers/activePickerId',
+    // todo change active to current
     parentFolder: 'mediaManagerFolders/parentFolder',
-    getPickerMedia: 'mediaManagerPickers/pickerMedia',
-    selectedMediaIds: 'mediaManagerMedia/selectedIds',
-    managedFolder: 'mediaManagerFolders/managedFolder',
     currentFolder: 'mediaManagerFolders/currentFolder',
-    acceptedExtensions: 'mediaManager/acceptedExtensions'
+    getPickerMedia: 'mediaManagerPickers/getPickerMedia',
+    focusedMediaIds: 'mediaManagerMedia/focusedMediaIds',
+    acceptedExtensions: 'mediaManager/acceptedExtensions',
+    selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
+    folderBeingManaged: 'mediaManagerFolders/folderBeingManaged'
   }), {
     pickerMediaCount: function pickerMediaCount() {
       return this.getPickerMedia(this.pickerId).length;
@@ -13377,15 +13383,15 @@ var script$f = {
     }
   }),
   methods: _objectSpread2({}, mapActions({
-    closeManager: 'mediaManager/close',
     openFolder: 'mediaManagerFolders/openFolder',
-    showFolders: 'mediaManagerFolders/show',
     showActionsPanel: 'mediaManager/showActionsPanel',
+    closeMediaManager: 'mediaManager/closeMediaManager',
+    showFoldersPanel: 'mediaManagerFolders/showFoldersPanel',
     setPickerMediaIds: 'mediaManagerPickers/setPickerMediaIds',
-    clearActivePickerId: 'mediaManagerPickers/clearActiveId',
-    clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedIds',
-    clearSelectedMediaIds: 'mediaManagerMedia/clearSelectedIds',
-    disableMultipleFocus: 'mediaManagerMedia/disableMultipleFocus'
+    clearActivePickerId: 'mediaManagerPickers/clearActivePickerId',
+    clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds',
+    clearSelectedMediaIds: 'mediaManagerMedia/clearSelectedMediaIds',
+    disableMultipleMediaFocus: 'mediaManagerMedia/disableMultipleMediaFocus'
   }), {
     confirm: function confirm() {
       if (!this.insertIsDisabled) {
@@ -13398,11 +13404,11 @@ var script$f = {
     },
     close: function close() {
       this.clearActivePickerId();
-      this.disableMultipleFocus();
+      this.disableMultipleMediaFocus();
       this.clearFocusedMediaIds();
       this.clearSelectedMediaIds();
       this.openFolder(null);
-      this.closeManager();
+      this.closeMediaManager();
     }
   })
 };
@@ -13428,7 +13434,7 @@ var __vue_render__$f = function __vue_render__() {
     }
   }, [_c("div", {
     staticClass: "mm-modal-wrap mm-media-manager-wrap"
-  }, [_c("folders"), _vm._v(" "), _c("actions-panel"), _vm._v(" "), _c("div", {
+  }, [_c("folders-panel"), _vm._v(" "), _c("actions-panel"), _vm._v(" "), _c("div", {
     staticClass: "mm-media"
   }, [_c("div", {
     staticClass: "mm-media-header"
@@ -13437,7 +13443,7 @@ var __vue_render__$f = function __vue_render__() {
   }, [_c("a", {
     staticClass: "mm-folders-show mm-icon",
     on: {
-      click: _vm.showFolders
+      click: _vm.showFoldersPanel
     }
   }, [_c("icon", {
     attrs: {
@@ -13467,7 +13473,7 @@ var __vue_render__$f = function __vue_render__() {
     }
   })], 1) : _vm._e()]), _vm._v(" "), _c("div", {
     staticClass: "mm-media-content"
-  }, [_c("media"), _vm._v(" "), _c("media-uploader", {
+  }, [_c("media-panel"), _vm._v(" "), _c("media-uploader", {
     ref: "upload"
   })], 1), _vm._v(" "), _c("div", {
     staticClass: "mm-media-footer"
@@ -13495,7 +13501,7 @@ var __vue_render__$f = function __vue_render__() {
     }
   }, [_vm._v("\n                        " + _vm._s(_vm.limit === 0 ? "Close" : "Cancel") + "\n                    ")])])])]), _vm._v(" "), _c("folder-manager", {
     attrs: {
-      item: _vm.managedFolder
+      item: _vm.folderBeingManaged
     }
   }), _vm._v(" "), _c("media-mover"), _vm._v(" "), _c("confirmation")], 1)]);
 };
@@ -13553,7 +13559,7 @@ var script$g = {
     }
   },
   computed: _objectSpread2({}, mapGetters({
-    getPickerMedia: 'mediaManagerPickers/pickerMedia'
+    getPickerMedia: 'mediaManagerPickers/getPickerMedia'
   }), {
     initialMedia: function initialMedia() {
       if (!this.media) {
@@ -13595,7 +13601,7 @@ var script$g = {
         });
 
         if (media.length) {
-          this.setMediaItems(media);
+          this.setMedia(media);
         }
       },
       immediate: true
@@ -13621,14 +13627,14 @@ var script$g = {
     this.clearPickerMediaIds(this.id);
   },
   methods: _objectSpread2({}, mapActions({
-    openManager: 'mediaManager/open',
-    setMediaItems: 'mediaManagerMedia/set',
+    setMedia: 'mediaManagerMedia/setMedia',
+    openMediaManager: 'mediaManager/openMediaManager',
     setPickerMediaIds: 'mediaManagerPickers/setPickerMediaIds',
     clearPickerMediaIds: 'mediaManagerPickers/clearPickerMediaIds',
     removePickerMediaId: 'mediaManagerPickers/removePickerMediaId'
   }), {
     open: function open() {
-      this.openManager({
+      this.openMediaManager({
         pickerId: this.id,
         limit: this.limit,
         acceptedExtensions: this.acceptedExtensions

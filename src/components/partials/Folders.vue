@@ -26,7 +26,7 @@
                 </a>
             </li>
 
-            <li v-for="folder in currentFolders" :key="folder.id">
+            <li v-for="folder in childFolders" :key="folder.id">
                 <a class="mm-folder" @click="openFolder(folder.id)">
                     <span class="mm-icon">
                         <icon icon="folder" />
@@ -86,7 +86,7 @@
         <div class="mm-folders-footer">
             <a
                 class="mm-folders-create"
-                @click="showManageModal"
+                @click="showManageFolderModal"
             >
                 <span class="mm-icon">
                     <icon icon="plus" />
@@ -109,27 +109,27 @@ export default {
 
     computed: {
         ...mapGetters({
-            isVisible: 'mediaManagerFolders/isVisible',
-            isLoading: 'mediaManagerFolders/isLoading',
-            currentFolders: 'mediaManagerFolders/currentList',
-            currentFolder: 'mediaManagerFolders/currentFolder',
+            childFolders: 'mediaManagerFolders/childFolders',
             parentFolder: 'mediaManagerFolders/parentFolder',
+            isVisible: 'mediaManagerFolders/showFoldersPanel',
+            isLoading: 'mediaManagerFolders/isLoadingFolders',
+            currentFolder: 'mediaManagerFolders/currentFolder',
         }),
     },
 
     methods: {
         ...mapActions({
-            hide: 'mediaManagerFolders/hide',
+            hide: 'mediaManagerFolders/hideFoldersPanel',
             openFolder: 'mediaManagerFolders/openFolder',
-            setManagedFolder: 'mediaManagerFolders/setManagedFolder',
-            showManageModal: 'mediaManagerFolders/showModal',
             openMediaMover: 'mediaManager/openMediaMover',
             openConfirmation: 'mediaManager/openConfirmation',
+            setFolderBeingManaged: 'mediaManagerFolders/setFolderBeingManaged',
+            showManageFolderModal: 'mediaManagerFolders/showManageFolderModal',
         }),
 
         editFolder(folder) {
-            this.setManagedFolder(folder);
-            this.showManageModal();
+            this.setFolderBeingManaged(folder);
+            this.showManageFolderModal();
         },
     },
 };
