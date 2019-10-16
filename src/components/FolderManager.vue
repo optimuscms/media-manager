@@ -66,8 +66,8 @@ export default {
 
     computed: {
         ...mapGetters({
-            isOpen: 'mediaManagerFolders/modalIsVisible',
             currentFolder: 'mediaManagerFolders/currentFolder',
+            isOpen: 'mediaManagerFolders/showManageFolderModal',
         }),
     },
 
@@ -83,17 +83,17 @@ export default {
                 this.$nextTick(() => this.$refs.name.focus());
             } else {
                 this.form = initialValues();
-                this.clearManagedFolder();
+                this.clearFolderBeingManaged();
             }
         },
     },
 
     methods: {
         ...mapActions({
-            close: 'mediaManagerFolders/hideModal',
             addFolder: 'mediaManagerFolders/addFolder',
             updateFolder: 'mediaManagerFolders/updateFolder',
-            clearManagedFolder: 'mediaManagerFolders/clearManagedFolder',
+            close: 'mediaManagerFolders/hideManageFolderModal',
+            clearFolderBeingManaged: 'mediaManagerFolders/clearFolderBeingManaged',
         }),
 
         save() {

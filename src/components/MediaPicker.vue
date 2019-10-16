@@ -84,7 +84,7 @@ export default {
 
     computed: {
         ...mapGetters({
-            getPickerMedia: 'mediaManagerPickers/pickerMedia',
+            getPickerMedia: 'mediaManagerPickers/getPickerMedia',
         }),
 
         initialMedia() {
@@ -132,7 +132,7 @@ export default {
                 });
 
                 if (media.length) {
-                    this.setMediaItems(media);
+                    this.setMedia(media);
                 }
             },
             immediate: true,
@@ -159,15 +159,15 @@ export default {
 
     methods: {
         ...mapActions({
-            openManager: 'mediaManager/open',
-            setMediaItems: 'mediaManagerMedia/set',
+            setMedia: 'mediaManagerMedia/setMedia',
+            openMediaManager: 'mediaManager/openMediaManager',
             setPickerMediaIds: 'mediaManagerPickers/setPickerMediaIds',
             clearPickerMediaIds: 'mediaManagerPickers/clearPickerMediaIds',
             removePickerMediaId: 'mediaManagerPickers/removePickerMediaId',
         }),
 
         open() {
-            this.openManager({
+            this.openMediaManager({
                 pickerId: this.id,
                 limit: this.limit,
                 acceptedExtensions: this.acceptedExtensions,

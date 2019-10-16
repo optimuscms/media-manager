@@ -1,7 +1,7 @@
 <template>
     <modal class="mm-reset" :active="isOpen" @close="close">
         <div class="mm-modal-wrap mm-media-manager-wrap">
-            <folders />
+            <folders-panel />
             <actions-panel />
 
             <div class="mm-media">
@@ -9,7 +9,7 @@
                     <div class="mm-media-header-left">
                         <a
                             class="mm-folders-show mm-icon"
-                            @click="showFolders"
+                            @click="showFoldersPanel"
                         >
                             <icon icon="list-alt" />
                         </a>
@@ -39,7 +39,7 @@
                 </div>
 
                 <div class="mm-media-content">
-                    <media />
+                    <media-panel />
 
                     <media-uploader ref="upload" />
                 </div>
@@ -69,7 +69,7 @@
                 </div>
             </div>
 
-            <folder-manager :item="managedFolder" />
+            <folder-manager :item="folderBeingManaged" />
             <media-mover />
             <confirmation />
         </div>
@@ -85,8 +85,8 @@ import Breadcrumb from './ui/Breadcrumb.vue';
 import Confirmation from './ui/Confirmation.vue';
 import Modal from './ui/Modal.vue';
 
-import Media from './partials/Media.vue';
-import Folders from './partials/Folders.vue';
+import MediaPanel from './partials/Media.vue';
+import FoldersPanel from './partials/Folders.vue';
 import ActionsPanel from './actions-panel/Panel.vue';
 import FolderManager from './FolderManager.vue';
 import MediaMover from './MediaMover.vue';
@@ -98,8 +98,8 @@ export default {
         Confirmation,
         Modal,
 
-        Media,
-        Folders,
+        MediaPanel,
+        FoldersPanel,
         ActionsPanel,
         FolderManager,
         MediaMover,
@@ -108,21 +108,21 @@ export default {
 
     computed: {
         ...mapGetters({
-            limit: 'mediaManager/limit',
-            isOpen: 'mediaManager/isOpen',
-            pickerId: 'mediaManagerPickers/activeId',
-            currentMedia: 'mediaManagerMedia/current',
-            focusedMediaIds: 'mediaManagerMedia/focusedIds',
+            limit: 'mediaManager/mediaSelectionLimit',
+            isOpen: 'mediaManager/mediaManagerIsOpen',
+            currentMedia: 'mediaManagerMedia/currentMedia',
             parentFolder: 'mediaManagerFolders/parentFolder',
-            getPickerMedia: 'mediaManagerPickers/pickerMedia',
-            selectedMediaIds: 'mediaManagerMedia/selectedIds',
-            managedFolder: 'mediaManagerFolders/managedFolder',
             currentFolder: 'mediaManagerFolders/currentFolder',
+            getPickerMedia: 'mediaManagerPickers/getPickerMedia',
+            focusedMediaIds: 'mediaManagerMedia/focusedMediaIds',
             acceptedExtensions: 'mediaManager/acceptedExtensions',
+            currentPickerId: 'mediaManagerPickers/currentPickerId',
+            selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
+            folderBeingManaged: 'mediaManagerFolders/folderBeingManaged',
         }),
 
         pickerMediaCount() {
-            return this.getPickerMedia(this.pickerId).length;
+            return this.getPickerMedia(this.currentPickerId).length;
         },
 
         hasFocusedMedia() {
@@ -164,21 +164,21 @@ export default {
 
     methods: {
         ...mapActions({
-            closeManager: 'mediaManager/close',
             openFolder: 'mediaManagerFolders/openFolder',
-            showFolders: 'mediaManagerFolders/show',
             showActionsPanel: 'mediaManager/showActionsPanel',
+            closeMediaManager: 'mediaManager/closeMediaManager',
+            showFoldersPanel: 'mediaManagerFolders/showFoldersPanel',
             setPickerMediaIds: 'mediaManagerPickers/setPickerMediaIds',
-            clearActivePickerId: 'mediaManagerPickers/clearActiveId',
-            clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedIds',
-            clearSelectedMediaIds: 'mediaManagerMedia/clearSelectedIds',
-            disableMultipleFocus: 'mediaManagerMedia/disableMultipleFocus',
+            clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds',
+            clearCurrentPickerId: 'mediaManagerPickers/clearCurrentPickerId',
+            clearSelectedMediaIds: 'mediaManagerMedia/clearSelectedMediaIds',
+            disableMultipleMediaFocus: 'mediaManagerMedia/disableMultipleMediaFocus',
         }),
 
         confirm() {
             if (! this.insertIsDisabled) {
                 this.setPickerMediaIds({
-                    pickerId: this.pickerId,
+                    pickerId: this.currentPickerId,
                     mediaIds: this.selectedAndFocusedMedia,
                 });
 
@@ -187,12 +187,12 @@ export default {
         },
 
         close() {
-            this.clearActivePickerId();
-            this.disableMultipleFocus();
+            this.clearCurrentPickerId();
+            this.disableMultipleMediaFocus();
             this.clearFocusedMediaIds();
             this.clearSelectedMediaIds();
             this.openFolder(null);
-            this.closeManager();
+            this.closeMediaManager();
         },
     },
 };

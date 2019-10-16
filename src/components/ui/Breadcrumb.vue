@@ -18,7 +18,7 @@ import { mapActions, mapGetters } from 'vuex';
 export default {
     computed: {
         ...mapGetters({
-            openFolders: 'mediaManagerFolders/open',
+            openFolders: 'mediaManagerFolders/openFolders',
             currentFolder: 'mediaManagerFolders/currentFolder',
         }),
     },

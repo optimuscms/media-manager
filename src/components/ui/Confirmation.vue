@@ -44,11 +44,11 @@ export default {
 
     computed: {
         ...mapGetters({
-            folders: 'mediaManagerFolders/list',
             type: 'mediaManager/confirmationType',
+            isOpen: 'mediaManager/showConfirmation',
+            folders: 'mediaManagerFolders/listFolders',
             subject: 'mediaManager/confirmationSubject',
-            isOpen: 'mediaManager/confirmationIsVisible',
-            getAncestorIds: 'mediaManagerFolders/ancestorIds',
+            getAncestorIds: 'mediaManagerFolders/getAncestorIds',
         }),
 
         subjectIsArray() {
@@ -95,10 +95,10 @@ export default {
     methods: {
         ...mapActions({
             close: 'mediaManager/closeConfirmation',
+            removeMedia: 'mediaManagerMedia/removeMedia',
             removeFolders: 'mediaManagerFolders/removeFolders',
-            removeMediaItems: 'mediaManagerMedia/remove',
-            removeMediaInFolders: 'mediaManagerMedia/removeInFolders',
-            clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedIds',
+            clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds',
+            removeMediaInFolders: 'mediaManagerMedia/removeMediaInFolders',
         }),
 
         confirm() {
@@ -121,7 +121,7 @@ export default {
                     apiActions.deleteMedia(mediaId);
                 });
 
-                this.removeMediaItems(this.itemIds);
+                this.removeMedia(this.itemIds);
                 this.clearFocusedMediaIds();
             }
 

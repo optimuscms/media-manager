@@ -13,11 +13,6 @@ export default {
         return client.post(uri, params);
     },
 
-    // // Make a put request
-    // put(uri, params = {}) {
-    //     return client.put(uri, params);
-    // },
-
     // Make a patch request
     update(uri, params = {}) {
         return client.patch(uri, params);

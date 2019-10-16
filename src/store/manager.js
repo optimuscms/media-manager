@@ -6,23 +6,23 @@ const state = {
     limit: 0,
     acceptedExtensions: [],
 
-    actionsPanelIsVisible: false,
+    showActionsPanel: false,
 
+    showMediaMover: false,
     mediaMoverType: '',
     mediaMoverSubject: null,
-    mediaMoverIsVisible: false,
 
+    showConfirmation: false,
     confirmationType: '',
     confirmationSubject: null,
-    confirmationIsVisible: false,
 };
 
 const getters = {
-    isOpen: state => {
+    mediaManagerIsOpen: state => {
         return state.isOpen;
     },
 
-    limit: state => {
+    mediaSelectionLimit: state => {
         return state.limit;
     },
 
@@ -34,31 +34,31 @@ const getters = {
         return state.acceptedExtensions;
     },
 
-    actionsPanelIsVisible: state => state.actionsPanelIsVisible,
+    showActionsPanel: state => state.showActionsPanel,
 
     mediaMoverType: state => state.mediaMoverType,
 
     mediaMoverSubject: state => state.mediaMoverSubject,
 
-    mediaMoverIsVisible: state => state.mediaMoverIsVisible,
+    showMediaMover: state => state.showMediaMover,
 
     confirmationType: state => state.confirmationType,
 
     confirmationSubject: state => state.confirmationSubject,
 
-    confirmationIsVisible: state => state.confirmationIsVisible,
+    showConfirmation: state => state.showConfirmation,
 };
 
 const mutations = {
-    open(state) {
+    openMediaManager(state) {
         state.isOpen = true;
     },
 
-    close(state) {
+    closeMediaManager(state) {
         state.isOpen = false;
     },
 
-    setLimit(state, limit) {
+    setMediaSelectionLimit(state, limit) {
         state.limit = limit;
     },
 
@@ -67,11 +67,11 @@ const mutations = {
     },
 
     showActionsPanel(state) {
-        state.actionsPanelIsVisible = true;
+        state.showActionsPanel = true;
     },
 
     hideActionsPanel(state) {
-        state.actionsPanelIsVisible = false;
+        state.showActionsPanel = false;
     },
 
     setMediaMoverType(state, type) {
@@ -83,11 +83,11 @@ const mutations = {
     },
 
     showMediaMover(state) {
-        state.mediaMoverIsVisible = true;
+        state.showMediaMover = true;
     },
 
     hideMediaMover(state) {
-        state.mediaMoverIsVisible = false;
+        state.showMediaMover = false;
     },
 
     setConfirmationType(state, type) {
@@ -99,31 +99,31 @@ const mutations = {
     },
 
     showConfirmation(state) {
-        state.confirmationIsVisible = true;
+        state.showConfirmation = true;
     },
 
     hideConfirmation(state) {
-        state.confirmationIsVisible = false;
+        state.showConfirmation = false;
     },
 };
 
 const actions = {
-    open({ commit, dispatch, rootGetters }, { pickerId, limit, acceptedExtensions } = {}) {
-        commit('setLimit', limit !== undefined ? limit : 0);
+    openMediaManager({ commit, dispatch, rootGetters }, { pickerId, limit, acceptedExtensions } = {}) {
+        commit('setMediaSelectionLimit', limit !== undefined ? limit : 0);
         commit('setAcceptedExtensions', formatAcceptedExtensions(acceptedExtensions));
-        dispatch('mediaManagerPickers/setActiveId', pickerId, { root: true });
+        dispatch('mediaManagerPickers/setCurrentPickerId', pickerId, { root: true });
 
-        dispatch('mediaManagerMedia/setSelectedIds',
-            rootGetters['mediaManagerPickers/pickerMedia'](pickerId).map(({ id }) => {
+        dispatch('mediaManagerMedia/setSelectedMediaIds',
+            rootGetters['mediaManagerPickers/getPickerMedia'](pickerId).map(({ id }) => {
                 return id;
             }),
             { root: true },
         );
 
-        dispatch('mediaManagerMedia/fetch', null, { root: true });
-        dispatch('mediaManagerFolders/fetch', null, { root: true });
+        dispatch('mediaManagerMedia/fetchMedia', null, { root: true });
+        dispatch('mediaManagerFolders/fetchFolders', null, { root: true });
 
-        commit('open');
+        commit('openMediaManager');
     },
 
     showActionsPanel({ commit }) {
@@ -158,8 +158,8 @@ const actions = {
         commit('hideConfirmation');
     },
 
-    close({ commit }) {
-        commit('close');
+    closeMediaManager({ commit }) {
+        commit('closeMediaManager');
     },
 };
 

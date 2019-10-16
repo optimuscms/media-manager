@@ -83,12 +83,9 @@ export default {
 
     computed: {
         ...mapGetters({
-            limit: 'mediaManager/limit',
-            media: 'mediaManagerMedia/list',
-            isVisible: 'mediaManager/actionsPanelIsVisible',
-            currentMedia: 'mediaManagerMedia/current',
-            focusedMediaIds: 'mediaManagerMedia/focusedIds',
-            selectedMediaIds: 'mediaManagerMedia/selectedIds',
+            isVisible: 'mediaManager/showActionsPanel',
+            currentMedia: 'mediaManagerMedia/currentMedia',
+            focusedMediaIds: 'mediaManagerMedia/focusedMediaIds',
         }),
 
         focusedMediaCount() {
@@ -124,7 +121,6 @@ export default {
 
     methods: {
         ...mapActions({
-            unselectMediaId: 'mediaManagerMedia/unselectId',
             hideActionsPanel: 'mediaManager/hideActionsPanel',
         }),
 

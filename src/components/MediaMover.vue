@@ -81,12 +81,12 @@ export default {
 
     computed: {
         ...mapGetters({
-            folders: 'mediaManagerFolders/list',
             type: 'mediaManager/mediaMoverType',
+            isOpen: 'mediaManager/showMediaMover',
             subject: 'mediaManager/mediaMoverSubject',
-            isOpen: 'mediaManager/mediaMoverIsVisible',
-            getFolder: 'mediaManagerFolders/folder',
-            getMediaItem: 'mediaManagerMedia/item',
+            folders: 'mediaManagerFolders/listFolders',
+            getFolder: 'mediaManagerFolders/getFolder',
+            getMediaItem: 'mediaManagerMedia/getMediaItem',
         }),
 
         groupedFolders() {
@@ -140,9 +140,9 @@ export default {
     methods: {
         ...mapActions({
             close: 'mediaManager/closeMediaMover',
+            moveMediaTo: 'mediaManagerMedia/moveMediaTo',
             moveFoldersTo: 'mediaManagerFolders/moveFoldersTo',
-            moveMediaTo: 'mediaManagerMedia/moveMediaItemsTo',
-            clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedIds',
+            clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds',
         }),
 
         setCurrentFolder(folderId) {
