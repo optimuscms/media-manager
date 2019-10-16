@@ -111,18 +111,18 @@ export default {
             limit: 'mediaManager/mediaSelectionLimit',
             isOpen: 'mediaManager/mediaManagerIsOpen',
             currentMedia: 'mediaManagerMedia/currentMedia',
-            pickerId: 'mediaManagerPickers/activePickerId', // todo change active to current
             parentFolder: 'mediaManagerFolders/parentFolder',
             currentFolder: 'mediaManagerFolders/currentFolder',
             getPickerMedia: 'mediaManagerPickers/getPickerMedia',
             focusedMediaIds: 'mediaManagerMedia/focusedMediaIds',
             acceptedExtensions: 'mediaManager/acceptedExtensions',
+            currentPickerId: 'mediaManagerPickers/currentPickerId',
             selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
             folderBeingManaged: 'mediaManagerFolders/folderBeingManaged',
         }),
 
         pickerMediaCount() {
-            return this.getPickerMedia(this.pickerId).length;
+            return this.getPickerMedia(this.currentPickerId).length;
         },
 
         hasFocusedMedia() {
@@ -169,8 +169,8 @@ export default {
             closeMediaManager: 'mediaManager/closeMediaManager',
             showFoldersPanel: 'mediaManagerFolders/showFoldersPanel',
             setPickerMediaIds: 'mediaManagerPickers/setPickerMediaIds',
-            clearActivePickerId: 'mediaManagerPickers/clearActivePickerId',
             clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds',
+            clearCurrentPickerId: 'mediaManagerPickers/clearCurrentPickerId',
             clearSelectedMediaIds: 'mediaManagerMedia/clearSelectedMediaIds',
             disableMultipleMediaFocus: 'mediaManagerMedia/disableMultipleMediaFocus',
         }),
@@ -178,7 +178,7 @@ export default {
         confirm() {
             if (! this.insertIsDisabled) {
                 this.setPickerMediaIds({
-                    pickerId: this.pickerId,
+                    pickerId: this.currentPickerId,
                     mediaIds: this.selectedAndFocusedMedia,
                 });
 
@@ -187,7 +187,7 @@ export default {
         },
 
         close() {
-            this.clearActivePickerId();
+            this.clearCurrentPickerId();
             this.disableMultipleMediaFocus();
             this.clearFocusedMediaIds();
             this.clearSelectedMediaIds();

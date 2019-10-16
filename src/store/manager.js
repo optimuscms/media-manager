@@ -111,7 +111,7 @@ const actions = {
     openMediaManager({ commit, dispatch, rootGetters }, { pickerId, limit, acceptedExtensions } = {}) {
         commit('setMediaSelectionLimit', limit !== undefined ? limit : 0);
         commit('setAcceptedExtensions', formatAcceptedExtensions(acceptedExtensions));
-        dispatch('mediaManagerPickers/setActivePickerId', pickerId, { root: true });
+        dispatch('mediaManagerPickers/setCurrentPickerId', pickerId, { root: true });
 
         dispatch('mediaManagerMedia/setSelectedMediaIds',
             rootGetters['mediaManagerPickers/getPickerMedia'](pickerId).map(({ id }) => {

@@ -189,7 +189,7 @@ var actions = {
 
     commit('setMediaSelectionLimit', limit !== undefined ? limit : 0);
     commit('setAcceptedExtensions', formatAcceptedExtensions(acceptedExtensions));
-    dispatch('mediaManagerPickers/setActivePickerId', pickerId, {
+    dispatch('mediaManagerPickers/setCurrentPickerId', pickerId, {
       root: true
     });
     dispatch('mediaManagerMedia/setSelectedMediaIds', rootGetters['mediaManagerPickers/getPickerMedia'](pickerId).map(function (_ref3) {
@@ -269,12 +269,12 @@ var managerStore = {
 };
 
 var state$1 = {
-  activeId: null,
+  currentId: null,
   pickersMediaIds: {}
 };
 var getters$1 = {
-  activePickerId: function activePickerId(state) {
-    return state.activeId;
+  currentPickerId: function currentPickerId(state) {
+    return state.currentId;
   },
   getPickerMedia: function getPickerMedia(state, getters, rootState, rootGetters) {
     return function (pickerId) {
@@ -291,8 +291,8 @@ var getters$1 = {
   }
 };
 var mutations$1 = {
-  setActivePickerId: function setActivePickerId(state, id) {
-    state.activeId = id;
+  setCurrentPickerId: function setCurrentPickerId(state, id) {
+    state.currentId = id;
   },
   setPickerMediaIds: function setPickerMediaIds(state, _ref2) {
     var pickerId = _ref2.pickerId,
@@ -311,13 +311,13 @@ var mutations$1 = {
   }
 };
 var actions$1 = {
-  setActivePickerId: function setActivePickerId(_ref4, id) {
+  setCurrentPickerId: function setCurrentPickerId(_ref4, id) {
     var commit = _ref4.commit;
-    commit('setActivePickerId', id || null);
+    commit('setCurrentPickerId', id || null);
   },
-  clearActivePickerId: function clearActivePickerId(_ref5) {
+  clearCurrentPickerId: function clearCurrentPickerId(_ref5) {
     var commit = _ref5.commit;
-    commit('setActivePickerId', null);
+    commit('setCurrentPickerId', null);
   },
   setPickerMediaIds: function setPickerMediaIds(_ref6, _ref7) {
     var commit = _ref6.commit;
@@ -13332,18 +13332,17 @@ var script$f = {
     limit: 'mediaManager/mediaSelectionLimit',
     isOpen: 'mediaManager/mediaManagerIsOpen',
     currentMedia: 'mediaManagerMedia/currentMedia',
-    pickerId: 'mediaManagerPickers/activePickerId',
-    // todo change active to current
     parentFolder: 'mediaManagerFolders/parentFolder',
     currentFolder: 'mediaManagerFolders/currentFolder',
     getPickerMedia: 'mediaManagerPickers/getPickerMedia',
     focusedMediaIds: 'mediaManagerMedia/focusedMediaIds',
     acceptedExtensions: 'mediaManager/acceptedExtensions',
+    currentPickerId: 'mediaManagerPickers/currentPickerId',
     selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
     folderBeingManaged: 'mediaManagerFolders/folderBeingManaged'
   }), {
     pickerMediaCount: function pickerMediaCount() {
-      return this.getPickerMedia(this.pickerId).length;
+      return this.getPickerMedia(this.currentPickerId).length;
     },
     hasFocusedMedia: function hasFocusedMedia() {
       return !!this.focusedMediaIds.length;
@@ -13388,22 +13387,22 @@ var script$f = {
     closeMediaManager: 'mediaManager/closeMediaManager',
     showFoldersPanel: 'mediaManagerFolders/showFoldersPanel',
     setPickerMediaIds: 'mediaManagerPickers/setPickerMediaIds',
-    clearActivePickerId: 'mediaManagerPickers/clearActivePickerId',
     clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds',
+    clearCurrentPickerId: 'mediaManagerPickers/clearCurrentPickerId',
     clearSelectedMediaIds: 'mediaManagerMedia/clearSelectedMediaIds',
     disableMultipleMediaFocus: 'mediaManagerMedia/disableMultipleMediaFocus'
   }), {
     confirm: function confirm() {
       if (!this.insertIsDisabled) {
         this.setPickerMediaIds({
-          pickerId: this.pickerId,
+          pickerId: this.currentPickerId,
           mediaIds: this.selectedAndFocusedMedia
         });
         this.close();
       }
     },
     close: function close() {
-      this.clearActivePickerId();
+      this.clearCurrentPickerId();
       this.disableMultipleMediaFocus();
       this.clearFocusedMediaIds();
       this.clearSelectedMediaIds();

@@ -1,11 +1,11 @@
 const state = {
-    activeId: null,
+    currentId: null,
 
     pickersMediaIds: {},
 };
 
 const getters = {
-    activePickerId: state => state.activeId,
+    currentPickerId: state => state.currentId,
 
     getPickerMedia: (state, getters, rootState, rootGetters) => pickerId => {
         if (pickerId) {
@@ -21,8 +21,8 @@ const getters = {
 };
 
 const mutations = {
-    setActivePickerId(state, id) {
-        state.activeId = id;
+    setCurrentPickerId(state, id) {
+        state.currentId = id;
     },
 
     setPickerMediaIds(state, { pickerId, mediaIds }) {
@@ -44,12 +44,12 @@ const mutations = {
 };
 
 const actions = {
-    setActivePickerId({ commit }, id) {
-        commit('setActivePickerId', id || null);
+    setCurrentPickerId({ commit }, id) {
+        commit('setCurrentPickerId', id || null);
     },
 
-    clearActivePickerId({ commit }) {
-        commit('setActivePickerId', null);
+    clearCurrentPickerId({ commit }) {
+        commit('setCurrentPickerId', null);
     },
 
     setPickerMediaIds({ commit }, { pickerId, mediaIds }) {
