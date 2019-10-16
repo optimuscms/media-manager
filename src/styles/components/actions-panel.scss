@@ -41,6 +41,13 @@
     }
 }
 
+.mm-share-url {
+    opacity: 0;
+    z-index: -1;
+    position: absolute;
+    pointer-events: none;
+}
+
 .mm-actions-panel-content {
     flex-grow: 1;
     overflow: auto;

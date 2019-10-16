@@ -44,7 +44,7 @@
 
                     <a class="mm-dropdown-item" @click="editFolder(folder)">
                         <span class="mm-icon">
-                            <icon icon="pencil-alt" />
+                            <icon icon="pencil-alt" size="sm" />
                         </span>
 
                         <span>Rename</span>
@@ -58,21 +58,23 @@
                         })"
                     >
                         <span class="mm-icon">
-                            <icon icon="reply" />
+                            <icon icon="reply" size="sm" />
                         </span>
 
                         <span>Move</span>
                     </a>
 
+                    <div class="mm-dropdown-divider" />
+
                     <a
-                        class="mm-dropdown-item"
+                        class="mm-dropdown-item mm-text-danger"
                         @click="openConfirmation({
                             type: 'folder',
                             subject: folder,
                         })"
                     >
                         <span class="mm-icon">
-                            <icon icon="trash-alt" />
+                            <icon icon="trash-alt" size="sm" />
                         </span>
 
                         <span>Delete</span>

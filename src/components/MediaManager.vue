@@ -87,7 +87,7 @@ import Modal from './ui/Modal.vue';
 
 import Media from './partials/Media.vue';
 import Folders from './partials/Folders.vue';
-import ActionsPanel from './partials/ActionsPanel.vue';
+import ActionsPanel from './actions-panel/Panel.vue';
 import FolderManager from './FolderManager.vue';
 import MediaMover from './MediaMover.vue';
 import MediaUploader from './MediaUploader.vue';
@@ -143,7 +143,7 @@ export default {
         selectedAndFocusedMedia() {
             return union(
                 this.selectedMediaIds,
-                this.allowedFocusedMediaIds
+                this.allowedFocusedMediaIds,
             );
         },
 
@@ -152,12 +152,13 @@ export default {
         },
 
         insertIsDisabled() {
-            if (this.limitIsExceeded) {
+            if (this.limitIsExceeded || ! this.allowedFocusedMediaIds.length) {
                 return true;
             }
 
-            return ! this.allowedFocusedMediaIds.length
-                && this.selectedMediaIds.length === this.pickerMediaCount;
+            return ! this.allowedFocusedMediaIds.filter(id => {
+                return ! this.selectedMediaIds.includes(id);
+            }).length;
         },
     },
 

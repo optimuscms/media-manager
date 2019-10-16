@@ -2,6 +2,12 @@
     color: $mm-text-danger-color;
 }
 
+a:hover {
+    &.mm-text-danger {
+        color: $mm-text-danger-hover-color;
+    }
+}
+
 .mm-fade-enter-active {
     transition: opacity 300ms;
 }
