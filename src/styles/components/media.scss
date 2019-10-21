@@ -182,6 +182,7 @@
 
 .mm-media-details {
     margin-bottom: 1.5em;
+    word-break: break-all;
     font-size: $mm-font-size-sm;
 
     p:not(:last-child) {
