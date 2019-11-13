@@ -26,7 +26,7 @@ const getters = {
     groupedMedia: state => {
         return mapValues(
             groupBy(state.list, ({ folder_id }) => folder_id),
-            group => sortBy(group, 'name', 'asc')
+            group => sortBy(group, [ ({ name }) => name.toLowerCase() ], 'asc')
         );
     },
 

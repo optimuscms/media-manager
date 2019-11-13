@@ -37,9 +37,11 @@ export default {
         }),
 
         selectedMedia() {
-            return sortBy(this.media.filter(({ id }) => {
-                return this.selectedMediaIds.includes(id);
-            }), 'name', 'asc');
+            return sortBy(
+                this.media.filter(({ id }) => this.selectedMediaIds.includes(id)),
+                [ ({ name }) => name.toLowerCase() ],
+                'asc',
+            );
         },
 
         title() {

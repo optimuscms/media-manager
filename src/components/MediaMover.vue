@@ -100,7 +100,7 @@ export default {
 
             return mapValues(
                 groupBy(folders, ({ parent_id }) => parent_id),
-                group => sortBy(group, 'name', 'asc')
+                group => sortBy(group, [ ({ name }) => name.toLowerCase() ], 'asc'),
             );
         },
 

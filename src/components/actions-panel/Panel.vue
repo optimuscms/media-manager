@@ -101,9 +101,11 @@ export default {
         },
 
         focusedMedia() {
-            return sortBy(this.currentMedia.filter(({ id }) => {
-                return this.focusedMediaIds.includes(id);
-            }), 'name', 'asc');
+            return sortBy(
+                this.currentMedia.filter(({ id }) => this.focusedMediaIds.includes(id)),
+                [ ({ name }) => name.toLowerCase() ],
+                'asc',
+            );
         },
 
         firstFocusedMedia() {

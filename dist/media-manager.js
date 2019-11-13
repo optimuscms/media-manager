@@ -9800,7 +9800,10 @@
         var folder_id = _ref2.folder_id;
         return folder_id;
       }), function (group) {
-        return lodash_3(group, 'name', 'asc');
+        return lodash_3(group, [function (_ref3) {
+          var name = _ref3.name;
+          return name.toLowerCase();
+        }], 'asc');
       });
     },
     currentMedia: function currentMedia(state, getters, rootState, rootGetters) {
@@ -9814,8 +9817,8 @@
     },
     getMediaItem: function getMediaItem(state) {
       return function (mediaId) {
-        return state.list.find(function (_ref3) {
-          var id = _ref3.id;
+        return state.list.find(function (_ref4) {
+          var id = _ref4.id;
           return id === mediaId;
         });
       };
@@ -9843,20 +9846,20 @@
     addMediaItem: function addMediaItem(state, media) {
       state.list.push(media);
     },
-    updateMediaItem: function updateMediaItem(state, _ref4) {
-      var index = _ref4.index,
-          media = _ref4.media;
+    updateMediaItem: function updateMediaItem(state, _ref5) {
+      var index = _ref5.index,
+          media = _ref5.media;
       state.list.splice(index, 1, _objectSpread2({}, state.list[index], {}, media));
     },
     removeMediaInFolders: function removeMediaInFolders(state, folderIds) {
-      state.list = state.list.filter(function (_ref5) {
-        var folder_id = _ref5.folder_id;
+      state.list = state.list.filter(function (_ref6) {
+        var folder_id = _ref6.folder_id;
         return !folderIds.includes(folder_id);
       });
     },
     removeMedia: function removeMedia(state, mediaIds) {
-      state.list = state.list.filter(function (_ref6) {
-        var id = _ref6.id;
+      state.list = state.list.filter(function (_ref7) {
+        var id = _ref7.id;
         return !mediaIds.includes(id);
       });
     },
@@ -9890,11 +9893,11 @@
     }
   };
   var actions$2 = {
-    fetchMedia: function fetchMedia(_ref7, folderId) {
-      var commit = _ref7.commit,
-          getters = _ref7.getters,
-          dispatch = _ref7.dispatch,
-          rootGetters = _ref7.rootGetters;
+    fetchMedia: function fetchMedia(_ref8, folderId) {
+      var commit = _ref8.commit,
+          getters = _ref8.getters,
+          dispatch = _ref8.dispatch,
+          rootGetters = _ref8.rootGetters;
       var cachedFolderIds = rootGetters['mediaManagerFolders/cachedFolderIds'];
 
       if (!getters.isLoading && !cachedFolderIds.includes(folderId)) {
@@ -9910,19 +9913,19 @@
         });
       }
     },
-    setMedia: function setMedia(_ref8, media) {
-      var commit = _ref8.commit;
+    setMedia: function setMedia(_ref9, media) {
+      var commit = _ref9.commit;
       commit('setMedia', media);
     },
-    addMediaItem: function addMediaItem(_ref9, media) {
-      var commit = _ref9.commit;
+    addMediaItem: function addMediaItem(_ref10, media) {
+      var commit = _ref10.commit;
       commit('addMediaItem', media);
     },
-    updateMediaItem: function updateMediaItem(_ref10, _ref11) {
-      var commit = _ref10.commit,
-          getters = _ref10.getters;
-      var id = _ref11.id,
-          media = _ref11.media;
+    updateMediaItem: function updateMediaItem(_ref11, _ref12) {
+      var commit = _ref11.commit,
+          getters = _ref11.getters;
+      var id = _ref12.id,
+          media = _ref12.media;
       var index = getters.findMediaIndex(id);
 
       if (index !== -1) {
@@ -9932,12 +9935,12 @@
         });
       }
     },
-    moveMediaTo: function moveMediaTo(_ref12, _ref13) {
-      var commit = _ref12.commit,
-          getters = _ref12.getters,
-          rootGetters = _ref12.rootGetters;
-      var folderId = _ref13.folderId,
-          mediaIds = _ref13.mediaIds;
+    moveMediaTo: function moveMediaTo(_ref13, _ref14) {
+      var commit = _ref13.commit,
+          getters = _ref13.getters,
+          rootGetters = _ref13.rootGetters;
+      var folderId = _ref14.folderId,
+          mediaIds = _ref14.mediaIds;
       var cachedFolderIds = rootGetters['mediaManagerFolders/cachedFolderIds'];
 
       if (cachedFolderIds.includes(folderId)) {
@@ -9957,25 +9960,25 @@
 
       commit('removeMedia', mediaIds);
     },
-    removeMediaInFolders: function removeMediaInFolders(_ref14, folderIds) {
-      var commit = _ref14.commit;
+    removeMediaInFolders: function removeMediaInFolders(_ref15, folderIds) {
+      var commit = _ref15.commit;
       commit('removeMediaInFolders', folderIds);
     },
-    removeMedia: function removeMedia(_ref15, mediaIds) {
-      var commit = _ref15.commit;
+    removeMedia: function removeMedia(_ref16, mediaIds) {
+      var commit = _ref16.commit;
       commit('removeMedia', mediaIds);
     },
-    enableMultipleMediaFocus: function enableMultipleMediaFocus(_ref16) {
-      var commit = _ref16.commit;
+    enableMultipleMediaFocus: function enableMultipleMediaFocus(_ref17) {
+      var commit = _ref17.commit;
       commit('enableMultipleMediaFocus');
     },
-    disableMultipleMediaFocus: function disableMultipleMediaFocus(_ref17) {
-      var commit = _ref17.commit;
+    disableMultipleMediaFocus: function disableMultipleMediaFocus(_ref18) {
+      var commit = _ref18.commit;
       commit('disableMultipleMediaFocus');
     },
-    focusMediaId: function focusMediaId(_ref18, mediaId) {
-      var commit = _ref18.commit,
-          getters = _ref18.getters;
+    focusMediaId: function focusMediaId(_ref19, mediaId) {
+      var commit = _ref19.commit,
+          getters = _ref19.getters;
 
       if (!getters.isFocusingMultipleMedia) {
         commit('clearFocusedMediaIds');
@@ -9983,32 +9986,32 @@
 
       commit('focusMediaId', mediaId);
     },
-    blurMediaId: function blurMediaId(_ref19, mediaId) {
-      var commit = _ref19.commit;
+    blurMediaId: function blurMediaId(_ref20, mediaId) {
+      var commit = _ref20.commit;
       commit('blurMediaId', mediaId);
     },
-    clearFocusedMediaIds: function clearFocusedMediaIds(_ref20) {
-      var commit = _ref20.commit;
+    clearFocusedMediaIds: function clearFocusedMediaIds(_ref21) {
+      var commit = _ref21.commit;
       commit('clearFocusedMediaIds');
     },
-    setSelectedMediaIds: function setSelectedMediaIds(_ref21, mediaIds) {
-      var commit = _ref21.commit;
+    setSelectedMediaIds: function setSelectedMediaIds(_ref22, mediaIds) {
+      var commit = _ref22.commit;
       commit('setSelectedMediaIds', mediaIds);
     },
-    selectMediaId: function selectMediaId(_ref22, mediaId) {
-      var commit = _ref22.commit;
+    selectMediaId: function selectMediaId(_ref23, mediaId) {
+      var commit = _ref23.commit;
       commit('selectMediaId', mediaId);
     },
-    deselectMediaId: function deselectMediaId(_ref23, mediaId) {
-      var commit = _ref23.commit;
+    deselectMediaId: function deselectMediaId(_ref24, mediaId) {
+      var commit = _ref24.commit;
       commit('deselectMediaIds', [mediaId]);
     },
-    deselectMediaIds: function deselectMediaIds(_ref24, mediaIds) {
-      var commit = _ref24.commit;
+    deselectMediaIds: function deselectMediaIds(_ref25, mediaIds) {
+      var commit = _ref25.commit;
       commit('deselectMediaIds', mediaIds);
     },
-    clearSelectedMediaIds: function clearSelectedMediaIds(_ref25) {
-      var commit = _ref25.commit;
+    clearSelectedMediaIds: function clearSelectedMediaIds(_ref26) {
+      var commit = _ref26.commit;
       commit('setSelectedMediaIds', []);
     }
   };
@@ -10060,13 +10063,16 @@
         var parent_id = _ref2.parent_id;
         return parent_id;
       }), function (group) {
-        return lodash_3(group, 'name', 'asc');
+        return lodash_3(group, [function (_ref3) {
+          var name = _ref3.name;
+          return name.toLowerCase();
+        }], 'asc');
       });
     },
     getFolder: function getFolder(state) {
       return function (folderId) {
-        return state.list.find(function (_ref3) {
-          var id = _ref3.id;
+        return state.list.find(function (_ref4) {
+          var id = _ref4.id;
           return id === folderId;
         });
       };
@@ -10100,8 +10106,8 @@
     getAncestorIds: function getAncestorIds(state, getters) {
       return function (folderId) {
         var ancestorIds = [];
-        var children = state.list.filter(function (_ref4) {
-          var parent_id = _ref4.parent_id;
+        var children = state.list.filter(function (_ref5) {
+          var parent_id = _ref5.parent_id;
           return parent_id === folderId;
         });
 
@@ -10134,9 +10140,9 @@
     addFolder: function addFolder(state, folder) {
       state.list.push(folder);
     },
-    updateFolder: function updateFolder(state, _ref5) {
-      var index = _ref5.index,
-          folder = _ref5.folder;
+    updateFolder: function updateFolder(state, _ref6) {
+      var index = _ref6.index,
+          folder = _ref6.folder;
       state.list.splice(index, 1, _objectSpread2({}, state.list[index], {}, folder));
     },
     openFolder: function openFolder(state, folder) {
@@ -10153,8 +10159,8 @@
       }
     },
     removeFolders: function removeFolders(state, folderIds) {
-      state.list = state.list.filter(function (_ref6) {
-        var id = _ref6.id;
+      state.list = state.list.filter(function (_ref7) {
+        var id = _ref7.id;
         return !folderIds.includes(id);
       });
     },
@@ -10172,17 +10178,17 @@
     }
   };
   var actions$3 = {
-    showFoldersPanel: function showFoldersPanel(_ref7) {
-      var commit = _ref7.commit;
+    showFoldersPanel: function showFoldersPanel(_ref8) {
+      var commit = _ref8.commit;
       commit('showFoldersPanel');
     },
-    hideFoldersPanel: function hideFoldersPanel(_ref8) {
-      var commit = _ref8.commit;
+    hideFoldersPanel: function hideFoldersPanel(_ref9) {
+      var commit = _ref9.commit;
       commit('hideFoldersPanel');
     },
-    fetchFolders: function fetchFolders(_ref9) {
-      var commit = _ref9.commit,
-          getters = _ref9.getters;
+    fetchFolders: function fetchFolders(_ref10) {
+      var commit = _ref10.commit,
+          getters = _ref10.getters;
 
       if (getters.isLoadingFolders) {
         actions$4.getFolders().then(function (folders) {
@@ -10191,15 +10197,15 @@
         });
       }
     },
-    addFolder: function addFolder(_ref10, folder) {
-      var commit = _ref10.commit;
+    addFolder: function addFolder(_ref11, folder) {
+      var commit = _ref11.commit;
       commit('addFolder', folder);
     },
-    updateFolder: function updateFolder(_ref11, _ref12) {
-      var commit = _ref11.commit,
-          getters = _ref11.getters;
-      var id = _ref12.id,
-          folder = _ref12.folder;
+    updateFolder: function updateFolder(_ref12, _ref13) {
+      var commit = _ref12.commit,
+          getters = _ref12.getters;
+      var id = _ref13.id,
+          folder = _ref13.folder;
       var index = getters.findFolderIndex(id);
 
       if (index !== -1) {
@@ -10209,20 +10215,20 @@
         });
       }
     },
-    openFolder: function openFolder(_ref13, folderId) {
-      var commit = _ref13.commit,
-          getters = _ref13.getters;
-      var folder = getters.listFolders.find(function (_ref14) {
-        var id = _ref14.id;
+    openFolder: function openFolder(_ref14, folderId) {
+      var commit = _ref14.commit,
+          getters = _ref14.getters;
+      var folder = getters.listFolders.find(function (_ref15) {
+        var id = _ref15.id;
         return id === folderId;
       });
       commit('openFolder', folder || rootFolder());
     },
-    moveFoldersTo: function moveFoldersTo(_ref15, _ref16) {
-      var commit = _ref15.commit,
-          getters = _ref15.getters;
-      var parentId = _ref16.parentId,
-          folderIds = _ref16.folderIds;
+    moveFoldersTo: function moveFoldersTo(_ref16, _ref17) {
+      var commit = _ref16.commit,
+          getters = _ref16.getters;
+      var parentId = _ref17.parentId,
+          folderIds = _ref17.folderIds;
       folderIds.forEach(function (folderId) {
         var index = getters.findFolderIndex(folderId);
 
@@ -10236,28 +10242,28 @@
         }
       });
     },
-    removeFolders: function removeFolders(_ref17, folderIds) {
-      var commit = _ref17.commit;
+    removeFolders: function removeFolders(_ref18, folderIds) {
+      var commit = _ref18.commit;
       commit('removeFolders', folderIds);
     },
-    setFolderBeingManaged: function setFolderBeingManaged(_ref18, folder) {
-      var commit = _ref18.commit;
+    setFolderBeingManaged: function setFolderBeingManaged(_ref19, folder) {
+      var commit = _ref19.commit;
       commit('setFolderBeingManaged', folder);
     },
-    clearFolderBeingManaged: function clearFolderBeingManaged(_ref19) {
-      var commit = _ref19.commit;
+    clearFolderBeingManaged: function clearFolderBeingManaged(_ref20) {
+      var commit = _ref20.commit;
       commit('setFolderBeingManaged', null);
     },
-    showManageFolderModal: function showManageFolderModal(_ref20) {
-      var commit = _ref20.commit;
+    showManageFolderModal: function showManageFolderModal(_ref21) {
+      var commit = _ref21.commit;
       commit('showManageFolderModal');
     },
-    hideManageFolderModal: function hideManageFolderModal(_ref21) {
-      var commit = _ref21.commit;
+    hideManageFolderModal: function hideManageFolderModal(_ref22) {
+      var commit = _ref22.commit;
       commit('hideManageFolderModal');
     },
-    addCachedFolderId: function addCachedFolderId(_ref22, folderId) {
-      var commit = _ref22.commit;
+    addCachedFolderId: function addCachedFolderId(_ref23, folderId) {
+      var commit = _ref23.commit;
       commit('addCachedFolderId', folderId);
     }
   };
@@ -12233,7 +12239,10 @@
         return lodash_3(this.media.filter(function (_ref) {
           var id = _ref.id;
           return _this.selectedMediaIds.includes(id);
-        }), 'name', 'asc');
+        }), [function (_ref2) {
+          var name = _ref2.name;
+          return name.toLowerCase();
+        }], 'asc');
       },
       title: function title() {
         var title = 'Selected Media';
@@ -12364,13 +12373,16 @@
         return lodash_3(this.currentMedia.filter(function (_ref) {
           var id = _ref.id;
           return _this.focusedMediaIds.includes(id);
-        }), 'name', 'asc');
+        }), [function (_ref2) {
+          var name = _ref2.name;
+          return name.toLowerCase();
+        }], 'asc');
       },
       firstFocusedMedia: function firstFocusedMedia() {
         var _this2 = this;
 
-        return this.focusedMedia.find(function (_ref2) {
-          var id = _ref2.id;
+        return this.focusedMedia.find(function (_ref3) {
+          var id = _ref3.id;
           return id === _this2.focusedMediaIds[0];
         });
       }
@@ -12767,7 +12779,10 @@
           var parent_id = _ref2.parent_id;
           return parent_id;
         }), function (group) {
-          return lodash_3(group, 'name', 'asc');
+          return lodash_3(group, [function (_ref3) {
+            var name = _ref3.name;
+            return name.toLowerCase();
+          }], 'asc');
         });
       },
       currentFolders: function currentFolders() {
@@ -12785,8 +12800,8 @@
       },
       itemIds: function itemIds() {
         if (this.subjectIsArray && this.subjectIsMultiple) {
-          return this.subject.map(function (_ref3) {
-            var id = _ref3.id;
+          return this.subject.map(function (_ref4) {
+            var id = _ref4.id;
             return id;
           });
         }
@@ -12810,8 +12825,8 @@
     }), {
       setCurrentFolder: function setCurrentFolder(folderId) {
         if (folderId) {
-          this.currentFolder = this.folders.find(function (_ref4) {
-            var id = _ref4.id;
+          this.currentFolder = this.folders.find(function (_ref5) {
+            var id = _ref5.id;
             return id === folderId;
           });
         } else {
@@ -13576,7 +13591,10 @@
         return [this.media];
       },
       pickerMedia: function pickerMedia() {
-        return lodash_3(this.getPickerMedia(this.id), 'name', 'asc');
+        return lodash_3(this.getPickerMedia(this.id), [function (_ref) {
+          var name = _ref.name;
+          return name.toLowerCase();
+        }], 'asc');
       },
       firstMedia: function firstMedia() {
         if (this.pickerMedia.length) {
@@ -13597,8 +13615,8 @@
         handler: function handler(media) {
           this.setPickerMediaIds({
             pickerId: this.id,
-            mediaIds: media.map(function (_ref) {
-              var id = _ref.id;
+            mediaIds: media.map(function (_ref2) {
+              var id = _ref2.id;
               return id;
             })
           });
@@ -13610,8 +13628,8 @@
         immediate: true
       },
       pickerMedia: function pickerMedia(_pickerMedia) {
-        var selectedIds = _pickerMedia.map(function (_ref2) {
-          var id = _ref2.id;
+        var selectedIds = _pickerMedia.map(function (_ref3) {
+          var id = _ref3.id;
           return id;
         });
 

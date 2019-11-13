@@ -100,7 +100,11 @@ export default {
         },
 
         pickerMedia() {
-            return sortBy(this.getPickerMedia(this.id), 'name', 'asc');
+            return sortBy(
+                this.getPickerMedia(this.id),
+                [ ({ name }) => name.toLowerCase() ],
+                'asc',
+            );
         },
 
         firstMedia() {

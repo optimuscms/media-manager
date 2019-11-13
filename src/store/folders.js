@@ -31,7 +31,7 @@ const getters = {
     groupedFolders: state => {
         return mapValues(
             groupBy(state.list, ({ parent_id }) => parent_id),
-            group => sortBy(group, 'name', 'asc')
+            group => sortBy(group, [ ({ name }) => name.toLowerCase() ], 'asc')
         );
     },
 
