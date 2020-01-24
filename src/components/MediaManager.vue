@@ -59,7 +59,10 @@
                             :disabled="limitIsExceeded"
                             @click="confirm"
                         >
-                            Insert ({{ `${selectedAndFocusedMedia.length}/${limit}` }})
+                            Insert
+                            <template v-if="limit">
+                                ({{ `${selectedAndFocusedMedia.length}/${limit}` }})
+                            </template>
                         </a>
 
                         <a class="mm-button" @click="close">

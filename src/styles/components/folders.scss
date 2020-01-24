@@ -81,6 +81,22 @@
     flex-grow: 1;
     overflow: auto;
     padding: 0.5em 1.5em;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.6) $mm-folders-background-color;
+
+    &::-webkit-scrollbar {
+        width: 11px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $mm-folders-background-color;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: rgba(0, 0, 0, 0.6);
+        border: 3px solid $mm-folders-background-color;
+    }
 
     &.loading {
         position: relative;
@@ -126,11 +142,11 @@
                 content: '';
                 position: absolute;
                 background-size: 8px 1px;
-                background-image: linear-gradient(to right, 
-                    rgba(255, 255, 255, 0.4) 0px, 
+                background-image: linear-gradient(to right,
+                    rgba(255, 255, 255, 0.4) 0px,
                     rgba(255, 255, 255, 0) 1px,
                     rgba(255, 255, 255, 0) 100%
-                ); 
+                );
             }
         }
 

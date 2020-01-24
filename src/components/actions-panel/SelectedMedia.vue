@@ -4,21 +4,23 @@
             Inserted Media
         </h4>
 
-        <div
-            v-for="mediaItem in selectedMedia"
-            :key="mediaItem.id"
-            class="mm-actions-media-item"
-        >
-            <a @click="focusSelectedMedia(mediaItem)">
-                {{ mediaItem.name }}
-            </a>
-
-            <a
-                class="mm-icon"
-                @click="deselectMediaId(mediaItem.id)"
+        <div class="mm-selected-media-content">
+            <div
+                v-for="mediaItem in selectedMedia"
+                :key="mediaItem.id"
+                class="mm-actions-media-item"
             >
-                <icon icon="times" size="sm" />
-            </a>
+                <a @click="focusSelectedMedia(mediaItem)">
+                    {{ mediaItem.name }}
+                </a>
+
+                <a
+                    class="mm-icon"
+                    @click="deselectMediaId(mediaItem.id)"
+                >
+                    <icon icon="times" size="sm" />
+                </a>
+            </div>
         </div>
     </div>
 </template>

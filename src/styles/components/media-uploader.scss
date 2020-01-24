@@ -34,6 +34,22 @@
     overflow: auto;
     max-height: 10em;
     margin-top: 0.75em;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.6) $mm-upload-background-color;
+
+    &::-webkit-scrollbar {
+        width: 11px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $mm-upload-background-color;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: rgba(0, 0, 0, 0.6);
+        border: 3px solid $mm-upload-background-color;
+    }
 }
 
 .mm-upload-item-wrap {

@@ -26,10 +26,26 @@
     margin: 0 auto;
     overflow: auto;
     position: relative;
+    scrollbar-width: thin;
     border-radius: $mm-modal-border-radius;
     background-color: $mm-modal-background-color;
+    scrollbar-color: rgba(0, 0, 0, 0.6) $mm-white;
     max-width: calc(100vw - #{$mm-modal-padding} * 2);
     max-height: calc(100vh - #{$mm-modal-padding} * 2);
+
+    &::-webkit-scrollbar {
+        width: 11px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $mm-white;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        border: 3px solid $mm-white;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
 }
 
 .mm-modal-header {
