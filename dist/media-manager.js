@@ -12244,14 +12244,8 @@
           return name.toLowerCase();
         }], 'asc');
       },
-      title: function title() {
-        var title = 'Selected Media';
-
-        if (this.mediaSelectionLimit) {
-          title += " (".concat(this.selectedMedia.length, "/").concat(this.mediaSelectionLimit, ")");
-        }
-
-        return title;
+      showSelectedMedia: function showSelectedMedia() {
+        return this.selectedMedia.length && this.mediaSelectionLimit !== 0;
       }
     }),
     methods: _objectSpread2({}, vuex.mapActions({
@@ -12286,11 +12280,11 @@
 
     var _c = _vm._self._c || _h;
 
-    return _vm.mediaSelectionLimit !== 0 ? _c("div", {
+    return _vm.showSelectedMedia ? _c("div", {
       staticClass: "mm-selected-media"
     }, [_c("h4", {
       staticClass: "mm-actions-panel-title"
-    }, [_vm._v("\n        " + _vm._s(_vm.title) + "\n    ")]), _vm._v(" "), _vm._l(_vm.selectedMedia, function (mediaItem) {
+    }, [_vm._v("\n        Inserted Media\n    ")]), _vm._v(" "), _vm._l(_vm.selectedMedia, function (mediaItem) {
       return _c("div", {
         key: mediaItem.id,
         staticClass: "mm-actions-media-item"
@@ -13366,7 +13360,7 @@
       hasFocusedMedia: function hasFocusedMedia() {
         return !!this.focusedMediaIds.length;
       },
-      allowedFocusedMediaIds: function allowedFocusedMediaIds() {
+      selectableFocusedMediaIds: function selectableFocusedMediaIds() {
         var _this = this;
 
         if (this.acceptedExtensions) {
@@ -13383,21 +13377,17 @@
         return this.focusedMediaIds;
       },
       selectedAndFocusedMedia: function selectedAndFocusedMedia() {
-        return lodash_4(this.selectedMediaIds, this.allowedFocusedMediaIds);
+        return lodash_4(this.selectedMediaIds, this.selectableFocusedMediaIds);
       },
       limitIsExceeded: function limitIsExceeded() {
         return this.limit && this.selectedAndFocusedMedia.length > this.limit;
       },
-      insertIsDisabled: function insertIsDisabled() {
+      focusedMediaHasChanged: function focusedMediaHasChanged() {
         var _this2 = this;
 
-        if (this.limitIsExceeded || !this.allowedFocusedMediaIds.length) {
-          return true;
-        }
-
-        return !this.allowedFocusedMediaIds.filter(function (id) {
+        return this.selectableFocusedMediaIds.filter(function (id) {
           return !_this2.selectedMediaIds.includes(id);
-        }).length;
+        }).length > 0;
       }
     }),
     methods: _objectSpread2({}, vuex.mapActions({
@@ -13412,13 +13402,14 @@
       disableMultipleMediaFocus: 'mediaManagerMedia/disableMultipleMediaFocus'
     }), {
       confirm: function confirm() {
-        if (!this.insertIsDisabled) {
+        if (!this.limitIsExceeded && this.focusedMediaHasChanged) {
           this.setPickerMediaIds({
             pickerId: this.currentPickerId,
             mediaIds: this.selectedAndFocusedMedia
           });
-          this.close();
         }
+
+        this.close();
       },
       close: function close() {
         this.clearCurrentPickerId();
@@ -13507,12 +13498,12 @@
     }, [_vm.limit !== 0 ? _c("a", {
       staticClass: "mm-button confirm",
       attrs: {
-        disabled: _vm.insertIsDisabled
+        disabled: _vm.limitIsExceeded
       },
       on: {
         click: _vm.confirm
       }
-    }, [_vm._v("\n                        Insert\n                    ")]) : _vm._e(), _vm._v(" "), _c("a", {
+    }, [_vm._v("\n                        Insert (" + _vm._s(_vm.selectedAndFocusedMedia.length + "/" + _vm.limit) + ")\n                    ")]) : _vm._e(), _vm._v(" "), _c("a", {
       staticClass: "mm-button",
       on: {
         click: _vm.close

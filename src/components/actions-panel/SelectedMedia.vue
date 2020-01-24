@@ -1,7 +1,7 @@
 <template>
-    <div v-if="mediaSelectionLimit !== 0" class="mm-selected-media">
+    <div v-if="showSelectedMedia" class="mm-selected-media">
         <h4 class="mm-actions-panel-title">
-            {{ title }}
+            Inserted Media
         </h4>
 
         <div
@@ -44,14 +44,9 @@ export default {
             );
         },
 
-        title() {
-            let title = 'Selected Media';
-
-            if (this.mediaSelectionLimit) {
-                title += ` (${this.selectedMedia.length}/${this.mediaSelectionLimit})`;
-            }
-
-            return title;
+        showSelectedMedia() {
+            return this.selectedMedia.length
+                && (this.mediaSelectionLimit !== 0);
         },
     },
 

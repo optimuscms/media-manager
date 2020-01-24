@@ -51,6 +51,22 @@
 .mm-actions-panel-content {
     flex-grow: 1;
     overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.6) $mm-actions-panel-background-color;
+
+    &::-webkit-scrollbar {
+        width: 11px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: $mm-actions-panel-background-color;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        border-radius: 4px;
+        background-color: rgba(0, 0, 0, 0.6);
+        border: 3px solid $mm-actions-panel-background-color;
+    }
 }
 
 .mm-selected-media {
@@ -104,12 +120,12 @@
             content: '';
             position: absolute;
             background-size: 8px 1px;
-            background-image: linear-gradient(to right, 
-                $mm-grey-700 0px, 
+            background-image: linear-gradient(to right,
+                $mm-grey-700 0px,
                 $mm-grey-700 1px,
                 transparent 1px,
                 transparent 100%
-            ); 
+            );
         }
     }
 }

@@ -56,10 +56,10 @@
                         <a
                             v-if="limit !== 0"
                             class="mm-button confirm"
-                            :disabled="insertIsDisabled"
+                            :disabled="limitIsExceeded"
                             @click="confirm"
                         >
-                            Insert
+                            Insert ({{ `${selectedAndFocusedMedia.length}/${limit}` }})
                         </a>
 
                         <a class="mm-button" @click="close">
@@ -129,7 +129,7 @@ export default {
             return !! this.focusedMediaIds.length;
         },
 
-        allowedFocusedMediaIds() {
+        selectableFocusedMediaIds() {
             if (this.acceptedExtensions) {
                 return this.currentMedia.filter(({ id, extension }) => {
                     return this.focusedMediaIds.includes(id)
@@ -143,22 +143,19 @@ export default {
         selectedAndFocusedMedia() {
             return union(
                 this.selectedMediaIds,
-                this.allowedFocusedMediaIds,
+                this.selectableFocusedMediaIds,
             );
         },
 
         limitIsExceeded() {
-            return this.limit && (this.selectedAndFocusedMedia.length > this.limit);
+            return this.limit
+                && (this.selectedAndFocusedMedia.length > this.limit);
         },
 
-        insertIsDisabled() {
-            if (this.limitIsExceeded || ! this.allowedFocusedMediaIds.length) {
-                return true;
-            }
-
-            return ! this.allowedFocusedMediaIds.filter(id => {
+        focusedMediaHasChanged() {
+            return this.selectableFocusedMediaIds.filter(id => {
                 return ! this.selectedMediaIds.includes(id);
-            }).length;
+            }).length > 0;
         },
     },
 
@@ -176,14 +173,14 @@ export default {
         }),
 
         confirm() {
-            if (! this.insertIsDisabled) {
+            if (! this.limitIsExceeded && this.focusedMediaHasChanged) {
                 this.setPickerMediaIds({
                     pickerId: this.currentPickerId,
                     mediaIds: this.selectedAndFocusedMedia,
                 });
-
-                this.close();
             }
+
+            this.close();
         },
 
         close() {
