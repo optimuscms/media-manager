@@ -12280,7 +12280,9 @@ var __vue_render__$9 = function __vue_render__() {
     staticClass: "mm-selected-media"
   }, [_c("h4", {
     staticClass: "mm-actions-panel-title"
-  }, [_vm._v("\n        Inserted Media\n    ")]), _vm._v(" "), _vm._l(_vm.selectedMedia, function (mediaItem) {
+  }, [_vm._v("\n        Inserted Media\n    ")]), _vm._v(" "), _c("div", {
+    staticClass: "mm-selected-media-content"
+  }, _vm._l(_vm.selectedMedia, function (mediaItem) {
     return _c("div", {
       key: mediaItem.id,
       staticClass: "mm-actions-media-item"
@@ -12290,7 +12292,7 @@ var __vue_render__$9 = function __vue_render__() {
           return _vm.focusSelectedMedia(mediaItem);
         }
       }
-    }, [_vm._v("\n            " + _vm._s(mediaItem.name) + "\n        ")]), _vm._v(" "), _c("a", {
+    }, [_vm._v("\n                " + _vm._s(mediaItem.name) + "\n            ")]), _vm._v(" "), _c("a", {
       staticClass: "mm-icon",
       on: {
         click: function click($event) {
@@ -12303,7 +12305,7 @@ var __vue_render__$9 = function __vue_render__() {
         size: "sm"
       }
     })], 1)]);
-  })], 2) : _vm._e();
+  }), 0)]) : _vm._e();
 };
 
 var __vue_staticRenderFns__$9 = [];
@@ -13499,7 +13501,7 @@ var __vue_render__$f = function __vue_render__() {
     on: {
       click: _vm.confirm
     }
-  }, [_vm._v("\n                        Insert (" + _vm._s(_vm.selectedAndFocusedMedia.length + "/" + _vm.limit) + ")\n                    ")]) : _vm._e(), _vm._v(" "), _c("a", {
+  }, [_vm._v("\n                        Insert\n                        "), _vm.limit ? [_vm._v("\n                            (" + _vm._s(_vm.selectedAndFocusedMedia.length + "/" + _vm.limit) + ")\n                        ")] : _vm._e()], 2) : _vm._e(), _vm._v(" "), _c("a", {
     staticClass: "mm-button",
     on: {
       click: _vm.close
