@@ -1,6 +1,7 @@
 .mm-media-manager-wrap {
     height: 100%;
     display: flex;
+    overflow-x: hidden;
     position: relative;
     background-color: transparent;
     min-height: calc(100vh - #{$mm-modal-padding});

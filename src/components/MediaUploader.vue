@@ -168,7 +168,7 @@ export default {
                         this.updateFile(id, {
                             uploading: true,
                             progress: Math.round(
-                                (progressEvent.loaded * 100) / progressEvent.total
+                                (progressEvent.loaded * 100) / progressEvent.total,
                             ),
                         });
                     },

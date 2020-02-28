@@ -32,7 +32,7 @@
                     <a
                         v-if="hasFocusedMedia"
                         class="mm-actions-panel-show mm-icon"
-                        @click="showActionsPanel"
+                        @click="toggleActionsPanel"
                     >
                         <icon icon="info-circle" />
                     </a>
@@ -121,6 +121,7 @@ export default {
             acceptedExtensions: 'mediaManager/acceptedExtensions',
             currentPickerId: 'mediaManagerPickers/currentPickerId',
             selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
+            actionsPanelIsVisible: 'mediaManager/showActionsPanel',
             folderBeingManaged: 'mediaManagerFolders/folderBeingManaged',
         }),
 
@@ -166,6 +167,7 @@ export default {
         ...mapActions({
             openFolder: 'mediaManagerFolders/openFolder',
             showActionsPanel: 'mediaManager/showActionsPanel',
+            hideActionsPanel: 'mediaManager/hideActionsPanel',
             closeMediaManager: 'mediaManager/closeMediaManager',
             showFoldersPanel: 'mediaManagerFolders/showFoldersPanel',
             setPickerMediaIds: 'mediaManagerPickers/setPickerMediaIds',
@@ -174,6 +176,14 @@ export default {
             clearSelectedMediaIds: 'mediaManagerMedia/clearSelectedMediaIds',
             disableMultipleMediaFocus: 'mediaManagerMedia/disableMultipleMediaFocus',
         }),
+
+        toggleActionsPanel() {
+            if (this.actionsPanelIsVisible) {
+                return this.hideActionsPanel();
+            }
+
+            return this.showActionsPanel();
+        },
 
         confirm() {
             if (! this.limitIsExceeded && this.focusedMediaHasChanged) {

@@ -2,11 +2,13 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vuex'), require('moment'), require('axios')) :
   typeof define === 'function' && define.amd ? define(['exports', 'vuex', 'moment', 'axios'], factory) :
   (global = global || self, factory(global.MediaManager = {}, global.Vuex, global.moment, global.axios));
-}(this, function (exports, vuex, moment, axios$1) { 'use strict';
+}(this, (function (exports, vuex, moment, axios$1) { 'use strict';
 
   moment = moment && moment.hasOwnProperty('default') ? moment['default'] : moment;
 
   function _typeof(obj) {
+    "@babel/helpers - typeof";
+
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
       _typeof = function (obj) {
         return typeof obj;
@@ -54,13 +56,13 @@
       var source = arguments[i] != null ? arguments[i] : {};
 
       if (i % 2) {
-        ownKeys(source, true).forEach(function (key) {
+        ownKeys(Object(source), true).forEach(function (key) {
           _defineProperty(target, key, source[key]);
         });
       } else if (Object.getOwnPropertyDescriptors) {
         Object.defineProperties(target, Object.getOwnPropertyDescriptors(source));
       } else {
-        ownKeys(source).forEach(function (key) {
+        ownKeys(Object(source)).forEach(function (key) {
           Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key));
         });
       }
@@ -10705,9 +10707,7 @@
 
   var styles$3 = namespace.styles;
 
-  var Library =
-  /*#__PURE__*/
-  function () {
+  var Library = /*#__PURE__*/function () {
     function Library() {
       _classCallCheck(this, Library);
 
@@ -10898,90 +10898,80 @@
     })
   };
 
-  function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier
-  /* server only */
-  , shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
-    if (typeof shadowMode !== 'boolean') {
-      createInjectorSSR = createInjector;
-      createInjector = shadowMode;
-      shadowMode = false;
-    } // Vue.extend constructor export interop.
-
-
-    var options = typeof script === 'function' ? script.options : script; // render functions
-
-    if (template && template.render) {
-      options.render = template.render;
-      options.staticRenderFns = template.staticRenderFns;
-      options._compiled = true; // functional template
-
-      if (isFunctionalTemplate) {
-        options.functional = true;
+  function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
+      if (typeof shadowMode !== 'boolean') {
+          createInjectorSSR = createInjector;
+          createInjector = shadowMode;
+          shadowMode = false;
       }
-    } // scopedId
-
-
-    if (scopeId) {
-      options._scopeId = scopeId;
-    }
-
-    var hook;
-
-    if (moduleIdentifier) {
-      // server build
-      hook = function hook(context) {
-        // 2.3 injection
-        context = context || // cached call
-        this.$vnode && this.$vnode.ssrContext || // stateful
-        this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext; // functional
-        // 2.2 with runInNewContext: true
-
-        if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
-          context = __VUE_SSR_CONTEXT__;
-        } // inject component styles
-
-
-        if (style) {
-          style.call(this, createInjectorSSR(context));
-        } // register component module identifier for async chunk inference
-
-
-        if (context && context._registeredComponents) {
-          context._registeredComponents.add(moduleIdentifier);
-        }
-      }; // used by ssr in case component is cached and beforeCreate
-      // never gets called
-
-
-      options._ssrRegister = hook;
-    } else if (style) {
-      hook = shadowMode ? function () {
-        style.call(this, createInjectorShadow(this.$root.$options.shadowRoot));
-      } : function (context) {
-        style.call(this, createInjector(context));
-      };
-    }
-
-    if (hook) {
-      if (options.functional) {
-        // register for functional component in vue file
-        var originalRender = options.render;
-
-        options.render = function renderWithStyleInjection(h, context) {
-          hook.call(context);
-          return originalRender(h, context);
-        };
-      } else {
-        // inject component registration as beforeCreate hook
-        var existing = options.beforeCreate;
-        options.beforeCreate = existing ? [].concat(existing, hook) : [hook];
+      // Vue.extend constructor export interop.
+      const options = typeof script === 'function' ? script.options : script;
+      // render functions
+      if (template && template.render) {
+          options.render = template.render;
+          options.staticRenderFns = template.staticRenderFns;
+          options._compiled = true;
+          // functional template
+          if (isFunctionalTemplate) {
+              options.functional = true;
+          }
       }
-    }
-
-    return script;
+      // scopedId
+      if (scopeId) {
+          options._scopeId = scopeId;
+      }
+      let hook;
+      if (moduleIdentifier) {
+          // server build
+          hook = function (context) {
+              // 2.3 injection
+              context =
+                  context || // cached call
+                      (this.$vnode && this.$vnode.ssrContext) || // stateful
+                      (this.parent && this.parent.$vnode && this.parent.$vnode.ssrContext); // functional
+              // 2.2 with runInNewContext: true
+              if (!context && typeof __VUE_SSR_CONTEXT__ !== 'undefined') {
+                  context = __VUE_SSR_CONTEXT__;
+              }
+              // inject component styles
+              if (style) {
+                  style.call(this, createInjectorSSR(context));
+              }
+              // register component module identifier for async chunk inference
+              if (context && context._registeredComponents) {
+                  context._registeredComponents.add(moduleIdentifier);
+              }
+          };
+          // used by ssr in case component is cached and beforeCreate
+          // never gets called
+          options._ssrRegister = hook;
+      }
+      else if (style) {
+          hook = shadowMode
+              ? function (context) {
+                  style.call(this, createInjectorShadow(context, this.$root.$options.shadowRoot));
+              }
+              : function (context) {
+                  style.call(this, createInjector(context));
+              };
+      }
+      if (hook) {
+          if (options.functional) {
+              // register for functional component in vue file
+              const originalRender = options.render;
+              options.render = function renderWithStyleInjection(h, context) {
+                  hook.call(context);
+                  return originalRender(h, context);
+              };
+          }
+          else {
+              // inject component registration as beforeCreate hook
+              const existing = options.beforeCreate;
+              options.beforeCreate = existing ? [].concat(existing, hook) : [hook];
+          }
+      }
+      return script;
   }
-
-  var normalizeComponent_1 = normalizeComponent;
 
   /* script */
   var __vue_script__ = script;
@@ -11030,10 +11020,12 @@
 
   /* style inject SSR */
 
-  var Breadcrumb = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__ = normalizeComponent({
     render: __vue_render__,
     staticRenderFns: __vue_staticRenderFns__
-  }, __vue_inject_styles__, __vue_script__, __vue_scope_id__, __vue_is_functional_template__, __vue_module_identifier__, undefined, undefined);
+  }, __vue_inject_styles__, __vue_script__, __vue_scope_id__, __vue_is_functional_template__, __vue_module_identifier__, false, undefined, undefined, undefined);
 
   //
   //
@@ -11099,14 +11091,16 @@
 
   /* style inject SSR */
 
-  var Modal = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$1 = normalizeComponent({
     render: __vue_render__$1,
     staticRenderFns: __vue_staticRenderFns__$1
-  }, __vue_inject_styles__$1, __vue_script__$1, __vue_scope_id__$1, __vue_is_functional_template__$1, __vue_module_identifier__$1, undefined, undefined);
+  }, __vue_inject_styles__$1, __vue_script__$1, __vue_scope_id__$1, __vue_is_functional_template__$1, __vue_module_identifier__$1, false, undefined, undefined, undefined);
 
   var script$2 = {
     components: {
-      Modal: Modal
+      Modal: __vue_component__$1
     },
     computed: _objectSpread2({}, vuex.mapGetters({
       type: 'mediaManager/confirmationType',
@@ -11244,10 +11238,12 @@
 
   /* style inject SSR */
 
-  var Confirmation = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$2 = normalizeComponent({
     render: __vue_render__$2,
     staticRenderFns: __vue_staticRenderFns__$2
-  }, __vue_inject_styles__$2, __vue_script__$2, __vue_scope_id__$2, __vue_is_functional_template__$2, __vue_module_identifier__$2, undefined, undefined);
+  }, __vue_inject_styles__$2, __vue_script__$2, __vue_scope_id__$2, __vue_is_functional_template__$2, __vue_module_identifier__$2, false, undefined, undefined, undefined);
 
   var script$3 = {
     computed: _objectSpread2({}, vuex.mapGetters({
@@ -11429,10 +11425,12 @@
 
   /* style inject SSR */
 
-  var MediaPanel = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$3 = normalizeComponent({
     render: __vue_render__$3,
     staticRenderFns: __vue_staticRenderFns__$3
-  }, __vue_inject_styles__$3, __vue_script__$3, __vue_scope_id__$3, __vue_is_functional_template__$3, __vue_module_identifier__$3, undefined, undefined);
+  }, __vue_inject_styles__$3, __vue_script__$3, __vue_scope_id__$3, __vue_is_functional_template__$3, __vue_module_identifier__$3, false, undefined, undefined, undefined);
 
   //
   //
@@ -11537,14 +11535,16 @@
 
   /* style inject SSR */
 
-  var Dropdown = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$4 = normalizeComponent({
     render: __vue_render__$4,
     staticRenderFns: __vue_staticRenderFns__$4
-  }, __vue_inject_styles__$4, __vue_script__$4, __vue_scope_id__$4, __vue_is_functional_template__$4, __vue_module_identifier__$4, undefined, undefined);
+  }, __vue_inject_styles__$4, __vue_script__$4, __vue_scope_id__$4, __vue_is_functional_template__$4, __vue_module_identifier__$4, false, undefined, undefined, undefined);
 
   var script$5 = {
     components: {
-      Dropdown: Dropdown
+      Dropdown: __vue_component__$4
     },
     computed: _objectSpread2({}, vuex.mapGetters({
       childFolders: 'mediaManagerFolders/childFolders',
@@ -11731,10 +11731,12 @@
 
   /* style inject SSR */
 
-  var FoldersPanel = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$5 = normalizeComponent({
     render: __vue_render__$5,
     staticRenderFns: __vue_staticRenderFns__$5
-  }, __vue_inject_styles__$5, __vue_script__$5, __vue_scope_id__$5, __vue_is_functional_template__$5, __vue_module_identifier__$5, undefined, undefined);
+  }, __vue_inject_styles__$5, __vue_script__$5, __vue_scope_id__$5, __vue_is_functional_template__$5, __vue_module_identifier__$5, false, undefined, undefined, undefined);
 
   //
   var script$6 = {
@@ -11787,14 +11789,16 @@
 
   /* style inject SSR */
 
-  var MediaDetails = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$6 = normalizeComponent({
     render: __vue_render__$6,
     staticRenderFns: __vue_staticRenderFns__$6
-  }, __vue_inject_styles__$6, __vue_script__$6, __vue_scope_id__$6, __vue_is_functional_template__$6, __vue_module_identifier__$6, undefined, undefined);
+  }, __vue_inject_styles__$6, __vue_script__$6, __vue_scope_id__$6, __vue_is_functional_template__$6, __vue_module_identifier__$6, false, undefined, undefined, undefined);
 
   var script$7 = {
     components: {
-      Dropdown: Dropdown
+      Dropdown: __vue_component__$4
     },
     props: {
       media: {
@@ -11946,10 +11950,12 @@
 
   /* style inject SSR */
 
-  var MediaDropdown = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$7 = normalizeComponent({
     render: __vue_render__$7,
     staticRenderFns: __vue_staticRenderFns__$7
-  }, __vue_inject_styles__$7, __vue_script__$7, __vue_scope_id__$7, __vue_is_functional_template__$7, __vue_module_identifier__$7, undefined, undefined);
+  }, __vue_inject_styles__$7, __vue_script__$7, __vue_scope_id__$7, __vue_is_functional_template__$7, __vue_module_identifier__$7, false, undefined, undefined, undefined);
 
   var formMixin = {
     props: {
@@ -12221,10 +12227,12 @@
 
   /* style inject SSR */
 
-  var MediaForm = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$8 = normalizeComponent({
     render: __vue_render__$8,
     staticRenderFns: __vue_staticRenderFns__$8
-  }, __vue_inject_styles__$8, __vue_script__$8, __vue_scope_id__$8, __vue_is_functional_template__$8, __vue_module_identifier__$8, undefined, undefined);
+  }, __vue_inject_styles__$8, __vue_script__$8, __vue_scope_id__$8, __vue_is_functional_template__$8, __vue_module_identifier__$8, false, undefined, undefined, undefined);
 
   var script$9 = {
     computed: _objectSpread2({}, vuex.mapGetters({
@@ -12330,17 +12338,19 @@
 
   /* style inject SSR */
 
-  var SelectedMedia = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$9 = normalizeComponent({
     render: __vue_render__$9,
     staticRenderFns: __vue_staticRenderFns__$9
-  }, __vue_inject_styles__$9, __vue_script__$9, __vue_scope_id__$9, __vue_is_functional_template__$9, __vue_module_identifier__$9, undefined, undefined);
+  }, __vue_inject_styles__$9, __vue_script__$9, __vue_scope_id__$9, __vue_is_functional_template__$9, __vue_module_identifier__$9, false, undefined, undefined, undefined);
 
   var script$a = {
     components: {
-      MediaDetails: MediaDetails,
-      MediaDropdown: MediaDropdown,
-      MediaForm: MediaForm,
-      SelectedMedia: SelectedMedia
+      MediaDetails: __vue_component__$6,
+      MediaDropdown: __vue_component__$7,
+      MediaForm: __vue_component__$8,
+      SelectedMedia: __vue_component__$9
     },
     data: function data() {
       return {
@@ -12492,10 +12502,12 @@
 
   /* style inject SSR */
 
-  var ActionsPanel = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$a = normalizeComponent({
     render: __vue_render__$a,
     staticRenderFns: __vue_staticRenderFns__$a
-  }, __vue_inject_styles__$a, __vue_script__$a, __vue_scope_id__$a, __vue_is_functional_template__$a, __vue_module_identifier__$a, undefined, undefined);
+  }, __vue_inject_styles__$a, __vue_script__$a, __vue_scope_id__$a, __vue_is_functional_template__$a, __vue_module_identifier__$a, false, undefined, undefined, undefined);
 
   //
   //
@@ -12558,10 +12570,12 @@
 
   /* style inject SSR */
 
-  var Errors = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$b = normalizeComponent({
     render: __vue_render__$b,
     staticRenderFns: __vue_staticRenderFns__$b
-  }, __vue_inject_styles__$b, __vue_script__$b, __vue_scope_id__$b, __vue_is_functional_template__$b, __vue_module_identifier__$b, undefined, undefined);
+  }, __vue_inject_styles__$b, __vue_script__$b, __vue_scope_id__$b, __vue_is_functional_template__$b, __vue_module_identifier__$b, false, undefined, undefined, undefined);
 
   var initialValues = function initialValues() {
     return {
@@ -12572,8 +12586,8 @@
 
   var script$c = {
     components: {
-      Errors: Errors,
-      Modal: Modal
+      Errors: __vue_component__$b,
+      Modal: __vue_component__$1
     },
     mixins: [formMixin],
     data: function data() {
@@ -12735,14 +12749,16 @@
 
   /* style inject SSR */
 
-  var FolderManager = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$c = normalizeComponent({
     render: __vue_render__$c,
     staticRenderFns: __vue_staticRenderFns__$c
-  }, __vue_inject_styles__$c, __vue_script__$c, __vue_scope_id__$c, __vue_is_functional_template__$c, __vue_module_identifier__$c, undefined, undefined);
+  }, __vue_inject_styles__$c, __vue_script__$c, __vue_scope_id__$c, __vue_is_functional_template__$c, __vue_module_identifier__$c, false, undefined, undefined, undefined);
 
   var script$d = {
     components: {
-      Modal: Modal
+      Modal: __vue_component__$1
     },
     data: function data() {
       return {
@@ -13019,14 +13035,16 @@
 
   /* style inject SSR */
 
-  var MediaMover = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$d = normalizeComponent({
     render: __vue_render__$d,
     staticRenderFns: __vue_staticRenderFns__$d
-  }, __vue_inject_styles__$d, __vue_script__$d, __vue_scope_id__$d, __vue_is_functional_template__$d, __vue_module_identifier__$d, undefined, undefined);
+  }, __vue_inject_styles__$d, __vue_script__$d, __vue_scope_id__$d, __vue_is_functional_template__$d, __vue_module_identifier__$d, false, undefined, undefined, undefined);
 
   var script$e = {
     components: {
-      Errors: Errors
+      Errors: __vue_component__$b
     },
     data: function data() {
       return {
@@ -13326,22 +13344,24 @@
 
   /* style inject SSR */
 
-  var MediaUploader = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$e = normalizeComponent({
     render: __vue_render__$e,
     staticRenderFns: __vue_staticRenderFns__$e
-  }, __vue_inject_styles__$e, __vue_script__$e, __vue_scope_id__$e, __vue_is_functional_template__$e, __vue_module_identifier__$e, undefined, undefined);
+  }, __vue_inject_styles__$e, __vue_script__$e, __vue_scope_id__$e, __vue_is_functional_template__$e, __vue_module_identifier__$e, false, undefined, undefined, undefined);
 
   var script$f = {
     components: {
-      Breadcrumb: Breadcrumb,
-      Confirmation: Confirmation,
-      Modal: Modal,
-      MediaPanel: MediaPanel,
-      FoldersPanel: FoldersPanel,
-      ActionsPanel: ActionsPanel,
-      FolderManager: FolderManager,
-      MediaMover: MediaMover,
-      MediaUploader: MediaUploader
+      Breadcrumb: __vue_component__,
+      Confirmation: __vue_component__$2,
+      Modal: __vue_component__$1,
+      MediaPanel: __vue_component__$3,
+      FoldersPanel: __vue_component__$5,
+      ActionsPanel: __vue_component__$a,
+      FolderManager: __vue_component__$c,
+      MediaMover: __vue_component__$d,
+      MediaUploader: __vue_component__$e
     },
     computed: _objectSpread2({}, vuex.mapGetters({
       limit: 'mediaManager/mediaSelectionLimit',
@@ -13354,6 +13374,7 @@
       acceptedExtensions: 'mediaManager/acceptedExtensions',
       currentPickerId: 'mediaManagerPickers/currentPickerId',
       selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
+      actionsPanelIsVisible: 'mediaManager/showActionsPanel',
       folderBeingManaged: 'mediaManagerFolders/folderBeingManaged'
     }), {
       pickerMediaCount: function pickerMediaCount() {
@@ -13395,6 +13416,7 @@
     methods: _objectSpread2({}, vuex.mapActions({
       openFolder: 'mediaManagerFolders/openFolder',
       showActionsPanel: 'mediaManager/showActionsPanel',
+      hideActionsPanel: 'mediaManager/hideActionsPanel',
       closeMediaManager: 'mediaManager/closeMediaManager',
       showFoldersPanel: 'mediaManagerFolders/showFoldersPanel',
       setPickerMediaIds: 'mediaManagerPickers/setPickerMediaIds',
@@ -13403,6 +13425,13 @@
       clearSelectedMediaIds: 'mediaManagerMedia/clearSelectedMediaIds',
       disableMultipleMediaFocus: 'mediaManagerMedia/disableMultipleMediaFocus'
     }), {
+      toggleActionsPanel: function toggleActionsPanel() {
+        if (this.actionsPanelIsVisible) {
+          return this.hideActionsPanel();
+        }
+
+        return this.showActionsPanel();
+      },
       confirm: function confirm() {
         if (!this.limitIsExceeded && this.focusedMediaHasChanged) {
           this.setPickerMediaIds({
@@ -13476,7 +13505,7 @@
     }, [_vm._v("\n                        " + _vm._s(_vm.currentFolder.name) + "\n                    ")]), _vm._v(" "), _c("breadcrumb")], 1), _vm._v(" "), _vm.hasFocusedMedia ? _c("a", {
       staticClass: "mm-actions-panel-show mm-icon",
       on: {
-        click: _vm.showActionsPanel
+        click: _vm.toggleActionsPanel
       }
     }, [_c("icon", {
       attrs: {
@@ -13535,10 +13564,12 @@
 
   /* style inject SSR */
 
-  var MediaManager = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$f = normalizeComponent({
     render: __vue_render__$f,
     staticRenderFns: __vue_staticRenderFns__$f
-  }, __vue_inject_styles__$f, __vue_script__$f, __vue_scope_id__$f, __vue_is_functional_template__$f, __vue_module_identifier__$f, undefined, undefined);
+  }, __vue_inject_styles__$f, __vue_script__$f, __vue_scope_id__$f, __vue_is_functional_template__$f, __vue_module_identifier__$f, false, undefined, undefined, undefined);
 
   var script$g = {
     props: {
@@ -13760,10 +13791,12 @@
 
   /* style inject SSR */
 
-  var MediaPicker = normalizeComponent_1({
+  /* style inject shadow dom */
+
+  var __vue_component__$g = normalizeComponent({
     render: __vue_render__$g,
     staticRenderFns: __vue_staticRenderFns__$g
-  }, __vue_inject_styles__$g, __vue_script__$g, __vue_scope_id__$g, __vue_is_functional_template__$g, __vue_module_identifier__$g, undefined, undefined);
+  }, __vue_inject_styles__$g, __vue_script__$g, __vue_scope_id__$g, __vue_is_functional_template__$g, __vue_module_identifier__$g, false, undefined, undefined, undefined);
 
   var actions$4 = _objectSpread2({}, defaultActions);
 
@@ -13785,8 +13818,8 @@
 
     icons.register(); // Register components
 
-    Vue.component('media-manager', MediaManager);
-    Vue.component('media-picker', MediaPicker); // Setup options
+    Vue.component('media-manager', __vue_component__$f);
+    Vue.component('media-picker', __vue_component__$g); // Setup options
 
     if (options.hasOwnProperty('actions')) {
       var userActions = options.actions;
@@ -13825,4 +13858,4 @@
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
