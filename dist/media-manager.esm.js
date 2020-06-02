@@ -68,23 +68,36 @@ function _objectSpread2(target) {
 }
 
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 
 function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
-
-    return arr2;
-  }
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
 }
 
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
+}
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(o);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
+
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i];
+
+  return arr2;
 }
 
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 
 var state = {
@@ -299,7 +312,7 @@ var mutations$1 = {
   setPickerMediaIds: function setPickerMediaIds(state, _ref2) {
     var pickerId = _ref2.pickerId,
         mediaIds = _ref2.mediaIds;
-    state.pickersMediaIds = _objectSpread2({}, state.pickersMediaIds, _defineProperty({}, pickerId, mediaIds));
+    state.pickersMediaIds = _objectSpread2(_objectSpread2({}, state.pickersMediaIds), {}, _defineProperty({}, pickerId, mediaIds));
   },
   clearPickerMediaIds: function clearPickerMediaIds(state, pickerId) {
     delete state.pickersMediaIds[pickerId];
@@ -1011,14 +1024,14 @@ lodash.prototype=baseLodash.prototype;lodash.prototype.constructor=lodash;Lodash
      * @name reverse
      * @memberOf LazyWrapper
      * @returns {Object} Returns the new reversed `LazyWrapper` object.
-     */function lazyReverse(){if(this.__filtered__){var result=new LazyWrapper(this);result.__dir__=-1;result.__filtered__=true;}else{result=this.clone();result.__dir__*=-1;}return result;}/**
+     */function lazyReverse(){if(this.__filtered__){var result=new LazyWrapper(this);result.__dir__=-1;result.__filtered__=true;}else {result=this.clone();result.__dir__*=-1;}return result;}/**
      * Extracts the unwrapped value from its lazy wrapper.
      *
      * @private
      * @name value
      * @memberOf LazyWrapper
      * @returns {*} Returns the unwrapped value.
-     */function lazyValue(){var array=this.__wrapped__.value(),dir=this.__dir__,isArr=isArray(array),isRight=dir<0,arrLength=isArr?array.length:0,view=getView(0,arrLength,this.__views__),start=view.start,end=view.end,length=end-start,index=isRight?end:start-1,iteratees=this.__iteratees__,iterLength=iteratees.length,resIndex=0,takeCount=nativeMin(length,this.__takeCount__);if(!isArr||!isRight&&arrLength==length&&takeCount==length){return baseWrapperValue(array,this.__actions__);}var result=[];outer:while(length--&&resIndex<takeCount){index+=dir;var iterIndex=-1,value=array[index];while(++iterIndex<iterLength){var data=iteratees[iterIndex],iteratee=data.iteratee,type=data.type,computed=iteratee(value);if(type==LAZY_MAP_FLAG){value=computed;}else if(!computed){if(type==LAZY_FILTER_FLAG){continue outer;}else{break outer;}}}result[resIndex++]=value;}return result;}// Ensure `LazyWrapper` is an instance of `baseLodash`.
+     */function lazyValue(){var array=this.__wrapped__.value(),dir=this.__dir__,isArr=isArray(array),isRight=dir<0,arrLength=isArr?array.length:0,view=getView(0,arrLength,this.__views__),start=view.start,end=view.end,length=end-start,index=isRight?end:start-1,iteratees=this.__iteratees__,iterLength=iteratees.length,resIndex=0,takeCount=nativeMin(length,this.__takeCount__);if(!isArr||!isRight&&arrLength==length&&takeCount==length){return baseWrapperValue(array,this.__actions__);}var result=[];outer:while(length--&&resIndex<takeCount){index+=dir;var iterIndex=-1,value=array[index];while(++iterIndex<iterLength){var data=iteratees[iterIndex],iteratee=data.iteratee,type=data.type,computed=iteratee(value);if(type==LAZY_MAP_FLAG){value=computed;}else if(!computed){if(type==LAZY_FILTER_FLAG){continue outer;}else {break outer;}}}result[resIndex++]=value;}return result;}// Ensure `LazyWrapper` is an instance of `baseLodash`.
 LazyWrapper.prototype=baseCreate(baseLodash.prototype);LazyWrapper.prototype.constructor=LazyWrapper;/*------------------------------------------------------------------------*/ /**
      * Creates a hash object.
      *
@@ -1086,7 +1099,7 @@ Hash.prototype.clear=hashClear;Hash.prototype['delete']=hashDelete;Hash.prototyp
      * @memberOf ListCache
      * @param {string} key The key of the value to remove.
      * @returns {boolean} Returns `true` if the entry was removed, else `false`.
-     */function listCacheDelete(key){var data=this.__data__,index=assocIndexOf(data,key);if(index<0){return false;}var lastIndex=data.length-1;if(index==lastIndex){data.pop();}else{splice.call(data,index,1);}--this.size;return true;}/**
+     */function listCacheDelete(key){var data=this.__data__,index=assocIndexOf(data,key);if(index<0){return false;}var lastIndex=data.length-1;if(index==lastIndex){data.pop();}else {splice.call(data,index,1);}--this.size;return true;}/**
      * Gets the list cache value for `key`.
      *
      * @private
@@ -1111,7 +1124,7 @@ Hash.prototype.clear=hashClear;Hash.prototype['delete']=hashDelete;Hash.prototyp
      * @param {string} key The key of the value to set.
      * @param {*} value The value to set.
      * @returns {Object} Returns the list cache instance.
-     */function listCacheSet(key,value){var data=this.__data__,index=assocIndexOf(data,key);if(index<0){++this.size;data.push([key,value]);}else{data[index][1]=value;}return this;}// Add methods to `ListCache`.
+     */function listCacheSet(key,value){var data=this.__data__,index=assocIndexOf(data,key);if(index<0){++this.size;data.push([key,value]);}else {data[index][1]=value;}return this;}// Add methods to `ListCache`.
 ListCache.prototype.clear=listCacheClear;ListCache.prototype['delete']=listCacheDelete;ListCache.prototype.get=listCacheGet;ListCache.prototype.has=listCacheHas;ListCache.prototype.set=listCacheSet;/*------------------------------------------------------------------------*/ /**
      * Creates a map cache object to store key-value pairs.
      *
@@ -1317,7 +1330,7 @@ isIndex(key,length)))){result.push(key);}}return result;}/**
      * @param {Object} object The object to modify.
      * @param {string} key The key of the property to assign.
      * @param {*} value The value to assign.
-     */function baseAssignValue(object,key,value){if(key=='__proto__'&&defineProperty){defineProperty(object,key,{'configurable':true,'enumerable':true,'value':value,'writable':true});}else{object[key]=value;}}/**
+     */function baseAssignValue(object,key,value){if(key=='__proto__'&&defineProperty){defineProperty(object,key,{'configurable':true,'enumerable':true,'value':value,'writable':true});}else {object[key]=value;}}/**
      * The base implementation of `_.at` without support for individual paths.
      *
      * @private
@@ -1347,7 +1360,7 @@ isIndex(key,length)))){result.push(key);}}return result;}/**
      * @param {Object} [object] The parent object of `value`.
      * @param {Object} [stack] Tracks traversed objects and their clone counterparts.
      * @returns {*} Returns the cloned value.
-     */function baseClone(value,bitmask,customizer,key,object,stack){var result,isDeep=bitmask&CLONE_DEEP_FLAG,isFlat=bitmask&CLONE_FLAT_FLAG,isFull=bitmask&CLONE_SYMBOLS_FLAG;if(customizer){result=object?customizer(value,key,object,stack):customizer(value);}if(result!==undefined$1){return result;}if(!isObject(value)){return value;}var isArr=isArray(value);if(isArr){result=initCloneArray(value);if(!isDeep){return copyArray(value,result);}}else{var tag=getTag(value),isFunc=tag==funcTag||tag==genTag;if(isBuffer(value)){return cloneBuffer(value,isDeep);}if(tag==objectTag||tag==argsTag||isFunc&&!object){result=isFlat||isFunc?{}:initCloneObject(value);if(!isDeep){return isFlat?copySymbolsIn(value,baseAssignIn(result,value)):copySymbols(value,baseAssign(result,value));}}else{if(!cloneableTags[tag]){return object?value:{};}result=initCloneByTag(value,tag,isDeep);}}// Check for circular references and return its corresponding clone.
+     */function baseClone(value,bitmask,customizer,key,object,stack){var result,isDeep=bitmask&CLONE_DEEP_FLAG,isFlat=bitmask&CLONE_FLAT_FLAG,isFull=bitmask&CLONE_SYMBOLS_FLAG;if(customizer){result=object?customizer(value,key,object,stack):customizer(value);}if(result!==undefined$1){return result;}if(!isObject(value)){return value;}var isArr=isArray(value);if(isArr){result=initCloneArray(value);if(!isDeep){return copyArray(value,result);}}else {var tag=getTag(value),isFunc=tag==funcTag||tag==genTag;if(isBuffer(value)){return cloneBuffer(value,isDeep);}if(tag==objectTag||tag==argsTag||isFunc&&!object){result=isFlat||isFunc?{}:initCloneObject(value);if(!isDeep){return isFlat?copySymbolsIn(value,baseAssignIn(result,value)):copySymbols(value,baseAssign(result,value));}}else {if(!cloneableTags[tag]){return object?value:{};}result=initCloneByTag(value,tag,isDeep);}}// Check for circular references and return its corresponding clone.
 stack||(stack=new Stack());var stacked=stack.get(value);if(stacked){return stacked;}stack.set(value,result);if(isSet(value)){value.forEach(function(subValue){result.add(baseClone(subValue,bitmask,customizer,subValue,value,stack));});}else if(isMap(value)){value.forEach(function(subValue,key){result.set(key,baseClone(subValue,bitmask,customizer,key,value,stack));});}var keysFunc=isFull?isFlat?getAllKeysIn:getAllKeys:isFlat?keysIn:keys;var props=isArr?undefined$1:keysFunc(value);arrayEach(props||value,function(subValue,key){if(props){key=subValue;subValue=value[key];}// Recursively populate clone (susceptible to call stack limits).
 assignValue(result,key,baseClone(subValue,bitmask,customizer,key,value,stack));});return result;}/**
      * The base implementation of `_.conforms` which doesn't clone `source`.
@@ -1439,7 +1452,7 @@ assignValue(result,key,baseClone(subValue,bitmask,customizer,key,value,stack));}
      * @param {Array} [result=[]] The initial result value.
      * @returns {Array} Returns the new flattened array.
      */function baseFlatten(array,depth,predicate,isStrict,result){var index=-1,length=array.length;predicate||(predicate=isFlattenable);result||(result=[]);while(++index<length){var value=array[index];if(depth>0&&predicate(value)){if(depth>1){// Recursively flatten arrays (susceptible to call stack limits).
-baseFlatten(value,depth-1,predicate,isStrict,result);}else{arrayPush(result,value);}}else if(!isStrict){result[result.length]=value;}}return result;}/**
+baseFlatten(value,depth-1,predicate,isStrict,result);}else {arrayPush(result,value);}}else if(!isStrict){result[result.length]=value;}}return result;}/**
      * The base implementation of `baseForOwn` which iterates over `object`
      * properties returned by `keysFunc` and invokes `iteratee` for each property.
      * Iteratee functions may exit iteration early by explicitly returning `false`.
@@ -1620,7 +1633,7 @@ baseFlatten(value,depth-1,predicate,isStrict,result);}else{arrayPush(result,valu
      * @param {Array} matchData The property names, values, and compare flags to match.
      * @param {Function} [customizer] The function to customize comparisons.
      * @returns {boolean} Returns `true` if `object` is a match, else `false`.
-     */function baseIsMatch(object,source,matchData,customizer){var index=matchData.length,length=index,noCustomizer=!customizer;if(object==null){return !length;}object=Object(object);while(index--){var data=matchData[index];if(noCustomizer&&data[2]?data[1]!==object[data[0]]:!(data[0]in object)){return false;}}while(++index<length){data=matchData[index];var key=data[0],objValue=object[key],srcValue=data[1];if(noCustomizer&&data[2]){if(objValue===undefined$1&&!(key in object)){return false;}}else{var stack=new Stack();if(customizer){var result=customizer(objValue,srcValue,key,object,source,stack);}if(!(result===undefined$1?baseIsEqual(srcValue,objValue,COMPARE_PARTIAL_FLAG|COMPARE_UNORDERED_FLAG,customizer,stack):result)){return false;}}}return true;}/**
+     */function baseIsMatch(object,source,matchData,customizer){var index=matchData.length,length=index,noCustomizer=!customizer;if(object==null){return !length;}object=Object(object);while(index--){var data=matchData[index];if(noCustomizer&&data[2]?data[1]!==object[data[0]]:!(data[0]in object)){return false;}}while(++index<length){data=matchData[index];var key=data[0],objValue=object[key],srcValue=data[1];if(noCustomizer&&data[2]){if(objValue===undefined$1&&!(key in object)){return false;}}else {var stack=new Stack();if(customizer){var result=customizer(objValue,srcValue,key,object,source,stack);}if(!(result===undefined$1?baseIsEqual(srcValue,objValue,COMPARE_PARTIAL_FLAG|COMPARE_UNORDERED_FLAG,customizer,stack):result)){return false;}}}return true;}/**
      * The base implementation of `_.isNative` without bad shim checks.
      *
      * @private
@@ -1703,7 +1716,7 @@ if(typeof value=='function'){return value;}if(value==null){return identity;}if(_
      * @param {Function} [customizer] The function to customize merged values.
      * @param {Object} [stack] Tracks traversed source values and their merged
      *  counterparts.
-     */function baseMerge(object,source,srcIndex,customizer,stack){if(object===source){return;}baseFor(source,function(srcValue,key){stack||(stack=new Stack());if(isObject(srcValue)){baseMergeDeep(object,source,key,srcIndex,baseMerge,customizer,stack);}else{var newValue=customizer?customizer(safeGet(object,key),srcValue,key+'',object,source,stack):undefined$1;if(newValue===undefined$1){newValue=srcValue;}assignMergeValue(object,key,newValue);}},keysIn);}/**
+     */function baseMerge(object,source,srcIndex,customizer,stack){if(object===source){return;}baseFor(source,function(srcValue,key){stack||(stack=new Stack());if(isObject(srcValue)){baseMergeDeep(object,source,key,srcIndex,baseMerge,customizer,stack);}else {var newValue=customizer?customizer(safeGet(object,key),srcValue,key+'',object,source,stack):undefined$1;if(newValue===undefined$1){newValue=srcValue;}assignMergeValue(object,key,newValue);}},keysIn);}/**
      * A specialized version of `baseMerge` for arrays and objects which performs
      * deep merges and tracks traversed objects enabling objects with circular
      * references to be merged.
@@ -1717,7 +1730,7 @@ if(typeof value=='function'){return value;}if(value==null){return identity;}if(_
      * @param {Function} [customizer] The function to customize assigned values.
      * @param {Object} [stack] Tracks traversed source values and their merged
      *  counterparts.
-     */function baseMergeDeep(object,source,key,srcIndex,mergeFunc,customizer,stack){var objValue=safeGet(object,key),srcValue=safeGet(source,key),stacked=stack.get(srcValue);if(stacked){assignMergeValue(object,key,stacked);return;}var newValue=customizer?customizer(objValue,srcValue,key+'',object,source,stack):undefined$1;var isCommon=newValue===undefined$1;if(isCommon){var isArr=isArray(srcValue),isBuff=!isArr&&isBuffer(srcValue),isTyped=!isArr&&!isBuff&&isTypedArray(srcValue);newValue=srcValue;if(isArr||isBuff||isTyped){if(isArray(objValue)){newValue=objValue;}else if(isArrayLikeObject(objValue)){newValue=copyArray(objValue);}else if(isBuff){isCommon=false;newValue=cloneBuffer(srcValue,true);}else if(isTyped){isCommon=false;newValue=cloneTypedArray(srcValue,true);}else{newValue=[];}}else if(isPlainObject(srcValue)||isArguments(srcValue)){newValue=objValue;if(isArguments(objValue)){newValue=toPlainObject(objValue);}else if(!isObject(objValue)||isFunction(objValue)){newValue=initCloneObject(srcValue);}}else{isCommon=false;}}if(isCommon){// Recursively merge objects and arrays (susceptible to call stack limits).
+     */function baseMergeDeep(object,source,key,srcIndex,mergeFunc,customizer,stack){var objValue=safeGet(object,key),srcValue=safeGet(source,key),stacked=stack.get(srcValue);if(stacked){assignMergeValue(object,key,stacked);return;}var newValue=customizer?customizer(objValue,srcValue,key+'',object,source,stack):undefined$1;var isCommon=newValue===undefined$1;if(isCommon){var isArr=isArray(srcValue),isBuff=!isArr&&isBuffer(srcValue),isTyped=!isArr&&!isBuff&&isTypedArray(srcValue);newValue=srcValue;if(isArr||isBuff||isTyped){if(isArray(objValue)){newValue=objValue;}else if(isArrayLikeObject(objValue)){newValue=copyArray(objValue);}else if(isBuff){isCommon=false;newValue=cloneBuffer(srcValue,true);}else if(isTyped){isCommon=false;newValue=cloneTypedArray(srcValue,true);}else {newValue=[];}}else if(isPlainObject(srcValue)||isArguments(srcValue)){newValue=objValue;if(isArguments(objValue)){newValue=toPlainObject(objValue);}else if(!isObject(objValue)||isFunction(objValue)){newValue=initCloneObject(srcValue);}}else {isCommon=false;}}if(isCommon){// Recursively merge objects and arrays (susceptible to call stack limits).
 stack.set(srcValue,newValue);mergeFunc(newValue,srcValue,srcIndex,customizer,stack);stack['delete'](srcValue);}assignMergeValue(object,key,newValue);}/**
      * The base implementation of `_.nth` which doesn't coerce arguments.
      *
@@ -1773,7 +1786,7 @@ stack.set(srcValue,newValue);mergeFunc(newValue,srcValue,srcIndex,customizer,sta
      * @param {Array} array The array to modify.
      * @param {number[]} indexes The indexes of elements to remove.
      * @returns {Array} Returns `array`.
-     */function basePullAt(array,indexes){var length=array?indexes.length:0,lastIndex=length-1;while(length--){var index=indexes[length];if(length==lastIndex||index!==previous){var previous=index;if(isIndex(index)){splice.call(array,index,1);}else{baseUnset(array,index);}}}return array;}/**
+     */function basePullAt(array,indexes){var length=array?indexes.length:0,lastIndex=length-1;while(length--){var index=indexes[length];if(length==lastIndex||index!==previous){var previous=index;if(isIndex(index)){splice.call(array,index,1);}else {baseUnset(array,index);}}}return array;}/**
      * The base implementation of `_.random` without support for returning
      * floating-point numbers.
      *
@@ -1876,7 +1889,7 @@ do{if(n%2){result+=string;}n=nativeFloor(n/2);if(n){string+=string;}}while(n);re
      * @param {boolean} [retHighest] Specify returning the highest qualified index.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
-     */function baseSortedIndex(array,value,retHighest){var low=0,high=array==null?low:array.length;if(typeof value=='number'&&value===value&&high<=HALF_MAX_ARRAY_LENGTH){while(low<high){var mid=low+high>>>1,computed=array[mid];if(computed!==null&&!isSymbol(computed)&&(retHighest?computed<=value:computed<value)){low=mid+1;}else{high=mid;}}return high;}return baseSortedIndexBy(array,value,identity,retHighest);}/**
+     */function baseSortedIndex(array,value,retHighest){var low=0,high=array==null?low:array.length;if(typeof value=='number'&&value===value&&high<=HALF_MAX_ARRAY_LENGTH){while(low<high){var mid=low+high>>>1,computed=array[mid];if(computed!==null&&!isSymbol(computed)&&(retHighest?computed<=value:computed<value)){low=mid+1;}else {high=mid;}}return high;}return baseSortedIndexBy(array,value,identity,retHighest);}/**
      * The base implementation of `_.sortedIndexBy` and `_.sortedLastIndexBy`
      * which invokes `iteratee` for `value` and each element of `array` to compute
      * their sort ranking. The iteratee is invoked with one argument; (value).
@@ -1888,7 +1901,7 @@ do{if(n%2){result+=string;}n=nativeFloor(n/2);if(n){string+=string;}}while(n);re
      * @param {boolean} [retHighest] Specify returning the highest qualified index.
      * @returns {number} Returns the index at which `value` should be inserted
      *  into `array`.
-     */function baseSortedIndexBy(array,value,iteratee,retHighest){value=iteratee(value);var low=0,high=array==null?0:array.length,valIsNaN=value!==value,valIsNull=value===null,valIsSymbol=isSymbol(value),valIsUndefined=value===undefined$1;while(low<high){var mid=nativeFloor((low+high)/2),computed=iteratee(array[mid]),othIsDefined=computed!==undefined$1,othIsNull=computed===null,othIsReflexive=computed===computed,othIsSymbol=isSymbol(computed);if(valIsNaN){var setLow=retHighest||othIsReflexive;}else if(valIsUndefined){setLow=othIsReflexive&&(retHighest||othIsDefined);}else if(valIsNull){setLow=othIsReflexive&&othIsDefined&&(retHighest||!othIsNull);}else if(valIsSymbol){setLow=othIsReflexive&&othIsDefined&&!othIsNull&&(retHighest||!othIsSymbol);}else if(othIsNull||othIsSymbol){setLow=false;}else{setLow=retHighest?computed<=value:computed<value;}if(setLow){low=mid+1;}else{high=mid;}}return nativeMin(high,MAX_ARRAY_INDEX);}/**
+     */function baseSortedIndexBy(array,value,iteratee,retHighest){value=iteratee(value);var low=0,high=array==null?0:array.length,valIsNaN=value!==value,valIsNull=value===null,valIsSymbol=isSymbol(value),valIsUndefined=value===undefined$1;while(low<high){var mid=nativeFloor((low+high)/2),computed=iteratee(array[mid]),othIsDefined=computed!==undefined$1,othIsNull=computed===null,othIsReflexive=computed===computed,othIsSymbol=isSymbol(computed);if(valIsNaN){var setLow=retHighest||othIsReflexive;}else if(valIsUndefined){setLow=othIsReflexive&&(retHighest||othIsDefined);}else if(valIsNull){setLow=othIsReflexive&&othIsDefined&&(retHighest||!othIsNull);}else if(valIsSymbol){setLow=othIsReflexive&&othIsDefined&&!othIsNull&&(retHighest||!othIsSymbol);}else if(othIsNull||othIsSymbol){setLow=false;}else {setLow=retHighest?computed<=value:computed<value;}if(setLow){low=mid+1;}else {high=mid;}}return nativeMin(high,MAX_ARRAY_INDEX);}/**
      * The base implementation of `_.sortedUniq` and `_.sortedUniqBy` without
      * support for iteratee shorthands.
      *
@@ -1920,7 +1933,7 @@ return arrayMap(value,baseToString)+'';}if(isSymbol(value)){return symbolToStrin
      * @param {Function} [iteratee] The iteratee invoked per element.
      * @param {Function} [comparator] The comparator invoked per element.
      * @returns {Array} Returns the new duplicate free array.
-     */function baseUniq(array,iteratee,comparator){var index=-1,includes=arrayIncludes,length=array.length,isCommon=true,result=[],seen=result;if(comparator){isCommon=false;includes=arrayIncludesWith;}else if(length>=LARGE_ARRAY_SIZE){var set=iteratee?null:createSet(array);if(set){return setToArray(set);}isCommon=false;includes=cacheHas;seen=new SetCache();}else{seen=iteratee?[]:result;}outer:while(++index<length){var value=array[index],computed=iteratee?iteratee(value):value;value=comparator||value!==0?value:0;if(isCommon&&computed===computed){var seenIndex=seen.length;while(seenIndex--){if(seen[seenIndex]===computed){continue outer;}}if(iteratee){seen.push(computed);}result.push(value);}else if(!includes(seen,computed,comparator)){if(seen!==result){seen.push(computed);}result.push(value);}}return result;}/**
+     */function baseUniq(array,iteratee,comparator){var index=-1,includes=arrayIncludes,length=array.length,isCommon=true,result=[],seen=result;if(comparator){isCommon=false;includes=arrayIncludesWith;}else if(length>=LARGE_ARRAY_SIZE){var set=iteratee?null:createSet(array);if(set){return setToArray(set);}isCommon=false;includes=cacheHas;seen=new SetCache();}else {seen=iteratee?[]:result;}outer:while(++index<length){var value=array[index],computed=iteratee?iteratee(value):value;value=comparator||value!==0?value:0;if(isCommon&&computed===computed){var seenIndex=seen.length;while(seenIndex--){if(seen[seenIndex]===computed){continue outer;}}if(iteratee){seen.push(computed);}result.push(value);}else if(!includes(seen,computed,comparator)){if(seen!==result){seen.push(computed);}result.push(value);}}return result;}/**
      * The base implementation of `_.unset`.
      *
      * @private
@@ -2114,7 +2127,7 @@ return object.index-other.index;}/**
      * @param {Object} [object={}] The object to copy properties to.
      * @param {Function} [customizer] The function to customize copied values.
      * @returns {Object} Returns `object`.
-     */function copyObject(source,props,object,customizer){var isNew=!object;object||(object={});var index=-1,length=props.length;while(++index<length){var key=props[index];var newValue=customizer?customizer(object[key],source[key],key,object,source):undefined$1;if(newValue===undefined$1){newValue=source[key];}if(isNew){baseAssignValue(object,key,newValue);}else{assignValue(object,key,newValue);}}return object;}/**
+     */function copyObject(source,props,object,customizer){var isNew=!object;object||(object={});var index=-1,length=props.length;while(++index<length){var key=props[index];var newValue=customizer?customizer(object[key],source[key],key,object,source):undefined$1;if(newValue===undefined$1){newValue=source[key];}if(isNew){baseAssignValue(object,key,newValue);}else {assignValue(object,key,newValue);}}return object;}/**
      * Copies own symbols of `source` to `object`.
      *
      * @private
@@ -2207,7 +2220,7 @@ return isObject(result)?result:thisBinding;};}/**
      * @private
      * @param {boolean} [fromRight] Specify iterating from right to left.
      * @returns {Function} Returns the new flow function.
-     */function createFlow(fromRight){return flatRest(function(funcs){var length=funcs.length,index=length,prereq=LodashWrapper.prototype.thru;if(fromRight){funcs.reverse();}while(index--){var func=funcs[index];if(typeof func!='function'){throw new TypeError(FUNC_ERROR_TEXT);}if(prereq&&!wrapper&&getFuncName(func)=='wrapper'){var wrapper=new LodashWrapper([],true);}}index=wrapper?index:length;while(++index<length){func=funcs[index];var funcName=getFuncName(func),data=funcName=='wrapper'?getData(func):undefined$1;if(data&&isLaziable(data[0])&&data[1]==(WRAP_ARY_FLAG|WRAP_CURRY_FLAG|WRAP_PARTIAL_FLAG|WRAP_REARG_FLAG)&&!data[4].length&&data[9]==1){wrapper=wrapper[getFuncName(data[0])].apply(wrapper,data[3]);}else{wrapper=func.length==1&&isLaziable(func)?wrapper[funcName]():wrapper.thru(func);}}return function(){var args=arguments,value=args[0];if(wrapper&&args.length==1&&isArray(value)){return wrapper.plant(value).value();}var index=0,result=length?funcs[index].apply(this,args):value;while(++index<length){result=funcs[index].call(this,result);}return result;};});}/**
+     */function createFlow(fromRight){return flatRest(function(funcs){var length=funcs.length,index=length,prereq=LodashWrapper.prototype.thru;if(fromRight){funcs.reverse();}while(index--){var func=funcs[index];if(typeof func!='function'){throw new TypeError(FUNC_ERROR_TEXT);}if(prereq&&!wrapper&&getFuncName(func)=='wrapper'){var wrapper=new LodashWrapper([],true);}}index=wrapper?index:length;while(++index<length){func=funcs[index];var funcName=getFuncName(func),data=funcName=='wrapper'?getData(func):undefined$1;if(data&&isLaziable(data[0])&&data[1]==(WRAP_ARY_FLAG|WRAP_CURRY_FLAG|WRAP_PARTIAL_FLAG|WRAP_REARG_FLAG)&&!data[4].length&&data[9]==1){wrapper=wrapper[getFuncName(data[0])].apply(wrapper,data[3]);}else {wrapper=func.length==1&&isLaziable(func)?wrapper[funcName]():wrapper.thru(func);}}return function(){var args=arguments,value=args[0];if(wrapper&&args.length==1&&isArray(value)){return wrapper.plant(value).value();}var index=0,result=length?funcs[index].apply(this,args):value;while(++index<length){result=funcs[index].call(this,result);}return result;};});}/**
      * Creates a function that wraps `func` to invoke it with optional `this`
      * binding of `thisArg`, partial application, and currying.
      *
@@ -2239,7 +2252,7 @@ return isObject(result)?result:thisBinding;};}/**
      * @param {Function} operator The function to perform the operation.
      * @param {number} [defaultValue] The value used for `undefined` arguments.
      * @returns {Function} Returns the new mathematical operation function.
-     */function createMathOperation(operator,defaultValue){return function(value,other){var result;if(value===undefined$1&&other===undefined$1){return defaultValue;}if(value!==undefined$1){result=value;}if(other!==undefined$1){if(result===undefined$1){return other;}if(typeof value=='string'||typeof other=='string'){value=baseToString(value);other=baseToString(other);}else{value=baseToNumber(value);other=baseToNumber(other);}result=operator(value,other);}return result;};}/**
+     */function createMathOperation(operator,defaultValue){return function(value,other){var result;if(value===undefined$1&&other===undefined$1){return defaultValue;}if(value!==undefined$1){result=value;}if(other!==undefined$1){if(result===undefined$1){return other;}if(typeof value=='string'||typeof other=='string'){value=baseToString(value);other=baseToString(other);}else {value=baseToNumber(value);other=baseToNumber(other);}result=operator(value,other);}return result;};}/**
      * Creates a function like `_.over`.
      *
      * @private
@@ -2271,7 +2284,7 @@ return isObject(result)?result:thisBinding;};}/**
      * @param {boolean} [fromRight] Specify iterating from right to left.
      * @returns {Function} Returns the new range function.
      */function createRange(fromRight){return function(start,end,step){if(step&&typeof step!='number'&&isIterateeCall(start,end,step)){end=step=undefined$1;}// Ensure the sign of `-0` is preserved.
-start=toFinite(start);if(end===undefined$1){end=start;start=0;}else{end=toFinite(end);}step=step===undefined$1?start<end?1:-1:toFinite(step);return baseRange(start,end,step,fromRight);};}/**
+start=toFinite(start);if(end===undefined$1){end=start;start=0;}else {end=toFinite(end);}step=step===undefined$1?start<end?1:-1:toFinite(step);return baseRange(start,end,step,fromRight);};}/**
      * Creates a function that performs a relational operation on two values.
      *
      * @private
@@ -2337,7 +2350,7 @@ var pair=(toString(number)+'e').split('e'),value=func(pair[0]+'e'+(+pair[1]+prec
      * @param {number} [ary] The arity cap of `func`.
      * @param {number} [arity] The arity of `func`.
      * @returns {Function} Returns the new wrapped function.
-     */function createWrap(func,bitmask,thisArg,partials,holders,argPos,ary,arity){var isBindKey=bitmask&WRAP_BIND_KEY_FLAG;if(!isBindKey&&typeof func!='function'){throw new TypeError(FUNC_ERROR_TEXT);}var length=partials?partials.length:0;if(!length){bitmask&=~(WRAP_PARTIAL_FLAG|WRAP_PARTIAL_RIGHT_FLAG);partials=holders=undefined$1;}ary=ary===undefined$1?ary:nativeMax(toInteger(ary),0);arity=arity===undefined$1?arity:toInteger(arity);length-=holders?holders.length:0;if(bitmask&WRAP_PARTIAL_RIGHT_FLAG){var partialsRight=partials,holdersRight=holders;partials=holders=undefined$1;}var data=isBindKey?undefined$1:getData(func);var newData=[func,bitmask,thisArg,partials,holders,partialsRight,holdersRight,argPos,ary,arity];if(data){mergeData(newData,data);}func=newData[0];bitmask=newData[1];thisArg=newData[2];partials=newData[3];holders=newData[4];arity=newData[9]=newData[9]===undefined$1?isBindKey?0:func.length:nativeMax(newData[9]-length,0);if(!arity&&bitmask&(WRAP_CURRY_FLAG|WRAP_CURRY_RIGHT_FLAG)){bitmask&=~(WRAP_CURRY_FLAG|WRAP_CURRY_RIGHT_FLAG);}if(!bitmask||bitmask==WRAP_BIND_FLAG){var result=createBind(func,bitmask,thisArg);}else if(bitmask==WRAP_CURRY_FLAG||bitmask==WRAP_CURRY_RIGHT_FLAG){result=createCurry(func,bitmask,arity);}else if((bitmask==WRAP_PARTIAL_FLAG||bitmask==(WRAP_BIND_FLAG|WRAP_PARTIAL_FLAG))&&!holders.length){result=createPartial(func,bitmask,thisArg,partials);}else{result=createHybrid.apply(undefined$1,newData);}var setter=data?baseSetData:setData;return setWrapToString(setter(result,newData),func,bitmask);}/**
+     */function createWrap(func,bitmask,thisArg,partials,holders,argPos,ary,arity){var isBindKey=bitmask&WRAP_BIND_KEY_FLAG;if(!isBindKey&&typeof func!='function'){throw new TypeError(FUNC_ERROR_TEXT);}var length=partials?partials.length:0;if(!length){bitmask&=~(WRAP_PARTIAL_FLAG|WRAP_PARTIAL_RIGHT_FLAG);partials=holders=undefined$1;}ary=ary===undefined$1?ary:nativeMax(toInteger(ary),0);arity=arity===undefined$1?arity:toInteger(arity);length-=holders?holders.length:0;if(bitmask&WRAP_PARTIAL_RIGHT_FLAG){var partialsRight=partials,holdersRight=holders;partials=holders=undefined$1;}var data=isBindKey?undefined$1:getData(func);var newData=[func,bitmask,thisArg,partials,holders,partialsRight,holdersRight,argPos,ary,arity];if(data){mergeData(newData,data);}func=newData[0];bitmask=newData[1];thisArg=newData[2];partials=newData[3];holders=newData[4];arity=newData[9]=newData[9]===undefined$1?isBindKey?0:func.length:nativeMax(newData[9]-length,0);if(!arity&&bitmask&(WRAP_CURRY_FLAG|WRAP_CURRY_RIGHT_FLAG)){bitmask&=~(WRAP_CURRY_FLAG|WRAP_CURRY_RIGHT_FLAG);}if(!bitmask||bitmask==WRAP_BIND_FLAG){var result=createBind(func,bitmask,thisArg);}else if(bitmask==WRAP_CURRY_FLAG||bitmask==WRAP_CURRY_RIGHT_FLAG){result=createCurry(func,bitmask,arity);}else if((bitmask==WRAP_PARTIAL_FLAG||bitmask==(WRAP_BIND_FLAG|WRAP_PARTIAL_FLAG))&&!holders.length){result=createPartial(func,bitmask,thisArg,partials);}else {result=createHybrid.apply(undefined$1,newData);}var setter=data?baseSetData:setData;return setWrapToString(setter(result,newData),func,bitmask);}/**
      * Used by `_.defaults` to customize its `_.assignIn` use to assign properties
      * of source objects to the destination object for all destination properties
      * that resolve to `undefined`.
@@ -2496,7 +2509,7 @@ if(objCtor!=othCtor&&'constructor'in object&&'constructor'in other&&!(typeof obj
      * @private
      * @param {*} value The value to query.
      * @returns {string} Returns the raw `toStringTag`.
-     */function getRawTag(value){var isOwn=hasOwnProperty.call(value,symToStringTag),tag=value[symToStringTag];try{value[symToStringTag]=undefined$1;var unmasked=true;}catch(e){}var result=nativeObjectToString.call(value);if(unmasked){if(isOwn){value[symToStringTag]=tag;}else{delete value[symToStringTag];}}return result;}/**
+     */function getRawTag(value){var isOwn=hasOwnProperty.call(value,symToStringTag),tag=value[symToStringTag];try{value[symToStringTag]=undefined$1;var unmasked=true;}catch(e){}var result=nativeObjectToString.call(value);if(unmasked){if(isOwn){value[symToStringTag]=tag;}else {delete value[symToStringTag];}}return result;}/**
      * Creates an array of the own enumerable symbols of `object`.
      *
      * @private
@@ -2764,7 +2777,7 @@ data[0]=source[0];data[1]=newBitmask;return data;}/**
      * @private
      * @param {Function} func The function to restrict.
      * @returns {Function} Returns the new shortable function.
-     */function shortOut(func){var count=0,lastCalled=0;return function(){var stamp=nativeNow(),remaining=HOT_SPAN-(stamp-lastCalled);lastCalled=stamp;if(remaining>0){if(++count>=HOT_COUNT){return arguments[0];}}else{count=0;}return func.apply(undefined$1,arguments);};}/**
+     */function shortOut(func){var count=0,lastCalled=0;return function(){var stamp=nativeNow(),remaining=HOT_SPAN-(stamp-lastCalled);lastCalled=stamp;if(remaining>0){if(++count>=HOT_COUNT){return arguments[0];}}else {count=0;}return func.apply(undefined$1,arguments);};}/**
      * A specialized version of `_.shuffle` which mutates and sets the size of `array`.
      *
      * @private
@@ -2822,7 +2835,7 @@ data[0]=source[0];data[1]=newBitmask;return data;}/**
      *
      * _.chunk(['a', 'b', 'c', 'd'], 3);
      * // => [['a', 'b', 'c'], ['d']]
-     */function chunk(array,size,guard){if(guard?isIterateeCall(array,size,guard):size===undefined$1){size=1;}else{size=nativeMax(toInteger(size),0);}var length=array==null?0:array.length;if(!length||size<1){return [];}var index=0,resIndex=0,result=Array(nativeCeil(length/size));while(index<length){result[resIndex++]=baseSlice(array,index,index+=size);}return result;}/**
+     */function chunk(array,size,guard){if(guard?isIterateeCall(array,size,guard):size===undefined$1){size=1;}else {size=nativeMax(toInteger(size),0);}var length=array==null?0:array.length;if(!length||size<1){return [];}var index=0,resIndex=0,result=Array(nativeCeil(length/size));while(index<length){result[resIndex++]=baseSlice(array,index,index+=size);}return result;}/**
      * Creates an array with all falsey values removed. The values `false`, `null`,
      * `0`, `""`, `undefined`, and `NaN` are falsey.
      *
@@ -3285,7 +3298,7 @@ data[0]=source[0];data[1]=newBitmask;return data;}/**
      * // The `_.property` iteratee shorthand.
      * _.intersectionBy([{ 'x': 1 }], [{ 'x': 2 }, { 'x': 1 }], 'x');
      * // => [{ 'x': 1 }]
-     */var intersectionBy=baseRest(function(arrays){var iteratee=last(arrays),mapped=arrayMap(arrays,castArrayLikeObject);if(iteratee===last(mapped)){iteratee=undefined$1;}else{mapped.pop();}return mapped.length&&mapped[0]===arrays[0]?baseIntersection(mapped,getIteratee(iteratee,2)):[];});/**
+     */var intersectionBy=baseRest(function(arrays){var iteratee=last(arrays),mapped=arrayMap(arrays,castArrayLikeObject);if(iteratee===last(mapped)){iteratee=undefined$1;}else {mapped.pop();}return mapped.length&&mapped[0]===arrays[0]?baseIntersection(mapped,getIteratee(iteratee,2)):[];});/**
      * This method is like `_.intersection` except that it accepts `comparator`
      * which is invoked to compare elements of `arrays`. The order and references
      * of result values are determined by the first array. The comparator is
@@ -3544,7 +3557,7 @@ data[0]=source[0];data[1]=newBitmask;return data;}/**
      * @param {number} [start=0] The start position.
      * @param {number} [end=array.length] The end position.
      * @returns {Array} Returns the slice of `array`.
-     */function slice(array,start,end){var length=array==null?0:array.length;if(!length){return [];}if(end&&typeof end!='number'&&isIterateeCall(array,start,end)){start=0;end=length;}else{start=start==null?0:toInteger(start);end=end===undefined$1?length:toInteger(end);}return baseSlice(array,start,end);}/**
+     */function slice(array,start,end){var length=array==null?0:array.length;if(!length){return [];}if(end&&typeof end!='number'&&isIterateeCall(array,start,end)){start=0;end=length;}else {start=start==null?0:toInteger(start);end=end===undefined$1?length:toInteger(end);}return baseSlice(array,start,end);}/**
      * Uses a binary search to determine the lowest index at which `value`
      * should be inserted into `array` in order to maintain its sort order.
      *
@@ -4306,7 +4319,7 @@ data[0]=source[0];data[1]=newBitmask;return data;}/**
      *
      * wrapped.value();
      * // => [1, 4]
-     */function wrapperPlant(value){var result,parent=this;while(parent instanceof baseLodash){var clone=wrapperClone(parent);clone.__index__=0;clone.__values__=undefined$1;if(result){previous.__wrapped__=clone;}else{result=clone;}var previous=clone;parent=parent.__wrapped__;}previous.__wrapped__=value;return result;}/**
+     */function wrapperPlant(value){var result,parent=this;while(parent instanceof baseLodash){var clone=wrapperClone(parent);clone.__index__=0;clone.__values__=undefined$1;if(result){previous.__wrapped__=clone;}else {result=clone;}var previous=clone;parent=parent.__wrapped__;}previous.__wrapped__=value;return result;}/**
      * This method is the wrapper version of `_.reverse`.
      *
      * **Note:** This method mutates the wrapped array.
@@ -4359,7 +4372,7 @@ data[0]=source[0];data[1]=newBitmask;return data;}/**
      * // The `_.property` iteratee shorthand.
      * _.countBy(['one', 'two', 'three'], 'length');
      * // => { '3': 2, '5': 1 }
-     */var countBy=createAggregator(function(result,value,key){if(hasOwnProperty.call(result,key)){++result[key];}else{baseAssignValue(result,key,1);}});/**
+     */var countBy=createAggregator(function(result,value,key){if(hasOwnProperty.call(result,key)){++result[key];}else {baseAssignValue(result,key,1);}});/**
      * Checks if `predicate` returns truthy for **all** elements of `collection`.
      * Iteration is stopped once `predicate` returns falsey. The predicate is
      * invoked with three arguments: (value, index|key, collection).
@@ -4617,7 +4630,7 @@ data[0]=source[0];data[1]=newBitmask;return data;}/**
      * // The `_.property` iteratee shorthand.
      * _.groupBy(['one', 'two', 'three'], 'length');
      * // => { '3': ['one', 'two'], '5': ['three'] }
-     */var groupBy=createAggregator(function(result,value,key){if(hasOwnProperty.call(result,key)){result[key].push(value);}else{baseAssignValue(result,key,[value]);}});/**
+     */var groupBy=createAggregator(function(result,value,key){if(hasOwnProperty.call(result,key)){result[key].push(value);}else {baseAssignValue(result,key,[value]);}});/**
      * Checks if `value` is in `collection`. If `collection` is a string, it's
      * checked for a substring of `value`, otherwise
      * [`SameValueZero`](http://ecma-international.org/ecma-262/7.0/#sec-samevaluezero)
@@ -4921,7 +4934,7 @@ data[0]=source[0];data[1]=newBitmask;return data;}/**
      *
      * _.sampleSize([1, 2, 3], 4);
      * // => [2, 3, 1]
-     */function sampleSize(collection,n,guard){if(guard?isIterateeCall(collection,n,guard):n===undefined$1){n=1;}else{n=toInteger(n);}var func=isArray(collection)?arraySampleSize:baseSampleSize;return func(collection,n);}/**
+     */function sampleSize(collection,n,guard){if(guard?isIterateeCall(collection,n,guard):n===undefined$1){n=1;}else {n=toInteger(n);}var func=isArray(collection)?arraySampleSize:baseSampleSize;return func(collection,n);}/**
      * Creates an array of shuffled values, using a version of the
      * [Fisher-Yates shuffle](https://en.wikipedia.org/wiki/Fisher-Yates_shuffle).
      *
@@ -7463,7 +7476,7 @@ return isNumber(value)&&value!=+value;}/**
      *   return 'group' + value;
      * });
      * // => { 'group1': ['a', 'c'], 'group2': ['b'] }
-     */var invertBy=createInverter(function(result,value,key){if(value!=null&&typeof value.toString!='function'){value=nativeObjectToString.call(value);}if(hasOwnProperty.call(result,value)){result[value].push(key);}else{result[value]=[key];}},getIteratee);/**
+     */var invertBy=createInverter(function(result,value,key){if(value!=null&&typeof value.toString!='function'){value=nativeObjectToString.call(value);}if(hasOwnProperty.call(result,value)){result[value].push(key);}else {result[value]=[key];}},getIteratee);/**
      * Invokes the method at `path` of `object`.
      *
      * @static
@@ -7861,7 +7874,7 @@ if(!length){length=1;object=undefined$1;}while(++index<length){var value=object=
      *   (result[value] || (result[value] = [])).push(key);
      * }, {});
      * // => { '1': ['a', 'c'], '2': ['b'] }
-     */function transform(object,iteratee,accumulator){var isArr=isArray(object),isArrLike=isArr||isBuffer(object)||isTypedArray(object);iteratee=getIteratee(iteratee,4);if(accumulator==null){var Ctor=object&&object.constructor;if(isArrLike){accumulator=isArr?new Ctor():[];}else if(isObject(object)){accumulator=isFunction(Ctor)?baseCreate(getPrototype(object)):{};}else{accumulator={};}}(isArrLike?arrayEach:baseForOwn)(object,function(value,index,object){return iteratee(accumulator,value,index,object);});return accumulator;}/**
+     */function transform(object,iteratee,accumulator){var isArr=isArray(object),isArrLike=isArr||isBuffer(object)||isTypedArray(object);iteratee=getIteratee(iteratee,4);if(accumulator==null){var Ctor=object&&object.constructor;if(isArrLike){accumulator=isArr?new Ctor():[];}else if(isObject(object)){accumulator=isFunction(Ctor)?baseCreate(getPrototype(object)):{};}else {accumulator={};}}(isArrLike?arrayEach:baseForOwn)(object,function(value,index,object){return iteratee(accumulator,value,index,object);});return accumulator;}/**
      * Removes the property at `path` of `object`.
      *
      * **Note:** This method mutates `object`.
@@ -8039,7 +8052,7 @@ if(!length){length=1;object=undefined$1;}while(++index<length){var value=object=
      *
      * _.inRange(-3, -2, -6);
      * // => true
-     */function inRange(number,start,end){start=toFinite(start);if(end===undefined$1){end=start;start=0;}else{end=toFinite(end);}number=toNumber(number);return baseInRange(number,start,end);}/**
+     */function inRange(number,start,end){start=toFinite(start);if(end===undefined$1){end=start;start=0;}else {end=toFinite(end);}number=toNumber(number);return baseInRange(number,start,end);}/**
      * Produces a random number between the inclusive `lower` and `upper` bounds.
      * If only one argument is provided a number between `0` and the given number
      * is returned. If `floating` is `true`, or either `lower` or `upper` are
@@ -8069,7 +8082,7 @@ if(!length){length=1;object=undefined$1;}while(++index<length){var value=object=
      *
      * _.random(1.2, 5.2);
      * // => a floating-point number between 1.2 and 5.2
-     */function random(lower,upper,floating){if(floating&&typeof floating!='boolean'&&isIterateeCall(lower,upper,floating)){upper=floating=undefined$1;}if(floating===undefined$1){if(typeof upper=='boolean'){floating=upper;upper=undefined$1;}else if(typeof lower=='boolean'){floating=lower;lower=undefined$1;}}if(lower===undefined$1&&upper===undefined$1){lower=0;upper=1;}else{lower=toFinite(lower);if(upper===undefined$1){upper=lower;lower=0;}else{upper=toFinite(upper);}}if(lower>upper){var temp=lower;lower=upper;upper=temp;}if(floating||lower%1||upper%1){var rand=nativeRandom();return nativeMin(lower+rand*(upper-lower+freeParseFloat('1e-'+((rand+'').length-1))),upper);}return baseRandom(lower,upper);}/*------------------------------------------------------------------------*/ /**
+     */function random(lower,upper,floating){if(floating&&typeof floating!='boolean'&&isIterateeCall(lower,upper,floating)){upper=floating=undefined$1;}if(floating===undefined$1){if(typeof upper=='boolean'){floating=upper;upper=undefined$1;}else if(typeof lower=='boolean'){floating=lower;lower=undefined$1;}}if(lower===undefined$1&&upper===undefined$1){lower=0;upper=1;}else {lower=toFinite(lower);if(upper===undefined$1){upper=lower;lower=0;}else {upper=toFinite(upper);}}if(lower>upper){var temp=lower;lower=upper;upper=temp;}if(floating||lower%1||upper%1){var rand=nativeRandom();return nativeMin(lower+rand*(upper-lower+freeParseFloat('1e-'+((rand+'').length-1))),upper);}return baseRandom(lower,upper);}/*------------------------------------------------------------------------*/ /**
      * Converts `string` to [camel case](https://en.wikipedia.org/wiki/CamelCase).
      *
      * @static
@@ -8347,7 +8360,7 @@ if(!length){length=1;object=undefined$1;}while(++index<length){var value=object=
      *
      * _.repeat('abc', 0);
      * // => ''
-     */function repeat(string,n,guard){if(guard?isIterateeCall(string,n,guard):n===undefined$1){n=1;}else{n=toInteger(n);}return baseRepeat(toString(string),n);}/**
+     */function repeat(string,n,guard){if(guard?isIterateeCall(string,n,guard):n===undefined$1){n=1;}else {n=toInteger(n);}return baseRepeat(toString(string),n);}/**
      * Replaces matches for `pattern` in `string` with `replacement`.
      *
      * **Note:** This method is based on
@@ -9754,7 +9767,7 @@ lodash.each=forEach;lodash.eachRight=forEachRight;lodash.first=head;mixin(lodash
      * @type {string}
      */lodash.VERSION=VERSION;// Assign default placeholders.
 arrayEach(['bind','bindKey','curry','curryRight','partial','partialRight'],function(methodName){lodash[methodName].placeholder=lodash;});// Add `LazyWrapper` methods for `_.drop` and `_.take` variants.
-arrayEach(['drop','take'],function(methodName,index){LazyWrapper.prototype[methodName]=function(n){n=n===undefined$1?1:nativeMax(toInteger(n),0);var result=this.__filtered__&&!index?new LazyWrapper(this):this.clone();if(result.__filtered__){result.__takeCount__=nativeMin(n,result.__takeCount__);}else{result.__views__.push({'size':nativeMin(n,MAX_ARRAY_LENGTH),'type':methodName+(result.__dir__<0?'Right':'')});}return result;};LazyWrapper.prototype[methodName+'Right']=function(n){return this.reverse()[methodName](n).reverse();};});// Add `LazyWrapper` methods that accept an `iteratee` value.
+arrayEach(['drop','take'],function(methodName,index){LazyWrapper.prototype[methodName]=function(n){n=n===undefined$1?1:nativeMax(toInteger(n),0);var result=this.__filtered__&&!index?new LazyWrapper(this):this.clone();if(result.__filtered__){result.__takeCount__=nativeMin(n,result.__takeCount__);}else {result.__views__.push({'size':nativeMin(n,MAX_ARRAY_LENGTH),'type':methodName+(result.__dir__<0?'Right':'')});}return result;};LazyWrapper.prototype[methodName+'Right']=function(n){return this.reverse()[methodName](n).reverse();};});// Add `LazyWrapper` methods that accept an `iteratee` value.
 arrayEach(['filter','map','takeWhile'],function(methodName,index){var type=index+1,isFilter=type==LAZY_FILTER_FLAG||type==LAZY_WHILE_FLAG;LazyWrapper.prototype[methodName]=function(iteratee){var result=this.clone();result.__iteratees__.push({'iteratee':getIteratee(iteratee,3),'type':type});result.__filtered__=result.__filtered__||isFilter;return result;};});// Add `LazyWrapper` methods for `_.head` and `_.last`.
 arrayEach(['head','last'],function(methodName,index){var takeName='take'+(index?'Right':'');LazyWrapper.prototype[methodName]=function(){return this[takeName](1).value()[0];};});// Add `LazyWrapper` methods for `_.initial` and `_.tail`.
 arrayEach(['initial','tail'],function(methodName,index){var dropName='drop'+(index?'':'Right');LazyWrapper.prototype[methodName]=function(){return this.__filtered__?new LazyWrapper(this):this[dropName](1);};});LazyWrapper.prototype.compact=function(){return this.filter(identity);};LazyWrapper.prototype.find=function(predicate){return this.filter(predicate).head();};LazyWrapper.prototype.findLast=function(predicate){return this.reverse().find(predicate);};LazyWrapper.prototype.invokeMap=baseRest(function(path,args){if(typeof path=='function'){return new LazyWrapper(this);}return this.map(function(value){return baseInvoke(value,path,args);});});LazyWrapper.prototype.reject=function(predicate){return this.filter(negate(getIteratee(predicate)));};LazyWrapper.prototype.slice=function(start,end){start=toInteger(start);var result=this;if(result.__filtered__&&(start>0||end<0)){return new LazyWrapper(result);}if(start<0){result=result.takeRight(-start);}else if(start){result=result.drop(start);}if(end!==undefined$1){end=toInteger(end);result=end<0?result.dropRight(-end):result.take(end-start);}return result;};LazyWrapper.prototype.takeRightWhile=function(predicate){return this.reverse().takeWhile(predicate).reverse();};LazyWrapper.prototype.toArray=function(){return this.take(MAX_ARRAY_LENGTH);};// Add `LazyWrapper` methods to `lodash.prototype`.
@@ -9768,7 +9781,7 @@ lodash.prototype.first=lodash.prototype.head;if(symIterator){lodash.prototype[sy
 var _=runInContext();// Some AMD build optimizers, like r.js, check for condition patterns like:
 if(freeModule){// Export for Node.js.
 (freeModule.exports=_)._=_;// Export for CommonJS support.
-freeExports._=_;}else{// Export to the global object.
+freeExports._=_;}else {// Export to the global object.
 root._=_;}}).call(commonjsGlobal);});var lodash_1=lodash.groupBy;var lodash_2=lodash.mapValues;var lodash_3=lodash.sortBy;var lodash_4=lodash.union;var lodash_5=lodash.unionBy;
 
 var state$2 = {
@@ -9847,7 +9860,7 @@ var mutations$2 = {
   updateMediaItem: function updateMediaItem(state, _ref5) {
     var index = _ref5.index,
         media = _ref5.media;
-    state.list.splice(index, 1, _objectSpread2({}, state.list[index], {}, media));
+    state.list.splice(index, 1, _objectSpread2(_objectSpread2({}, state.list[index]), media));
   },
   removeMediaInFolders: function removeMediaInFolders(state, folderIds) {
     state.list = state.list.filter(function (_ref6) {
@@ -10141,7 +10154,7 @@ var mutations$3 = {
   updateFolder: function updateFolder(state, _ref6) {
     var index = _ref6.index,
         folder = _ref6.folder;
-    state.list.splice(index, 1, _objectSpread2({}, state.list[index], {}, folder));
+    state.list.splice(index, 1, _objectSpread2(_objectSpread2({}, state.list[index]), folder));
   },
   openFolder: function openFolder(state, folder) {
     var openIds = state.open.map(function (folder) {
@@ -10604,7 +10617,7 @@ var build = function build() {
     });
     return acc;
   });
-  var hasRegular = 'far' in styles;
+  var hasRegular = ('far' in styles);
   _byOldName = reduce(shims, function (acc, shim) {
     var oldName = shim[0];
     var prefix = shim[1];
@@ -10864,7 +10877,7 @@ var folderActions = {
   deleteFolder: deleteFolder
 };
 
-var defaultActions = _objectSpread2({}, mediaActions, {}, folderActions);
+var defaultActions = _objectSpread2(_objectSpread2({}, mediaActions), folderActions);
 
 var iconMap = {
   'file-image': ['bmp', 'gif', 'jpg', 'jpeg', 'png', 'svg'],
@@ -10883,9 +10896,9 @@ var script = {
     openFolders: 'mediaManagerFolders/openFolders',
     currentFolder: 'mediaManagerFolders/currentFolder'
   })),
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     openFolder: 'mediaManagerFolders/openFolder'
-  }), {
+  })), {}, {
     open: function open(folder) {
       if (this.currentFolder.id !== folder.id) {
         this.openFolder(folder.id);
@@ -11018,7 +11031,7 @@ var __vue_is_functional_template__ = false;
 
 /* style inject shadow dom */
 
-var __vue_component__ = normalizeComponent({
+var __vue_component__ = /*#__PURE__*/normalizeComponent({
   render: __vue_render__,
   staticRenderFns: __vue_staticRenderFns__
 }, __vue_inject_styles__, __vue_script__, __vue_scope_id__, __vue_is_functional_template__, __vue_module_identifier__, false, undefined, undefined, undefined);
@@ -11089,7 +11102,7 @@ var __vue_is_functional_template__$1 = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$1 = normalizeComponent({
+var __vue_component__$1 = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$1,
   staticRenderFns: __vue_staticRenderFns__$1
 }, __vue_inject_styles__$1, __vue_script__$1, __vue_scope_id__$1, __vue_is_functional_template__$1, __vue_module_identifier__$1, false, undefined, undefined, undefined);
@@ -11098,13 +11111,13 @@ var script$2 = {
   components: {
     Modal: __vue_component__$1
   },
-  computed: _objectSpread2({}, mapGetters({
+  computed: _objectSpread2(_objectSpread2({}, mapGetters({
     type: 'mediaManager/confirmationType',
     isOpen: 'mediaManager/showConfirmation',
     folders: 'mediaManagerFolders/listFolders',
     subject: 'mediaManager/confirmationSubject',
     getAncestorIds: 'mediaManagerFolders/getAncestorIds'
-  }), {
+  })), {}, {
     subjectIsArray: function subjectIsArray() {
       return this.subject && Array.isArray(this.subject);
     },
@@ -11144,13 +11157,13 @@ var script$2 = {
       return [];
     }
   }),
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     close: 'mediaManager/closeConfirmation',
     removeMedia: 'mediaManagerMedia/removeMedia',
     removeFolders: 'mediaManagerFolders/removeFolders',
     clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds',
     removeMediaInFolders: 'mediaManagerMedia/removeMediaInFolders'
-  }), {
+  })), {}, {
     confirm: function confirm() {
       var _this = this;
 
@@ -11236,13 +11249,13 @@ var __vue_is_functional_template__$2 = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$2 = normalizeComponent({
+var __vue_component__$2 = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$2,
   staticRenderFns: __vue_staticRenderFns__$2
 }, __vue_inject_styles__$2, __vue_script__$2, __vue_scope_id__$2, __vue_is_functional_template__$2, __vue_module_identifier__$2, false, undefined, undefined, undefined);
 
 var script$3 = {
-  computed: _objectSpread2({}, mapGetters({
+  computed: _objectSpread2(_objectSpread2({}, mapGetters({
     isLoading: 'mediaManagerMedia/isLoadingMedia',
     currentMedia: 'mediaManagerMedia/currentMedia',
     currentFolder: 'mediaManagerFolders/currentFolder',
@@ -11250,7 +11263,7 @@ var script$3 = {
     acceptedExtensions: 'mediaManager/acceptedExtensions',
     selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
     isFocusingMultipleMedia: 'mediaManagerMedia/isFocusingMultipleMedia'
-  }), {
+  })), {}, {
     currentFolderId: function currentFolderId() {
       return this.currentFolder.id;
     }
@@ -11262,14 +11275,14 @@ var script$3 = {
       this.disableMultipleMediaFocus();
     }
   },
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     fetchMedia: 'mediaManagerMedia/fetchMedia',
     blurMediaId: 'mediaManagerMedia/blurMediaId',
     focusMediaId: 'mediaManagerMedia/focusMediaId',
     clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds',
     enableMultipleMediaFocus: 'mediaManagerMedia/enableMultipleMediaFocus',
     disableMultipleMediaFocus: 'mediaManagerMedia/disableMultipleMediaFocus'
-  }), {
+  })), {}, {
     isImage: function isImage(extension) {
       return imageExtensions$1.includes(extension);
     },
@@ -11423,7 +11436,7 @@ var __vue_is_functional_template__$3 = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$3 = normalizeComponent({
+var __vue_component__$3 = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$3,
   staticRenderFns: __vue_staticRenderFns__$3
 }, __vue_inject_styles__$3, __vue_script__$3, __vue_scope_id__$3, __vue_is_functional_template__$3, __vue_module_identifier__$3, false, undefined, undefined, undefined);
@@ -11533,7 +11546,7 @@ var __vue_is_functional_template__$4 = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$4 = normalizeComponent({
+var __vue_component__$4 = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$4,
   staticRenderFns: __vue_staticRenderFns__$4
 }, __vue_inject_styles__$4, __vue_script__$4, __vue_scope_id__$4, __vue_is_functional_template__$4, __vue_module_identifier__$4, false, undefined, undefined, undefined);
@@ -11549,14 +11562,14 @@ var script$5 = {
     isLoading: 'mediaManagerFolders/isLoadingFolders',
     currentFolder: 'mediaManagerFolders/currentFolder'
   })),
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     hide: 'mediaManagerFolders/hideFoldersPanel',
     openFolder: 'mediaManagerFolders/openFolder',
     openMediaMover: 'mediaManager/openMediaMover',
     openConfirmation: 'mediaManager/openConfirmation',
     setFolderBeingManaged: 'mediaManagerFolders/setFolderBeingManaged',
     showManageFolderModal: 'mediaManagerFolders/showManageFolderModal'
-  }), {
+  })), {}, {
     editFolder: function editFolder(folder) {
       this.setFolderBeingManaged(folder);
       this.showManageFolderModal();
@@ -11729,7 +11742,7 @@ var __vue_is_functional_template__$5 = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$5 = normalizeComponent({
+var __vue_component__$5 = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$5,
   staticRenderFns: __vue_staticRenderFns__$5
 }, __vue_inject_styles__$5, __vue_script__$5, __vue_scope_id__$5, __vue_is_functional_template__$5, __vue_module_identifier__$5, false, undefined, undefined, undefined);
@@ -11787,7 +11800,7 @@ var __vue_is_functional_template__$6 = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$6 = normalizeComponent({
+var __vue_component__$6 = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$6,
   staticRenderFns: __vue_staticRenderFns__$6
 }, __vue_inject_styles__$6, __vue_script__$6, __vue_scope_id__$6, __vue_is_functional_template__$6, __vue_module_identifier__$6, false, undefined, undefined, undefined);
@@ -11808,9 +11821,9 @@ var script$7 = {
       default: function _default() {}
     }
   },
-  computed: _objectSpread2({}, mapGetters({
+  computed: _objectSpread2(_objectSpread2({}, mapGetters({
     focusedMediaIds: 'mediaManagerMedia/focusedMediaIds'
-  }), {
+  })), {}, {
     mediaCount: function mediaCount() {
       return this.media.length;
     },
@@ -11818,10 +11831,10 @@ var script$7 = {
       return !!Object.keys(this.firstMedia).length;
     }
   }),
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     openMediaMover: 'mediaManager/openMediaMover',
     openConfirmation: 'mediaManager/openConfirmation'
-  }), {
+  })), {}, {
     copyUrl: function copyUrl() {
       this.$refs.mediaUrl.select();
       document.execCommand('copy');
@@ -11948,7 +11961,7 @@ var __vue_is_functional_template__$7 = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$7 = normalizeComponent({
+var __vue_component__$7 = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$7,
   staticRenderFns: __vue_staticRenderFns__$7
 }, __vue_inject_styles__$7, __vue_script__$7, __vue_scope_id__$7, __vue_is_functional_template__$7, __vue_module_identifier__$7, false, undefined, undefined, undefined);
@@ -12037,9 +12050,9 @@ var script$8 = {
       immediate: true
     }
   },
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     updateMediaItem: 'mediaManagerMedia/updateMediaItem'
-  }), {
+  })), {}, {
     save: function save() {
       return actions$4.updateMedia(this.item.id, this.form);
     },
@@ -12225,18 +12238,18 @@ var __vue_is_functional_template__$8 = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$8 = normalizeComponent({
+var __vue_component__$8 = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$8,
   staticRenderFns: __vue_staticRenderFns__$8
 }, __vue_inject_styles__$8, __vue_script__$8, __vue_scope_id__$8, __vue_is_functional_template__$8, __vue_module_identifier__$8, false, undefined, undefined, undefined);
 
 var script$9 = {
-  computed: _objectSpread2({}, mapGetters({
+  computed: _objectSpread2(_objectSpread2({}, mapGetters({
     media: 'mediaManagerMedia/listMedia',
     currentFolder: 'mediaManagerFolders/currentFolder',
     selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
     mediaSelectionLimit: 'mediaManager/mediaSelectionLimit'
-  }), {
+  })), {}, {
     selectedMedia: function selectedMedia() {
       var _this = this;
 
@@ -12252,12 +12265,12 @@ var script$9 = {
       return this.selectedMedia.length && this.mediaSelectionLimit !== 0;
     }
   }),
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     openFolder: 'mediaManagerFolders/openFolder',
     focusMediaId: 'mediaManagerMedia/focusMediaId',
     deselectMediaId: 'mediaManagerMedia/deselectMediaId',
     clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds'
-  }), {
+  })), {}, {
     edit: function edit(media) {
       this.editingItem = media;
       this.isEditing = true;
@@ -12336,7 +12349,7 @@ var __vue_is_functional_template__$9 = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$9 = normalizeComponent({
+var __vue_component__$9 = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$9,
   staticRenderFns: __vue_staticRenderFns__$9
 }, __vue_inject_styles__$9, __vue_script__$9, __vue_scope_id__$9, __vue_is_functional_template__$9, __vue_module_identifier__$9, false, undefined, undefined, undefined);
@@ -12354,11 +12367,11 @@ var script$a = {
       editingItem: null
     };
   },
-  computed: _objectSpread2({}, mapGetters({
+  computed: _objectSpread2(_objectSpread2({}, mapGetters({
     isVisible: 'mediaManager/showActionsPanel',
     currentMedia: 'mediaManagerMedia/currentMedia',
     focusedMediaIds: 'mediaManagerMedia/focusedMediaIds'
-  }), {
+  })), {}, {
     focusedMediaCount: function focusedMediaCount() {
       return this.focusedMediaIds.length;
     },
@@ -12394,9 +12407,9 @@ var script$a = {
       this.isEditing = false;
     }
   },
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     hideActionsPanel: 'mediaManager/hideActionsPanel'
-  }), {
+  })), {}, {
     edit: function edit(media) {
       this.editingItem = media;
       this.isEditing = true;
@@ -12500,7 +12513,7 @@ var __vue_is_functional_template__$a = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$a = normalizeComponent({
+var __vue_component__$a = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$a,
   staticRenderFns: __vue_staticRenderFns__$a
 }, __vue_inject_styles__$a, __vue_script__$a, __vue_scope_id__$a, __vue_is_functional_template__$a, __vue_module_identifier__$a, false, undefined, undefined, undefined);
@@ -12568,7 +12581,7 @@ var __vue_is_functional_template__$b = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$b = normalizeComponent({
+var __vue_component__$b = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$b,
   staticRenderFns: __vue_staticRenderFns__$b
 }, __vue_inject_styles__$b, __vue_script__$b, __vue_scope_id__$b, __vue_is_functional_template__$b, __vue_module_identifier__$b, false, undefined, undefined, undefined);
@@ -12614,12 +12627,12 @@ var script$c = {
       }
     }
   },
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     addFolder: 'mediaManagerFolders/addFolder',
     updateFolder: 'mediaManagerFolders/updateFolder',
     close: 'mediaManagerFolders/hideManageFolderModal',
     clearFolderBeingManaged: 'mediaManagerFolders/clearFolderBeingManaged'
-  }), {
+  })), {}, {
     save: function save() {
       if (this.isEditing) {
         return actions$4.updateFolder(this.item.id, this.form);
@@ -12747,7 +12760,7 @@ var __vue_is_functional_template__$c = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$c = normalizeComponent({
+var __vue_component__$c = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$c,
   staticRenderFns: __vue_staticRenderFns__$c
 }, __vue_inject_styles__$c, __vue_script__$c, __vue_scope_id__$c, __vue_is_functional_template__$c, __vue_module_identifier__$c, false, undefined, undefined, undefined);
@@ -12763,14 +12776,14 @@ var script$d = {
       selectedFolderId: null
     };
   },
-  computed: _objectSpread2({}, mapGetters({
+  computed: _objectSpread2(_objectSpread2({}, mapGetters({
     type: 'mediaManager/mediaMoverType',
     isOpen: 'mediaManager/showMediaMover',
     subject: 'mediaManager/mediaMoverSubject',
     folders: 'mediaManagerFolders/listFolders',
     getFolder: 'mediaManagerFolders/getFolder',
     getMediaItem: 'mediaManagerMedia/getMediaItem'
-  }), {
+  })), {}, {
     groupedFolders: function groupedFolders() {
       var _this = this;
 
@@ -12825,12 +12838,12 @@ var script$d = {
       return [];
     }
   }),
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     close: 'mediaManager/closeMediaMover',
     moveMediaTo: 'mediaManagerMedia/moveMediaTo',
     moveFoldersTo: 'mediaManagerFolders/moveFoldersTo',
     clearFocusedMediaIds: 'mediaManagerMedia/clearFocusedMediaIds'
-  }), {
+  })), {}, {
     setCurrentFolder: function setCurrentFolder(folderId) {
       if (folderId) {
         this.currentFolder = this.folders.find(function (_ref5) {
@@ -13033,7 +13046,7 @@ var __vue_is_functional_template__$d = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$d = normalizeComponent({
+var __vue_component__$d = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$d,
   staticRenderFns: __vue_staticRenderFns__$d
 }, __vue_inject_styles__$d, __vue_script__$d, __vue_scope_id__$d, __vue_is_functional_template__$d, __vue_module_identifier__$d, false, undefined, undefined, undefined);
@@ -13051,9 +13064,9 @@ var script$e = {
       errors: null
     };
   },
-  computed: _objectSpread2({}, mapGetters({
+  computed: _objectSpread2(_objectSpread2({}, mapGetters({
     currentFolder: 'mediaManagerFolders/currentFolder'
-  }), {
+  })), {}, {
     isProcessing: function isProcessing() {
       return !!this.files.filter(function (file) {
         return file.uploading && !file.complete;
@@ -13063,9 +13076,9 @@ var script$e = {
       return this.isProcessing ? 'Uploading' : 'Uploading Complete';
     }
   }),
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     addMediaItem: 'mediaManagerMedia/addMediaItem'
-  }), {
+  })), {}, {
     findFileIndex: function findFileIndex(fileId) {
       return this.files.findIndex(function (_ref) {
         var id = _ref.id;
@@ -13118,7 +13131,17 @@ var script$e = {
           });
 
           _this.addMediaItem(media);
-        }).catch(function (errors) {
+        }).catch(function (error) {
+          var errors = {};
+
+          if (error.response.status === 422) {
+            errors = error.response.data.errors;
+          } else {
+            errors = {
+              error: ['An unexpected error occured.']
+            };
+          }
+
           _this.updateFile(id, {
             uploading: false,
             errors: errors
@@ -13131,7 +13154,7 @@ var script$e = {
       var index = this.findFileIndex(id);
 
       if (index !== -1) {
-        this.files.splice(index, 1, _objectSpread2({}, this.files[index], {}, properties));
+        this.files.splice(index, 1, _objectSpread2(_objectSpread2({}, this.files[index]), properties));
       }
     },
     fileIcon: function fileIcon(file) {
@@ -13342,7 +13365,7 @@ var __vue_is_functional_template__$e = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$e = normalizeComponent({
+var __vue_component__$e = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$e,
   staticRenderFns: __vue_staticRenderFns__$e
 }, __vue_inject_styles__$e, __vue_script__$e, __vue_scope_id__$e, __vue_is_functional_template__$e, __vue_module_identifier__$e, false, undefined, undefined, undefined);
@@ -13359,7 +13382,7 @@ var script$f = {
     MediaMover: __vue_component__$d,
     MediaUploader: __vue_component__$e
   },
-  computed: _objectSpread2({}, mapGetters({
+  computed: _objectSpread2(_objectSpread2({}, mapGetters({
     limit: 'mediaManager/mediaSelectionLimit',
     isOpen: 'mediaManager/mediaManagerIsOpen',
     currentMedia: 'mediaManagerMedia/currentMedia',
@@ -13372,7 +13395,7 @@ var script$f = {
     selectedMediaIds: 'mediaManagerMedia/selectedMediaIds',
     actionsPanelIsVisible: 'mediaManager/showActionsPanel',
     folderBeingManaged: 'mediaManagerFolders/folderBeingManaged'
-  }), {
+  })), {}, {
     pickerMediaCount: function pickerMediaCount() {
       return this.getPickerMedia(this.currentPickerId).length;
     },
@@ -13409,7 +13432,7 @@ var script$f = {
       }).length > 0;
     }
   }),
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     openFolder: 'mediaManagerFolders/openFolder',
     showActionsPanel: 'mediaManager/showActionsPanel',
     hideActionsPanel: 'mediaManager/hideActionsPanel',
@@ -13420,7 +13443,7 @@ var script$f = {
     clearCurrentPickerId: 'mediaManagerPickers/clearCurrentPickerId',
     clearSelectedMediaIds: 'mediaManagerMedia/clearSelectedMediaIds',
     disableMultipleMediaFocus: 'mediaManagerMedia/disableMultipleMediaFocus'
-  }), {
+  })), {}, {
     toggleActionsPanel: function toggleActionsPanel() {
       if (this.actionsPanelIsVisible) {
         return this.hideActionsPanel();
@@ -13562,7 +13585,7 @@ var __vue_is_functional_template__$f = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$f = normalizeComponent({
+var __vue_component__$f = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$f,
   staticRenderFns: __vue_staticRenderFns__$f
 }, __vue_inject_styles__$f, __vue_script__$f, __vue_scope_id__$f, __vue_is_functional_template__$f, __vue_module_identifier__$f, false, undefined, undefined, undefined);
@@ -13596,9 +13619,9 @@ var script$g = {
       }
     }
   },
-  computed: _objectSpread2({}, mapGetters({
+  computed: _objectSpread2(_objectSpread2({}, mapGetters({
     getPickerMedia: 'mediaManagerPickers/getPickerMedia'
-  }), {
+  })), {}, {
     initialMedia: function initialMedia() {
       if (!this.media) {
         return [];
@@ -13667,13 +13690,13 @@ var script$g = {
   beforeDestroy: function beforeDestroy() {
     this.clearPickerMediaIds(this.id);
   },
-  methods: _objectSpread2({}, mapActions({
+  methods: _objectSpread2(_objectSpread2({}, mapActions({
     setMedia: 'mediaManagerMedia/setMedia',
     openMediaManager: 'mediaManager/openMediaManager',
     setPickerMediaIds: 'mediaManagerPickers/setPickerMediaIds',
     clearPickerMediaIds: 'mediaManagerPickers/clearPickerMediaIds',
     removePickerMediaId: 'mediaManagerPickers/removePickerMediaId'
-  }), {
+  })), {}, {
     open: function open() {
       this.openMediaManager({
         pickerId: this.id,
@@ -13789,7 +13812,7 @@ var __vue_is_functional_template__$g = false;
 
 /* style inject shadow dom */
 
-var __vue_component__$g = normalizeComponent({
+var __vue_component__$g = /*#__PURE__*/normalizeComponent({
   render: __vue_render__$g,
   staticRenderFns: __vue_staticRenderFns__$g
 }, __vue_inject_styles__$g, __vue_script__$g, __vue_scope_id__$g, __vue_is_functional_template__$g, __vue_module_identifier__$g, false, undefined, undefined, undefined);

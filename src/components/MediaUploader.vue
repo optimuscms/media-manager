@@ -179,10 +179,20 @@ export default {
                     });
 
                     this.addMediaItem(media);
-                }).catch(errors => {
+                }).catch(error => {
+                    let errors = {};
+
+                    if (error.response.status === 422) {
+                        errors = error.response.data.errors;
+                    } else {
+                        errors = {
+                            error: ['An unexpected error occured.'],
+                        };
+                    }
+
                     this.updateFile(id, {
                         uploading: false,
-                        errors: errors,
+                        errors,
                     });
                 });
             });
